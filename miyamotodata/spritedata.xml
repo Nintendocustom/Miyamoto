@@ -1,11 +1,4 @@
 <?xml version="1.0"?>
-
-<!-- 
-Miyamoto Evolution Patch
-Custom Miyamoto spritedata.xml Module
-By Rimea and friends
--->
-
 <sprites>
 	<sprite id="0" name="Goomba" notes="A simple walking mushroom head that takes 1 hit to kill.">
 		<list nybble="6" title="Spawned Child Direction (No ground pound)" comment="Controls the direction (and z order) of the Goombas spawned by a Medium Goomba, without ground pound. Higher values cause an overflow with probably unexpected results.">
