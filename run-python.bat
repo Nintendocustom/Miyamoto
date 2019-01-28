@@ -11,25 +11,11 @@ echo   you have to download the installer off of the internet.
 echo(
 echo Enjoy!
 
-:choice
-set /P c=Do you want to download the latest spritedata.xml [Y/N]?
-if /I "%c%" EQU "Y" goto :downloadthatstuff
-if /I "%c%" EQU "N" goto :nogoaway
-goto :choice
-
-
 :downloadthatstuff
 
-@echo OFF
 echo Downloading latest spritedata...
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Gota7/Miyamoto/master/miyamotodata/spritedata.xml -OutFile miyamotodata/spritedata.xml"
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Nintendocustom/Miyamoto/master/miyamotodata/spritedata.xml -OutFile miyamotodata/spritedata.xml"
 echo Done!
-
-:nogoaway
-set /P c=Do you want to download the latest category.xml [Y/N]?
-if /I "%c%" EQU "Y" goto :downloadthatxml
-if /I "%c%" EQU "N" goto :srslygoaway
-goto :nogoaway
 
 :downloadthatxml
 
@@ -39,9 +25,5 @@ powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Gota7/M
 echo Done!
 echo Starting Miyamoto!
 py miyamoto.py
+pause
 EXIT
-
-:srslygoaway
-@echo OFF
-echo Starting Miyamoto!
-py miyamoto.py
