@@ -1766,12 +1766,13 @@ class SpriteImage_StalkingPiranha(SLib.SpriteImage_Static):  # 63
             ImageCache['StalkingPiranha'],
         )
 
-        self.yOffset = -17
-        # self.xOffset = -10
+        self.yOffset = -56
+        self.xOffset = -8
 
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('StalkingPiranha', 'stalking_piranha.png')
+
 
 
 class SpriteImage_WaterPlant(SLib.SpriteImage_Static):  # 64
@@ -4273,7 +4274,7 @@ class SpriteImage_Spike(SLib.SpriteImage_Static):  # 180
             parent,
             3.75,
             ImageCache['Spike'],
-            (-16, -16),
+            (-9, -32),
         )
 
     @staticmethod
@@ -6122,7 +6123,7 @@ class SpriteImage_Bramball(SLib.SpriteImage_Static):  # 336
         )
 
         self.xOffset = -30
-        self.yOffset = -46
+        self.yOffset = -48
 
     @staticmethod
     def loadImages():
@@ -6665,8 +6666,8 @@ class SpriteImage_Fliprus(SLib.SpriteImage_StaticMultiple):  # 441
             3.75,
         )
 
-        self.yOffset = -16
-        self.xOffset = -6
+        self.yOffset = -96
+        self.xOffset = -8
 
     @staticmethod
     def loadImages():
@@ -6687,7 +6688,7 @@ class SpriteImage_Fliprus(SLib.SpriteImage_StaticMultiple):  # 441
         else:
             self.image = ImageCache['FliprusL']
 
-        super().dataChanged()
+        super().dataChanged()	
 
 
 class SpriteImage_BonyBeetle(SLib.SpriteImage_Static):  # 443
@@ -6725,6 +6726,7 @@ class SpriteImage_NabbitPlacement(SLib.SpriteImage_Static):  # 451
             parent,
             3.75,
             ImageCache['NabbitP'],
+            (-16, -24),
         )
 
     @staticmethod
