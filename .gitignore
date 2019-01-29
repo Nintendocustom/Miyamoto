@@ -5,6 +5,7 @@ build/
 data/
 dist/
 miyamotodata/patches/OtherSMBU/
+miyamotodata/patches/Miyamoto Evolution Patch/
 *.qpp
 *.spec
 build.bat

@@ -1427,8 +1427,8 @@ class SpriteImage_RedRing(SLib.SpriteImage_Static):  # 44
             ImageCache['RedRing'],
         )
 
-        self.yOffset = -14
-        self.xOffset = -7
+        self.yOffset = -7
+        self.xOffset = -9
 
     @staticmethod
     def loadImages():
@@ -1512,8 +1512,7 @@ class SpriteImage_GreenCoin(SLib.SpriteImage_Static):  # 50
             ImageCache['GreenCoin'],
         )
 
-        self.xOffset = -7
-        self.yOffset = -2
+        self.xOffset = -8
 
     @staticmethod
     def loadImages():
@@ -1528,8 +1527,8 @@ class SpriteImage_MontyMole(SLib.SpriteImage_Static):  # 51
             ImageCache['MontyMole'],
         )
 
-        self.xOffset = -6
-        self.yOffset = -2
+        self.xOffset = -8
+        self.yOffset = -8
 
     @staticmethod
     def loadImages():
@@ -2057,68 +2056,84 @@ class SpriteImage_HuckitCrab(SLib.SpriteImage_Static):  # 74
         SLib.loadIfNotInImageCache('HuckitCrab', 'huckit_crab.png')
 
 
-class SpriteImage_BroIce(SLib.SpriteImage_Static):  # 75
+class SpriteImage_IceBro(SLib.SpriteImage_Static):  # 75
     def __init__(self, parent):
         super().__init__(
             parent,
             3.75,
-            ImageCache['BroIce'],
+            ImageCache['IceBro'],
         )
 
-        self.yOffset = -16
-        self.xOffset = -32
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('BroIce', 'bro_ice.png')
-
-
-class SpriteImage_BroHammer(SLib.SpriteImage_Static):  # 76
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            3.75,
-            ImageCache['BroHammer'],
-        )
-
-        self.yOffset = -16
+        self.yOffset = -24
         self.xOffset = -8
 
     @staticmethod
     def loadImages():
-        SLib.loadIfNotInImageCache('BroHammer', 'bro_hammer.png')
+        SLib.loadIfNotInImageCache('IceBro', 'ice_bro.png')	
 
 
-class SpriteImage_BroBoomerang(SLib.SpriteImage_Static):  # 78
+class SpriteImage_HammerBro(SLib.SpriteImage_Static):  # 76
     def __init__(self, parent):
         super().__init__(
             parent,
             3.75,
-            ImageCache['BroBoomerang'],
+            ImageCache['HammerBro'],
         )
 
-        self.yOffset = -16
-        self.xOffset = -32
+        self.yOffset = -24
+        self.xOffset = -8
 
     @staticmethod
     def loadImages():
-        SLib.loadIfNotInImageCache('BroBoomerang', 'bro_boomerang.png')
+        SLib.loadIfNotInImageCache('HammerBro', 'hammer_bro.png')
 
 
-class SpriteImage_BroFire(SLib.SpriteImage_Static):  # 79
+class SpriteImage_SledgeBro(SLib.SpriteImage_Static):  # 77
     def __init__(self, parent):
         super().__init__(
             parent,
             3.75,
-            ImageCache['BroFire'],
+            ImageCache['SledgeBro'],
         )
 
-        self.yOffset = -16
-        self.xOffset = -32
+        self.yOffset = -32
+        self.xOffset = -8
 
     @staticmethod
     def loadImages():
-        SLib.loadIfNotInImageCache('BroFire', 'bro_fire.png')
+        SLib.loadIfNotInImageCache('SledgeBro', 'sledge_bro.png')
+
+ 
+class SpriteImage_BoomerangBro(SLib.SpriteImage_Static):  # 78
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['BoomerangBro'],
+        )
+
+        self.yOffset = -24
+        self.xOffset = -8
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('BoomerangBro', 'boomerang_bro.png')
+
+
+class SpriteImage_FireBro(SLib.SpriteImage_Static):  # 79
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['FireBro'],
+        )
+
+        self.yOffset = -24
+        self.xOffset = -8
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('FireBro', 'fire_bro.png')	
 
 
 class SpriteImage_FlameChomp(SLib.SpriteImage_Static):  # 85
@@ -2425,11 +2440,11 @@ class SpriteImage_CheepCheep(SLib.SpriteImage_Static):  # 101
 
         nybbleWidth = self.parent.spritedata[3] & 0xF
 
-        width = nybbleWidth * 60 + 120
+        width = nybbleWidth * 120 + 120
 
-        offsetX = -(nybbleWidth * 60 + 60)
+        offsetX = -(nybbleWidth * 60 + 26.25)
 
-        self.aux[0].setSize(width, 60, offsetX, 0)
+        self.aux[0].setSize(width, 60, offsetX, 7.5)
 
     @staticmethod
     def loadImages():
@@ -2735,20 +2750,42 @@ class SpriteImage_SpinyCheep(SLib.SpriteImage_Static):  # 120
         SLib.loadIfNotInImageCache('SpinyCheep', 'cheep_spiny.png')
 
 
-class SpriteImage_SandPillar(SLib.SpriteImage_Static):  # 123
+class SpriteImage_SandPillar(SLib.SpriteImage_StaticMultiple):  # 123
     def __init__(self, parent):
         super().__init__(
             parent,
-            3.75,
-            ImageCache['SandPillar'],
+            3.75,				
         )
 
-        self.yOffset = -143  # what
-        self.xOffset = -18
 
     @staticmethod
     def loadImages():
-        SLib.loadIfNotInImageCache('SandPillar', 'sand_pillar.png')
+        SLib.loadIfNotInImageCache('SandPillar0', 'sandpillar_0.png')
+        SLib.loadIfNotInImageCache('SandPillar1', 'sandpillar_1.png')
+        SLib.loadIfNotInImageCache('SandPillar2', 'sandpillar_2.png')
+        SLib.loadIfNotInImageCache('SandPillar3', 'sandpillar_3.png')
+    def dataChanged(self):
+
+        size = (self.parent.spritedata[5] >> 4)
+
+        if size == 0:
+            self.image = ImageCache['SandPillar0']
+            self.xOffset = -24
+            self.yOffset = -160
+        elif size == 1:
+            self.image = ImageCache['SandPillar1']
+            self.xOffset = -24
+            self.yOffset = -256
+        elif size == 2:
+            self.image = ImageCache['SandPillar2']
+            self.xOffset = -24
+            self.yOffset = -64
+        elif size == 3:
+            self.image = ImageCache['SandPillar3']
+            self.xOffset = -24
+            self.yOffset = -208
+			
+        super().dataChanged()
 
 
 class SpriteImage_SpineCoaster(SLib.SpriteImage_Static):  # 133
@@ -2816,8 +2853,8 @@ class SpriteImage_GiantThwomp(SLib.SpriteImage_Static):  # 136
             ImageCache['GiantThwomp'],
         )
 
-        self.xOffset = -4
-        self.yOffset = 0
+        self.xOffset = -8
+        self.yOffset = -8
 
     @staticmethod
     def loadImages():
@@ -3629,88 +3666,70 @@ class SpriteImage_PipeCannon(SLib.SpriteImage):  # 155
         super().dataChanged()
 
 
-class SpriteImage_WaterGeyser(SpriteImage_StackedSprite):  # 156
-    def __init__(self, parent, scale=3.75):
-        super().__init__(parent, scale)
+class SpriteImage_WaterGeyser(SLib.SpriteImage_StaticMultiple):  # 156
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
 
     @staticmethod
     def loadImages():
-        ImageCache['WaterGeyserTop'] = SLib.GetImg('water_geyser_top.png')
-        ImageCache['WaterGeyserMiddle'] = SLib.GetImg('water_geyser_middle.png')
+        SLib.loadIfNotInImageCache('WaterGeyserTop', 'water_geyser_top.png')
+        SLib.loadIfNotInImageCache('WaterGeyserBottom', 'water_geyser_bottom.png')
 
     def dataChanged(self):
         super().dataChanged()
-        rawlengthones = self.parent.spritedata[5]
-        rawlengthtwos = self.parent.spritedata[4] & 0xF
 
-        if rawlengthones == 0:
-            rawlengthones = 0
-        elif rawlengthones == 16:
-            rawlengthones = 1
-        elif rawlengthones == 32:
-            rawlengthones = 2
-        elif rawlengthones == 48:
-            rawlengthones = 3
-        elif rawlengthones == 64:
-            rawlengthones = 4
-        elif rawlengthones == 80:
-            rawlengthones = 5
-        elif rawlengthones == 96:
-            rawlengthones = 6
-        elif rawlengthones == 112:
-            rawlengthones = 7
-        elif rawlengthones == 128:
-            rawlengthones = 8
-        elif rawlengthones == 144:
-            rawlengthones = 9
-        elif rawlengthones == 160:
-            rawlengthones = 10
-        elif rawlengthones == 176:
-            rawlengthones = 11
-        elif rawlengthones == 192:
-            rawlengthones = 12
-        elif rawlengthones == 208:
-            rawlengthones = 13
-        elif rawlengthones == 224:
-            rawlengthones = 14
-        elif rawlengthones == 240:
-            rawlengthones = 15
-        elif rawlengthones == 256:
-            rawlengthones = 16
-
-        rawlengthtwos = rawlengthtwos * 16
-
-        #        if rawlengthtwos > 255: rawlengthtwos = rawlengthtwos - 256
-
-        rawlength = rawlengthones + rawlengthtwos
-
-        pipeLength = rawlength
-
-        #        print(rawlengthones, rawlengthtwos, pipeLength)
-
-        self.hasTop = True
-        self.hasBottom = False
-
-        self.pipeHeight = (pipeLength + 1) * 60
-        self.height = (self.pipeHeight / 3.75)
-        self.pipeHeight = (pipeLength) * 60
-
-        self.middle = ImageCache['WaterGeyserMiddle']
-        self.top = ImageCache['WaterGeyserTop']
-
-        self.pipeWidth = 360
-        self.width = 96
-
-        self.yOffset = 8 + (-6 * 16) + (-1 * ((rawlength - 2) * 8))
-        #        self.yOffset = -12 * 16
-        self.xOffset = -40
+        self.height = (self.parent.spritedata[5] >> 4) + (self.parent.spritedata[4]*16)
+        if self.height > 255 :
+             self.height = self.height - 256
+        self.bleh = round(self.parent.spritedata[3]/16)
+        self.bleh2 = self.parent.spritedata[8]
+        self.yOffset = -72-self.height*8
+        self.height = self.height*16 + 16
+        self.actualwidth = 10
+        if self.bleh == 0:
+            self.actualwidth = 6
+        if self.bleh == 1:
+            self.actualwidth = 3
+        if self.bleh == 2:
+            self.actualwidth = 4.5
+        if self.bleh == 3:
+            self.actualwidth = 6
+        if self.bleh == 4:
+            self.actualwidth = 8
+        if self.bleh == 5:
+            self.actualwidth = 9.5
+        if self.bleh == 6:
+            self.actualwidth = 11.5
+        if self.bleh == 7:
+            self.actualwidth = 13
+        if self.bleh == 8:
+            self.actualwidth = 15
+        if self.bleh == 9:
+            self.actualwidth = 16
+        if self.bleh == 10:
+            self.actualwidth = 17.5
+        if self.bleh == 11:
+            self.actualwidth = 19
+        if self.bleh == 12:
+            self.actualwidth = 20.5
+        if self.bleh == 13:
+            self.actualwidth = 22
+        if self.bleh == 14:
+            self.actualwidth = 24
+        if self.bleh == 15:
+            self.actualwidth = 26
+        if self.bleh2 == 1:
+            self.actualwidth = 2.5
+        self.xOffset = -self.actualwidth*8 +8
+        self.width = self.actualwidth*16
 
     def paint(self, painter):
         super().paint(painter)
-
-        painter.drawTiledPixmap(self.x, self.y, self.pipeWidth, self.pipeHeight, self.middle)
-        if self.hasTop:
-            painter.drawPixmap(self.topX, self.topY, self.top)
+        painter.drawPixmap(self.actualwidth*10, 60, self.actualwidth*40,(self.height - 32) * 3.75, ImageCache['WaterGeyserBottom'])
+        painter.drawPixmap(0, 0, self.actualwidth*60, 180, ImageCache['WaterGeyserTop'])
 
 
 class SpriteImage_BarCenter(SLib.SpriteImage_Static):  # 157
@@ -3959,88 +3978,70 @@ class SpriteImage_ExpandingPipeDown(SpriteImage_PipeExpand):  # 162
         super().dataChanged()
 
 
-class SpriteImage_WaterGeyserLocation(SpriteImage_StackedSprite):  # 163
-    def __init__(self, parent, scale=3.75):
-        super().__init__(parent, scale)
+class SpriteImage_WaterGeyserLocation(SLib.SpriteImage_StaticMultiple):  # 163
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
 
     @staticmethod
     def loadImages():
-        ImageCache['WaterGeyserTop'] = SLib.GetImg('water_geyser_top.png')
-        ImageCache['WaterGeyserMiddle'] = SLib.GetImg('water_geyser_middle.png')
+        SLib.loadIfNotInImageCache('WaterGeyserTop', 'water_geyser_top.png')
+        SLib.loadIfNotInImageCache('WaterGeyserBottom', 'water_geyser_bottom.png')
 
     def dataChanged(self):
         super().dataChanged()
-        rawlengthones = self.parent.spritedata[5]
-        rawlengthtwos = self.parent.spritedata[4] & 0xF
 
-        if rawlengthones == 0:
-            rawlengthones = 0
-        elif rawlengthones == 16:
-            rawlengthones = 1
-        elif rawlengthones == 32:
-            rawlengthones = 2
-        elif rawlengthones == 48:
-            rawlengthones = 3
-        elif rawlengthones == 64:
-            rawlengthones = 4
-        elif rawlengthones == 80:
-            rawlengthones = 5
-        elif rawlengthones == 96:
-            rawlengthones = 6
-        elif rawlengthones == 112:
-            rawlengthones = 7
-        elif rawlengthones == 128:
-            rawlengthones = 8
-        elif rawlengthones == 144:
-            rawlengthones = 9
-        elif rawlengthones == 160:
-            rawlengthones = 10
-        elif rawlengthones == 176:
-            rawlengthones = 11
-        elif rawlengthones == 192:
-            rawlengthones = 12
-        elif rawlengthones == 208:
-            rawlengthones = 13
-        elif rawlengthones == 224:
-            rawlengthones = 14
-        elif rawlengthones == 240:
-            rawlengthones = 15
-        elif rawlengthones == 256:
-            rawlengthones = 16
-
-        rawlengthtwos = rawlengthtwos * 16
-
-        #        if rawlengthtwos > 255: rawlengthtwos = rawlengthtwos - 256
-
-        rawlength = rawlengthones
-
-        pipeLength = rawlength
-
-        #        print(rawlengthones, rawlengthtwos, pipeLength)
-
-        self.hasTop = True
-        self.hasBottom = False
-
-        self.pipeHeight = (pipeLength + 1) * 60
-        self.height = (self.pipeHeight / 3.75)
-        self.pipeHeight = (pipeLength) * 60
-
-        self.middle = ImageCache['WaterGeyserMiddle']
-        self.top = ImageCache['WaterGeyserTop']
-
-        self.pipeWidth = 360
-        self.width = 96
-
-        self.yOffset = 8 + (-6 * 16) + (-1 * ((rawlength - 2) * 8))
-        #        self.yOffset = -12 * 16
-        self.xOffset = -40
+        self.height = (self.parent.spritedata[5] >> 4)
+        if self.height > 255 :
+             self.height = self.height - 256
+        self.bleh = round(self.parent.spritedata[3]/16)
+        self.bleh2 = self.parent.spritedata[8]
+        self.yOffset = -72-self.height*8
+        self.height = self.height*16 + 16
+        self.actualwidth = 10
+        if self.bleh == 0:
+            self.actualwidth = 6
+        if self.bleh == 1:
+            self.actualwidth = 3
+        if self.bleh == 2:
+            self.actualwidth = 4.5
+        if self.bleh == 3:
+            self.actualwidth = 6
+        if self.bleh == 4:
+            self.actualwidth = 8
+        if self.bleh == 5:
+            self.actualwidth = 9.5
+        if self.bleh == 6:
+            self.actualwidth = 11.5
+        if self.bleh == 7:
+            self.actualwidth = 13
+        if self.bleh == 8:
+            self.actualwidth = 15
+        if self.bleh == 9:
+            self.actualwidth = 16
+        if self.bleh == 10:
+            self.actualwidth = 17.5
+        if self.bleh == 11:
+            self.actualwidth = 19
+        if self.bleh == 12:
+            self.actualwidth = 20.5
+        if self.bleh == 13:
+            self.actualwidth = 22
+        if self.bleh == 14:
+            self.actualwidth = 24
+        if self.bleh == 15:
+            self.actualwidth = 26
+        if self.bleh2 == 1:
+            self.actualwidth = 2.5
+        self.xOffset = -self.actualwidth*8 +8
+        self.width = self.actualwidth*16
 
     def paint(self, painter):
         super().paint(painter)
-
-        painter.drawTiledPixmap(self.x, self.y, self.pipeWidth, self.pipeHeight, self.middle)
-        if self.hasTop:
-            painter.drawPixmap(self.topX, self.topY, self.top)
+        painter.drawPixmap(self.actualwidth*10, 60, self.actualwidth*40,(self.height - 32) * 3.75, ImageCache['WaterGeyserBottom'])
+        painter.drawPixmap(0, 0, self.actualwidth*60, 180, ImageCache['WaterGeyserTop'])
 
 
 class SpriteImage_BobOmb(SLib.SpriteImage_Static):  # 164
@@ -4938,8 +4939,8 @@ class SpriteImage_Foo(SLib.SpriteImage_Static):  # 229
             ImageCache['Foo'],
         )
 
-        self.yOffset = -13
-        self.xOffset = -4
+        self.yOffset = -16
+        self.xOffset = -8
 
     @staticmethod
     def loadImages():
@@ -6471,8 +6472,8 @@ class SpriteImage_GreenRing(SLib.SpriteImage_Static):  # 402
             ImageCache['GreenRing'],
         )
 
-        self.yOffset = -14
-        self.xOffset = -7
+        self.yOffset = -7
+        self.xOffset = -9
 
     @staticmethod
     def loadImages():
@@ -7276,7 +7277,7 @@ class SpriteImage_RockyWrench(SLib.SpriteImage_Static):  # 536
             parent,
             3.75,
             ImageCache['RockyWrench'],
-            (4, -41),
+            (-3, -40),
         )
 
     @staticmethod
@@ -7395,6 +7396,44 @@ class SpriteImage_Flowers(SLib.SpriteImage_StaticMultiple):  # 546
 
         super().dataChanged()
 
+
+class SpriteImage_GiantPiranhaPlant(SLib.SpriteImage_StaticMultiple):  # 550
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,				
+        )
+
+ 
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('GiantPiranhaUp', 'giant_piranha_plant_up.png') 
+        SLib.loadIfNotInImageCache('GiantPiranhaDown', 'giant_piranha_plant_down.png')
+        SLib.loadIfNotInImageCache('GiantPiranhaRight', 'giant_piranha_plant_left.png')
+        SLib.loadIfNotInImageCache('GiantPiranhaLeft', 'giant_piranha_plant_right.png')
+    def dataChanged(self):
+
+        spawntype = ((self.parent.spritedata[2] & 0xF0) >> 4)
+
+        if spawntype == 0:
+            self.image = ImageCache['GiantPiranhaUp']
+            self.yOffset = -128
+            self.xOffset = -32
+        elif spawntype == 1:
+            self.image = ImageCache['GiantPiranhaDown']
+            self.yOffset = 64 
+            self.xOffset = -32
+        elif spawntype == 2:
+            self.image = ImageCache['GiantPiranhaLeft']
+            self.yOffset = -32 
+            self.xOffset = 64
+        elif spawntype == 3:
+            self.image = ImageCache['GiantPiranhaRight']
+            self.yOffset = -32 
+            self.xOffset = -128			
+        super().dataChanged()
+		
 
 class SpriteImage_RecordSignboard(SLib.SpriteImage):  # 561
     def __init__(self, parent):
@@ -7571,8 +7610,8 @@ class SpriteImage_BlueRing(SLib.SpriteImage_Static):  # 662
             ImageCache['BlueRing'],
         )
 
-        self.yOffset = -14
-        self.xOffset = -7
+        self.yOffset = -7
+        self.xOffset = -9
 
     @staticmethod
     def loadImages():
@@ -7646,10 +7685,11 @@ ImageClasses = {
     72: SpriteImage_MovingLandBlock,
     73: SpriteImage_CoinSpawner,
     74: SpriteImage_HuckitCrab,
-    75: SpriteImage_BroIce,
-    76: SpriteImage_BroHammer,
-    78: SpriteImage_BroBoomerang,
-    79: SpriteImage_BroFire,
+    75: SpriteImage_IceBro,
+    76: SpriteImage_HammerBro,
+    77: SpriteImage_SledgeBro,
+    78: SpriteImage_BoomerangBro,
+    79: SpriteImage_FireBro,
     85: SpriteImage_FlameChomp,
     86: SpriteImage_Urchin,
     87: SpriteImage_MovingCoin,
@@ -7894,6 +7934,7 @@ ImageClasses = {
     542: SpriteImage_MushroomPlatform,
     544: SpriteImage_MushroomMovingPlatform,
     546: SpriteImage_Flowers,
+    550: SpriteImage_GiantPiranhaPlant,
     551: SpriteImage_Useless,
     555: SpriteImage_Crash,
     556: SpriteImage_Crash,
