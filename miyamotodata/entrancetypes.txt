@@ -1,35 +1,35 @@
 0:Normal
 1:Normal?
-2:Door Exit
-3:Pipe Facing Up
-4:Pipe Facing Down
-5:Pipe Facing Left
-6:Pipe Facing Right
-7:Falling (Fast)
-8:Ground Pound
-9:Sliding
-10:Swimming
-11:Normal (Mispositioned)
-12:Normal (Mispositioned)
-13:Normal (Mispositioned)
-14:Unknown
-15:Unknown
-16:Mini Pipe Facing Up
-17:Mini Pipe Facing Down
-18:Mini Pipe Facing Left
-19:Mini Pipe Facing Right
-20:Jumping (Facing Right)
-21:Vine Entrance
-22:Pipe Facing Towards Screen
-23:Boss Entrance (Standing)
-24:Walking Right (From Entrance Pos. to 8 Blocks Right of Entrance Pos.)
-25:Boss Entrance (Jumping Right)
-26:Boss Entrance (Falling Right)
-27:Door Entrance
-28:Unknown (Crash)
-29:Unknown (Freeze)
-30:Unknown
-31:Unknown
-32:Unknown
-33:Title Screen
-34:Ambush entrance (center)
+2:Tuer Ausgang
+3:Roehre Nach oben gerichtet
+4:Roehre Nach unten gerichtet
+5:Roehre Nach links gerichtet
+6:Roehre Nach rechts gerichtet
+7:Schnell (fallen)
+8:Stampfattacke
+9:Rutschen
+10:Schwimmen
+11:Normal (Fehlpositioniert)
+12:Normal (Fehlpositioniert)
+13:Normal (Fehlpositioniert)
+14:Unbekannt
+15:Unbekannt
+16:Mini Roehre Nach oben gerichtet
+17:Mini Roehre Nach unten gerichtet
+18:Mini Roehre Nach links gerichtet
+19:Mini Roehre Nach rechts gerichtet
+20:Springen (Nach rechts gerichtet)
+21:Ranke Eingang
+22:Roehre in Richtung Bildschirm
+23:Boss Eingang (stehend)
+24:Nach rechts gehen (Von Eingang Pos. 8 Böcke nach rechts von Eingang Pos.)
+25:Boss Eingang (Springen Rechts)
+26:Boss Eingang (Fallen Rechts)
+27:Tuer Eingang
+28:Unbekannt (Absturz)
+29:Unbekannt (Einfrieren)
+30:Unbekannt
+31:Unbekannt
+32:Unbekannt
+33:Titelbildschirm
+34:Hintereingang (Center)Hintereingang (Mitte)

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <views>
-  <view name="Enemies">
-    <category name="Enemies - Overworld">
+  <view name="Feinde">
+    <category name="Feinde - Ueberwelt">
       <attach sprite="0"/>
       <attach sprite="1"/>
       <attach sprite="2"/>
@@ -35,7 +35,7 @@
       <attach sprite="698"/>
       <attach sprite="712"/>
     </category>
-    <category name="Enemies - Desert">
+    <category name="Feinde - Wueste">
       <attach sprite="0"/>
       <attach sprite="14"/>
       <attach sprite="22"/>
@@ -48,7 +48,7 @@
       <attach sprite="351"/>
       <attach sprite="651"/>
     </category>
-    <category name="Enemies - Underground">
+    <category name="Feinde - untergrund">
       <attach sprite="0"/>
       <attach sprite="22"/>
       <attach sprite="23"/>
@@ -59,7 +59,7 @@
       <attach sprite="505"/>
       <attach sprite="606"/>
     </category>
-    <category name="Enemies - Tower/Castle">
+    <category name="Feinde - Turm / Schloss">
       <attach sprite="22"/>
       <attach sprite="34"/>
       <attach sprite="57"/>
@@ -92,7 +92,7 @@
       <attach sprite="653"/>
       <attach sprite="659"/>
     </category>
-    <category name="Enemies - Airship">
+    <category name="Feinde - Luftschiff">
       <attach sprite="127"/>
       <attach sprite="128"/>
       <attach sprite="164"/>
@@ -110,7 +110,7 @@
       <attach sprite="596"/>
       <attach sprite="687"/>
     </category>
-    <category name="Enemies - Underwater / Beach">
+    <category name="Feinde - Uterwasser / Strand">
       <attach sprite="0"/>
       <attach sprite="53"/>
       <attach sprite="56"/>
@@ -151,7 +151,7 @@
       <attach sprite="695"/>
       <attach sprite="723"/>
     </category>
-    <category name="Enemies - Lava">
+    <category name="Feinde - Lava">
       <attach sprite="0"/>
       <attach sprite="85"/>
       <attach sprite="89"/>
@@ -163,7 +163,7 @@
       <attach sprite="643"/>
       <attach sprite="644"/>
     </category>
-    <category name="Enemies - Snow">
+    <category name="Feinde - Schnee">
       <attach sprite="0"/>
       <attach sprite="10"/>
       <attach sprite="11"/>
@@ -188,7 +188,7 @@
       <attach sprite="446"/>
       <attach sprite="539"/>
     </category>
-    <category name="Enemies - Jungle">
+    <category name="Feinde - Jungle">
       <attach sprite="0"/>
       <attach sprite="64"/>
       <attach sprite="90"/>
@@ -199,7 +199,7 @@
       <attach sprite="476"/>
       <attach sprite="702"/>
     </category>
-    <category name="Enemies - Ghost House">
+    <category name="Feinde - Geister Haus">
       <attach sprite="218"/>
       <attach sprite="219"/>
       <attach sprite="220"/>
@@ -209,7 +209,7 @@
       <attach sprite="529"/>
       <attach sprite="703"/>
     </category>
-    <category name="Enemies - Athletic">
+    <category name="Feinde - Sportlich?">
       <attach sprite="0"/>
       <attach sprite="20"/>
       <attach sprite="85"/>
@@ -234,7 +234,7 @@
       <attach sprite="668"/>
       <attach sprite="716"/>
     </category>
-    <category name="Enemies - Big">
+    <category name="Feinde - Gross">
       <attach sprite="0"/>
       <attach sprite="34"/>
       <attach sprite="99"/>
@@ -255,8 +255,8 @@
       <attach sprite="723"/>
     </category>
   </view>
-  <view name="Platforms">
-    <category name="Platforms">
+  <view name="Platformen">
+    <category name="Platformen">
       <attach sprite="72"/>
       <attach sprite="80"/>
       <attach sprite="81"/>
@@ -345,7 +345,7 @@
       <attach sprite="711"/>
       <attach sprite="714"/>
     </category>
-    <category name="Rotation Controlled">
+    <category name="Rotations Controller">
       <attach sprite="48"/>
       <attach sprite="60"/>
       <attach sprite="72"/>
@@ -373,7 +373,7 @@
       <attach sprite="709"/>
       <attach sprite="714"/>
     </category>
-    <category name="Controlled - Uses Lines">
+    <category name="Controller- Verwendet Linien">
       <attach sprite="46"/>
       <attach sprite="72"/>
       <attach sprite="116"/>
@@ -393,7 +393,7 @@
       <attach sprite="658"/>
       <attach sprite="721"/>
     </category>
-    <category name="Controlled - Uses Paths">
+    <category name="Controller - Verwendet Pfade">
       <attach sprite="60"/>
       <attach sprite="72"/>
       <attach sprite="116"/>
@@ -406,7 +406,7 @@
     </category>
   </view>
   <view name="Mechanics">
-    <category name="Bosses / Boss Objects">
+    <category name="Bosse / Boss Objekte">
       <attach sprite="111"/>
       <attach sprite="206"/>
       <attach sprite="216"/>
@@ -460,7 +460,7 @@
       <attach sprite="636"/>
       <attach sprite="667"/>
     </category>
-    <category name="Level Mechanics">
+    <category name="Level Mechaniken">
       <attach sprite="25"/>
       <attach sprite="31"/>
       <attach sprite="32"/>
@@ -540,7 +540,7 @@
       <attach sprite="710"/>
       <attach sprite="722"/>
     </category>
-    <category name="Spawners and Generators">
+    <category name="Spawner und Generator">
       <attach sprite="73"/>
       <attach sprite="98"/>
       <attach sprite="106"/>
@@ -569,7 +569,7 @@
       <attach sprite="597"/>
       <attach sprite="621"/>
     </category>
-    <category name="Controllers">
+    <category name="Controller">
       <attach sprite="36"/>
       <attach sprite="37"/>
       <attach sprite="38"/>
@@ -611,8 +611,8 @@
       <attach sprite="699"/>
     </category>
   </view>
-  <view name="Misc.">
-    <category name="Items and Blocks">
+  <view name="Verschiedenes.">
+    <category name="Items und Bloecke">
       <attach sprite="48"/>
       <attach sprite="49"/>
       <attach sprite="50"/>
@@ -664,7 +664,7 @@
       <attach sprite="707"/>
       <attach sprite="721"/>
     </category>
-    <category name="Lighting and Effects">
+    <category name="Beleuchtung und Effekte">
       <attach sprite="6"/>
       <attach sprite="7"/>
       <attach sprite="15"/>
@@ -702,8 +702,8 @@
       <attach sprite="708"/>
     </category>
   </view>
-  <view name="Unused / Useless">
-    <category name="Unused / Beta Sprites">
+  <view name="Unbenutzt / Nutzlos">
+    <category name="Unbenutzt / Nutzlos">
       <attach sprite="8"/>
       <attach sprite="9"/>
       <attach sprite="12"/>
@@ -859,7 +859,7 @@
       <attach sprite="694"/>
       <attach sprite="712"/>
     </category>
-    <category name="Useless / Crashing Sprites">
+    <category name="Nutzlose / Abstuerzende Sprites">
       <attach sprite="102"/>
       <attach sprite="134"/>
       <attach sprite="143"/>
