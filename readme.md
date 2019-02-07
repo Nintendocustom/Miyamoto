@@ -40,7 +40,6 @@ GitHub: https://github.com/aboood40091/Miyamoto/tree/deluxe
 ----------------------------------------------------------------
 
 ### TODO
-- Get unknown entrance fields figured out
 - Get unknown area fields figured out
 - Sprite images / HD screenshots (a lot of them)
 - Improve Zones and Objects resizing
@@ -56,15 +55,15 @@ Or using `git` with the following command:
 `git clone -b deluxe --single-branch https://github.com/aboood40091/Miyamoto.git`  
 
 #### STEP 2:
-Install the latest version of Python 3 (make sure you install pip and add it to PATH):
+Install the latest version of Python 3 (make sure you install pip and add it to PATH):  
 https://www.python.org/downloads/
 
-STEP 3:
+#### STEP 3:
 Open Command Prompt (or PowerShell) and type the following:  
-`py -3 -m pip install PyQt5  
-py -3 -m pip install Cython  
-py -3 -m pip install libyaz0  
-py -3 -m pip install SarcLib`  
+`py -3 -m pip install PyQt5`  
+`py -3 -m pip install Cython`  
+`py -3 -m pip install libyaz0`  
+`py -3 -m pip install SarcLib`  
 
 #### STEP 4:
 Make sure you have a compatible C compiler with Cython. For Linux and Mac OSX, you want "gcc". (which is usually preinstalled)  

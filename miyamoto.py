@@ -1336,7 +1336,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         self.eventEditorTab = QtWidgets.QWidget()
         tabs.addTab(self.eventEditorTab, GetIcon('events'), '')
         tabs.setTabToolTip(6, globals.trans.string('Palette', 18))
-        tabs.setTabEnabled(6, False)
 
         eventel = QtWidgets.QGridLayout(self.eventEditorTab)
         self.eventEditorLayout = eventel
@@ -1352,7 +1351,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         self.eventChooser.itemClicked.connect(self.handleEventTabItemClick)
         self.eventChooserItems = []
         flags = Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled
-        for id in range(32):
+        for id in range(64):
             itm = QtWidgets.QTreeWidgetItem()
             itm.setFlags(flags)
             itm.setCheckState(0, Qt.Unchecked)
@@ -1525,9 +1524,9 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
     def LoadEventTabFromLevel(self):
         """
-        Configures the Events tab from the data in Area.defEvents
+        Configures the Events tab from the data in Area.eventBits
         """
-        defEvents = globals.Area.defEvents
+        defEvents = (globals.Area.eventBits64 << 32) | globals.Area.eventBits32
         checked = Qt.Checked
         unchecked = Qt.Unchecked
 
@@ -1548,7 +1547,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 for char in rawStr: newStr += chr(char)
                 eventTexts[eventId] = newStr
 
-        for id in range(32):
+        for id in range(64):
             item = self.eventChooserItems[id]
             value = 1 << id
             item.setCheckState(0, checked if (defEvents & value) != 0 else unchecked)
@@ -1569,15 +1568,37 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         """
         noteText = item.text(1)
         self.eventNotesEditor.setText(noteText)
+
         selIdx = self.eventChooserItems.index(item)
-        if item.checkState(0):
-            # Turn a bit on
-            globals.Area.defEvents |= 1 << selIdx
+        if selIdx > 31:
+            _selIdx = selIdx - 32
+            isOn = (globals.Area.eventBits64 & 1 << _selIdx) == 1 << _selIdx
+
         else:
+            isOn = (globals.Area.eventBits32 & 1 << selIdx) == 1 << selIdx
+
+        if item.checkState(0) == Qt.Checked and not isOn:
+            # Turn a bit on
+            if selIdx > 31:
+                selIdx -= 32
+                globals.Area.eventBits64 |= 1 << selIdx
+
+            else:
+                globals.Area.eventBits32 |= 1 << selIdx
+            SetDirty()
+        elif item.checkState(0) == Qt.Unchecked and isOn:
             # Turn a bit off (invert, turn on, invert)
-            globals.Area.defEvents = ~globals.Area.defEvents
-            globals.Area.defEvents |= 1 << selIdx
-            globals.Area.defEvents = ~globals.Area.defEvents
+            if selIdx > 31:
+                selIdx -= 32
+                globals.Area.eventBits64 = ~globals.Area.eventBits64
+                globals.Area.eventBits64 |= 1 << selIdx
+                globals.Area.eventBits64 = ~globals.Area.eventBits64
+
+            else:
+                globals.Area.eventBits32 = ~globals.Area.eventBits32
+                globals.Area.eventBits32 |= 1 << selIdx
+                globals.Area.eventBits32 = ~globals.Area.eventBits32
+            SetDirty()
 
     def handleEventNotesEdit(self):
         """
@@ -1638,6 +1659,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         Handles the "Remove Stamp" btn being clicked
         """
         self.stampChooser.removeStamp(self.stampChooser.currentlySelectedStamp())
+        self.handleStampSelectionChanged()
 
     def handleStampsOpen(self):
         """
@@ -1669,13 +1691,10 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                     i += 3
 
                 except IndexError:
-                    # Meh. Malformed stamps file.
-                    i += 9999  # avoid infinite loops
-                    continue
+                    return
 
-                stamps.append(Stamp(rc, name))
-
-        for stamp in stamps: self.stampChooser.addStamp(stamp)
+                else:
+                    self.stampChooser.addStamp(Stamp(rc, name))
 
     def handleStampsSave(self):
         """
@@ -1716,6 +1735,9 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         Called when the user edits the name of the current stamp
         """
         stamp = self.stampChooser.currentlySelectedStamp()
+        if not stamp:
+            return
+
         text = self.stampNameEdit.text()
         stamp.Name = text
         stamp.update()
@@ -1895,7 +1917,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         if len(clip) > 300:
             result = QtWidgets.QMessageBox.warning(self, 'Miyamoto!', globals.trans.string('MainWindow', 1),
                                                    QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-            if result == QtWidgets.QMessageBox.No: return
+            if result != QtWidgets.QMessageBox.Yes: return
 
         layers, sprites = self.getEncodedObjects(encoded)
 
@@ -1963,7 +1985,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 z += 1
 
         # now center everything
-        zoomscaler = (self.ZoomLevel / 100.0)
+        zoomscaler = ((self.ZoomLevel / globals.TileWidth * 24) / 100.0)
         width = x2 - x1 + 1
         height = y2 - y1 + 1
         viewportx = (self.view.XScrollBar.value() / zoomscaler) / globals.TileWidth
@@ -2192,7 +2214,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
             loc = LocationItem(newx, newy, neww - newx, newh - newy, newID)
 
-            mw = globals.mainWindow
+            mw = self
             loc.positionChanged = mw.HandleObjPosChange
             mw.scene.addItem(loc)
 
@@ -2435,7 +2457,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         """
         Save a level back to the archive
         """
-        if not globals.mainWindow.fileSavePath:
+        if not self.fileSavePath:
             if not self.HandleSaveAs():
                 return False
 
@@ -2445,7 +2467,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         data = globals.Level.save()
 
         try:
-            with open(globals.mainWindow.fileSavePath, 'wb+') as f:
+            with open(self.fileSavePath, 'wb+') as f:
                 f.write(data)
 
         except IOError as e:
@@ -2465,7 +2487,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         """
         Save a level back to the archive
         """
-        if not globals.mainWindow.fileSavePath:
+        if not self.fileSavePath:
             if not self.HandleSaveAs():
                 return False
             else:
@@ -2474,7 +2496,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         data = globals.Level.saveNewArea(course, L0, L1, L2)
 
         try:
-            with open(globals.mainWindow.fileSavePath, 'wb+') as f:
+            with open(self.fileSavePath, 'wb+') as f:
                 f.write(data)
 
         except IOError as e:
@@ -2621,18 +2643,20 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         setSetting('ShowSpriteImages', globals.SpriteImagesShown)
 
         if globals.Area is not None:
+            globals.DirtyOverride += 1
             for spr in globals.Area.sprites:
                 spr.UpdateRects()
-                if globals.SpriteImagesShown:
+                if globals.SpriteImagesShown and not globals.Initializing:
                     spr.setPos(
                         (spr.objx + spr.ImageObj.xOffset) * (globals.TileWidth / 16),
                         (spr.objy + spr.ImageObj.yOffset) * (globals.TileWidth / 16),
                     )
-                else:
+                elif not globals.Initializing:
                     spr.setPos(
                         spr.objx * (globals.TileWidth / 16),
                         spr.objy * (globals.TileWidth / 16),
                     )
+            globals.DirtyOverride -= 1
 
         self.scene.update()
 
@@ -3081,8 +3105,8 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         QuickPaintOperations.object_search_database = {}
 
         # Set the level overview settings
-        globals.mainWindow.levelOverview.maxX = 100
-        globals.mainWindow.levelOverview.maxY = 40
+        self.levelOverview.maxX = 100
+        self.levelOverview.maxY = 40
 
         # Fill up the area list
         self.areaComboBox.clear()
@@ -3097,6 +3121,11 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         startEnt = None
         for ent in globals.Area.entrances:
             if ent.entid == startEntID: startEnt = ent
+
+        if not startEnt:
+            startEntID = globals.Area.startEntranceCoinBoost
+            for ent in globals.Area.entrances:
+                if ent.entid == startEntID: startEnt = ent
 
         self.view.centerOn(0, 0)
         if startEnt is not None: self.view.centerOn(startEnt.objx * (globals.TileWidth / 16), startEnt.objy * (globals.TileWidth / 16))
@@ -3484,7 +3513,10 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         else:
             self.actions['deselect'].setEnabled(False)
 
-        if updateModeInfo: self.UpdateModeInfo()
+        if updateModeInfo:
+            globals.DirtyOverride += 1
+            self.UpdateModeInfo()
+            globals.DirtyOverride -= 1
 
     def HandleObjPosChange(self, obj, oldx, oldy, x, y):
         """
@@ -3519,6 +3551,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             CPT = 9  # comment
 
         globals.CurrentPaintType = CPT
+        globals.CurrentObject = -1
 
     def ObjTabChanged(self, nt):
         """
@@ -4112,16 +4145,16 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         dlg = AreaOptionsDialog()
         if dlg.exec_() == QtWidgets.QDialog.Accepted:
             SetDirty()
+            globals.Area.wrapFlag = dlg.LoadingTab.wrap.isChecked()
+            globals.Area.unkFlag1 = dlg.LoadingTab.unk1.isChecked()
             globals.Area.timelimit = dlg.LoadingTab.timer.value()
+            globals.Area.unkFlag2 = dlg.LoadingTab.unk2.isChecked()
+            globals.Area.unkFlag3 = dlg.LoadingTab.unk3.isChecked()
+            globals.Area.unkFlag4 = dlg.LoadingTab.unk4.isChecked()
+            globals.Area.startEntrance = dlg.LoadingTab.entrance.value()
+            globals.Area.startEntranceCoinBoost = dlg.LoadingTab.entranceCoinBoost.value()
             globals.Area.timelimit2 = dlg.LoadingTab.timelimit2.value() + 100
             globals.Area.timelimit3 = dlg.LoadingTab.timelimit3.value() - 200
-            globals.Area.startEntrance = dlg.LoadingTab.entrance.value()
-            globals.Area.unk1 = dlg.LoadingTab.unk1.value()
-            globals.Area.unk2 = dlg.LoadingTab.unk2.value()
-            globals.Area.unk3 = dlg.LoadingTab.unk3.value()
-            globals.Area.unk4 = dlg.LoadingTab.unk4.value()
-            globals.Area.unk5 = dlg.LoadingTab.unk5.value()
-            globals.Area.unk6 = dlg.LoadingTab.unk6.value()
 
             oldnames = [globals.Area.tileset0, globals.Area.tileset1, globals.Area.tileset2, globals.Area.tileset3]
             assignments = ['globals.Area.tileset0', 'globals.Area.tileset1', 'globals.Area.tileset2', 'globals.Area.tileset3']
@@ -4504,21 +4537,21 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         dlg = ScreenCapChoiceDialog()
         if dlg.exec_() == QtWidgets.QDialog.Accepted:
-            fn = QtWidgets.QFileDialog.getSaveFileName(globals.mainWindow, globals.trans.string('FileDlgs', 3), '/untitled.png',
+            fn = QtWidgets.QFileDialog.getSaveFileName(self, globals.trans.string('FileDlgs', 3), '/untitled.png',
                                                        globals.trans.string('FileDlgs', 4) + ' (*.png)')[0]
             if fn == '': return
             fn = str(fn)
 
             if dlg.zoneCombo.currentIndex() == 0:
-                ScreenshotImage = QtGui.QImage(globals.mainWindow.view.width(), globals.mainWindow.view.height(),
+                ScreenshotImage = QtGui.QImage(self.view.width(), self.view.height(),
                                                QtGui.QImage.Format_ARGB32)
                 ScreenshotImage.fill(Qt.transparent)
 
                 RenderPainter = QtGui.QPainter(ScreenshotImage)
-                globals.mainWindow.view.render(RenderPainter,
-                                       QtCore.QRectF(0, 0, globals.mainWindow.view.width(), globals.mainWindow.view.height()),
+                self.view.render(RenderPainter,
+                                       QtCore.QRectF(0, 0, self.view.width(), self.view.height()),
                                        QtCore.QRect(QtCore.QPoint(0, 0),
-                                                    QtCore.QSize(globals.mainWindow.view.width(), globals.mainWindow.view.height())))
+                                                    QtCore.QSize(self.view.width(), self.view.height())))
                 RenderPainter.end()
             elif dlg.zoneCombo.currentIndex() == 1:
                 maxX = maxY = 0
@@ -4541,7 +4574,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 ScreenshotImage.fill(Qt.transparent)
 
                 RenderPainter = QtGui.QPainter(ScreenshotImage)
-                globals.mainWindow.scene.render(RenderPainter, QtCore.QRectF(0, 0, int(maxX - minX), int(maxY - minY)),
+                self.scene.render(RenderPainter, QtCore.QRectF(0, 0, int(maxX - minX), int(maxY - minY)),
                                         QtCore.QRectF(int(minX), int(minY), int(maxX - minX), int(maxY - minY)))
                 RenderPainter.end()
 
@@ -4553,7 +4586,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 ScreenshotImage.fill(Qt.transparent)
 
                 RenderPainter = QtGui.QPainter(ScreenshotImage)
-                globals.mainWindow.scene.render(RenderPainter, QtCore.QRectF(0, 0, globals.Area.zones[i].width * globals.TileWidth / 16,
+                self.scene.render(RenderPainter, QtCore.QRectF(0, 0, globals.Area.zones[i].width * globals.TileWidth / 16,
                                                                      globals.Area.zones[i].height * globals.TileWidth / 16),
                                         QtCore.QRectF(int(globals.Area.zones[i].objx) * globals.TileWidth / 16,
                                                       int(globals.Area.zones[i].objy) * globals.TileWidth / 16,

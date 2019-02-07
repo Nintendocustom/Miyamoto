@@ -1420,10 +1420,16 @@ class SpriteItem(LevelEditorItem):
         self.setFlag(self.ItemIsSelectable, not globals.SpritesFrozen)
 
         globals.DirtyOverride += 1
-        self.setPos(
-            int((self.objx + self.ImageObj.xOffset) * globals.TileWidth / 16),
-            int((self.objy + self.ImageObj.yOffset) * globals.TileWidth / 16),
-        )
+        if globals.SpriteImagesShown:
+            self.setPos(
+                int((self.objx + self.ImageObj.xOffset) * globals.TileWidth / 16),
+                int((self.objy + self.ImageObj.yOffset) * globals.TileWidth / 16),
+            )
+        else:
+            self.setPos(
+                int(self.objx * globals.TileWidth / 16),
+                int(self.objy * globals.TileWidth / 16),
+            )
         globals.DirtyOverride -= 1
 
     def SetType(self, type):
@@ -1579,17 +1585,9 @@ class SpriteItem(LevelEditorItem):
         if (self.type in globals.gamedef.getImageClasses()) and (self.type not in SLib.SpriteImagesLoaded):
             globals.gamedef.getImageClasses()[self.type].loadImages()
             SLib.SpriteImagesLoaded.add(self.type)
-        self.ImageObj = obj(self)
 
+        self.ImageObj = obj(self)
         self.UpdateDynamicSizing()
-        self.UpdateRects()
-        self.ChangingPos = True
-        self.setPos(
-            int((self.objx + self.ImageObj.xOffset) * globals.TileWidth / 16),
-            int((self.objy + self.ImageObj.yOffset) * globals.TileWidth / 16),
-        )
-        self.ChangingPos = False
-        if self.scene() is not None: self.scene().update()
 
     def UpdateDynamicSizing(self):
         """
@@ -1606,14 +1604,15 @@ class SpriteItem(LevelEditorItem):
             ))
 
         self.ImageObj.dataChanged()
-        self.UpdateRects()
 
-        self.ChangingPos = True
-        self.setPos(
-            int((self.objx + self.ImageObj.xOffset) * globals.TileWidth / 16),
-            int((self.objy + self.ImageObj.yOffset) * globals.TileWidth / 16),
-        )
-        self.ChangingPos = False
+        if globals.SpriteImagesShown:
+            self.UpdateRects()
+            self.ChangingPos = True
+            self.setPos(
+                int((self.objx + self.ImageObj.xOffset) * globals.TileWidth / 16),
+                int((self.objy + self.ImageObj.yOffset) * globals.TileWidth / 16),
+            )
+            self.ChangingPos = False
 
         if self.scene() is not None:
             self.scene().update(CurrentRect)
@@ -1829,12 +1828,29 @@ class SpriteItem(LevelEditorItem):
 
         return QtWidgets.QGraphicsItem.itemChange(self, change, value)
 
+    def setNewObjPos(self, newobjx, newobjy):
+        """
+        Sets a new position, through objx and objy
+        """
+        self.objx, self.objy = newobjx, newobjy
+        if globals.SpriteImagesShown:
+            self.setPos((newobjx + self.ImageObj.xOffset) * globals.TileWidth / 16, (newobjy + self.ImageObj.yOffset) * globals.TileWidth / 16)
+        else:
+            self.setPos(newobjx * globals.TileWidth / 16, newobjy * globals.TileWidth / 16)
+
     def mousePressEvent(self, event):
         """
         Overrides mouse pressing events if needed for cloning
         """
         if event.button() != Qt.LeftButton or QtWidgets.QApplication.keyboardModifiers() != Qt.ControlModifier:
+            if not globals.SpriteImagesShown:
+                oldpos = (self.objx, self.objy)
+
             LevelEditorItem.mousePressEvent(self, event)
+
+            if not globals.SpriteImagesShown:
+                self.setNewObjPos(oldpos[0], oldpos[1])
+
             return
 
         newitem = SpriteItem(self.type, self.objx, self.objy, self.spritedata)
@@ -2041,8 +2057,8 @@ class EntranceItem(LevelEditorItem):
             """
             return self.BoundingRect
 
-    def __init__(self, x, y, unk05, id, destarea, destentrance, type, unk0C, zone, unk0F, settings, unk12, camera,
-                 pathID, pathnodeindex, unk16):
+    def __init__(self, x, y, cameraX, cameraY, id, destarea, destentrance, type, players, zone, playerDistance, settings, otherID, coinOrder,
+                 pathID, pathnodeindex, transition):
         """
         Creates an entrance with specific data
         """
@@ -2055,32 +2071,26 @@ class EntranceItem(LevelEditorItem):
 
         super().__init__()
 
-        layer = 0
-        path = 0
-        cpd = 0
-
         self.font = globals.NumberFont
         self.objx = x
         self.objy = y
-        self.unk05 = unk05
+        self.camerax = cameraX
+        self.cameray = cameraY
         self.entid = id
         self.destarea = destarea
         self.destentrance = destentrance
         self.enttype = type
-        self.unk0C = unk0C
+        self.players = players
         self.entzone = zone
-        self.unk0F = unk0F
+        self.playerDistance = playerDistance
         self.entsettings = settings
-        self.unk12 = unk12
-        self.camera = camera
+        self.otherID = otherID
+        self.coinOrder = coinOrder
         self.pathID = pathID
         self.pathnodeindex = pathnodeindex
-        self.unk16 = unk16
-        self.entlayer = layer
-        self.entpath = path
+        self.transition = transition
         self.listitem = None
         self.LevelRect = QtCore.QRectF(self.objx / 16, self.objy / 16, 1, 1)
-        self.cpdirection = cpd
 
         self.setFlag(self.ItemIsMovable, not globals.EntrancesFrozen)
         self.setFlag(self.ItemIsSelectable, not globals.EntrancesFrozen)
