@@ -238,6 +238,9 @@ class MiyamotoTranslation:
                     'Rechts',
                     ),
                 28: '([id]) [name]',
+                29: '[b]Players to spawn:[/b][br]Spieler Spawn an diesem Eingang. Wird in Hinterhaltslevels verwendet.',
+                30: '[b]Kamera X-Position:[/b][br]Wird verwendet, um den Punkt zu verschieben, auf dem die Kamera zentriert ist. Position in Bezug auf den\die Eingang\Eingänge.[br]16 = 1 Block.',
+                31: '[b]Kamera Y-Position:[/b][br]Wird verwendet, um den Punkt zu verschieben, auf dem die Kamera zentriert ist. Position in Bezug auf den\die Eingang\Eingänge.[br]16 = 1 Block.',
                 },
             'Entrances': {
                 0: '[b]Entrance [ent]:[/b][br]Type: [type][br][i][dest][/i]',
