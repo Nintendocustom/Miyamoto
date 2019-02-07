@@ -1429,7 +1429,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         self.eventEditorTab = QtWidgets.QWidget()
         tabs.addTab(self.eventEditorTab, GetIcon('events'), '')
         tabs.setTabToolTip(6, globals.trans.string('Palette', 18))
-        tabs.setTabEnabled(6, False)
 
         eventel = QtWidgets.QGridLayout(self.eventEditorTab)
         self.eventEditorLayout = eventel
@@ -1445,7 +1444,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         self.eventChooser.itemClicked.connect(self.handleEventTabItemClick)
         self.eventChooserItems = []
         flags = Qt.ItemIsSelectable | Qt.ItemIsUserCheckable | Qt.ItemIsEnabled
-        for id in range(32):
+        for id in range(64):
             itm = QtWidgets.QTreeWidgetItem()
             itm.setFlags(flags)
             itm.setCheckState(0, Qt.Unchecked)
@@ -1625,9 +1624,9 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
     def LoadEventTabFromLevel(self):
         """
-        Configures the Events tab from the data in Area.defEvents
+        Configures the Events tab from the data in Area.eventBits
         """
-        defEvents = globals.Area.defEvents
+        defEvents = (globals.Area.eventBits64 << 32) | globals.Area.eventBits32
         checked = Qt.Checked
         unchecked = Qt.Unchecked
 
@@ -1648,7 +1647,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 for char in rawStr: newStr += chr(char)
                 eventTexts[eventId] = newStr
 
-        for id in range(32):
+        for id in range(64):
             item = self.eventChooserItems[id]
             value = 1 << id
             item.setCheckState(0, checked if (defEvents & value) != 0 else unchecked)
@@ -1669,15 +1668,37 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         """
         noteText = item.text(1)
         self.eventNotesEditor.setText(noteText)
+
         selIdx = self.eventChooserItems.index(item)
-        if item.checkState(0):
-            # Turn a bit on
-            globals.Area.defEvents |= 1 << selIdx
+        if selIdx > 31:
+            _selIdx = selIdx - 32
+            isOn = (globals.Area.eventBits64 & 1 << _selIdx) == 1 << _selIdx
+
         else:
+            isOn = (globals.Area.eventBits32 & 1 << selIdx) == 1 << selIdx
+
+        if item.checkState(0) == Qt.Checked and not isOn:
+            # Turn a bit on
+            if selIdx > 31:
+                selIdx -= 32
+                globals.Area.eventBits64 |= 1 << selIdx
+
+            else:
+                globals.Area.eventBits32 |= 1 << selIdx
+            SetDirty()
+        elif item.checkState(0) == Qt.Unchecked and isOn:
             # Turn a bit off (invert, turn on, invert)
-            globals.Area.defEvents = ~globals.Area.defEvents
-            globals.Area.defEvents |= 1 << selIdx
-            globals.Area.defEvents = ~globals.Area.defEvents
+            if selIdx > 31:
+                selIdx -= 32
+                globals.Area.eventBits64 = ~globals.Area.eventBits64
+                globals.Area.eventBits64 |= 1 << selIdx
+                globals.Area.eventBits64 = ~globals.Area.eventBits64
+
+            else:
+                globals.Area.eventBits32 = ~globals.Area.eventBits32
+                globals.Area.eventBits32 |= 1 << selIdx
+                globals.Area.eventBits32 = ~globals.Area.eventBits32
+            SetDirty()
 
     def handleEventNotesEdit(self):
         """
@@ -2904,18 +2925,20 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         setSetting('ShowSpriteImages', globals.SpriteImagesShown)
 
         if globals.Area is not None:
+            globals.DirtyOverride += 1
             for spr in globals.Area.sprites:
                 spr.UpdateRects()
-                if globals.SpriteImagesShown:
+                if globals.SpriteImagesShown and not globals.Initializing:
                     spr.setPos(
                         (spr.objx + spr.ImageObj.xOffset) * (globals.TileWidth / 16),
                         (spr.objy + spr.ImageObj.yOffset) * (globals.TileWidth / 16),
                     )
-                else:
+                elif not globals.Initializing:
                     spr.setPos(
                         spr.objx * (globals.TileWidth / 16),
                         spr.objy * (globals.TileWidth / 16),
                     )
+            globals.DirtyOverride -= 1
 
         self.scene.update()
 
@@ -3528,6 +3551,11 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         for ent in globals.Area.entrances:
             if ent.entid == startEntID: startEnt = ent
 
+        if not startEnt:
+            startEntID = globals.Area.startEntranceCoinBoost
+            for ent in globals.Area.entrances:
+                if ent.entid == startEntID: startEnt = ent
+
         self.view.centerOn(0, 0)
         if startEnt is not None: self.view.centerOn(startEnt.objx * (globals.TileWidth / 16), startEnt.objy * (globals.TileWidth / 16))
         self.ZoomTo(100.0)
@@ -3915,7 +3943,10 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         else:
             self.actions['deselect'].setEnabled(False)
 
-        if updateModeInfo: self.UpdateModeInfo()
+        if updateModeInfo:
+            globals.DirtyOverride += 1
+            self.UpdateModeInfo()
+            globals.DirtyOverride -= 1
 
     def HandleObjPosChange(self, obj, oldx, oldy, x, y):
         """
@@ -4668,16 +4699,16 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         dlg = AreaOptionsDialog()
         if dlg.exec_() == QtWidgets.QDialog.Accepted:
             SetDirty()
+            globals.Area.wrapFlag = dlg.LoadingTab.wrap.isChecked()
+            globals.Area.unkFlag1 = dlg.LoadingTab.unk1.isChecked()
             globals.Area.timelimit = dlg.LoadingTab.timer.value()
+            globals.Area.unkFlag2 = dlg.LoadingTab.unk2.isChecked()
+            globals.Area.unkFlag3 = dlg.LoadingTab.unk3.isChecked()
+            globals.Area.unkFlag4 = dlg.LoadingTab.unk4.isChecked()
+            globals.Area.startEntrance = dlg.LoadingTab.entrance.value()
+            globals.Area.startEntranceCoinBoost = dlg.LoadingTab.entranceCoinBoost.value()
             globals.Area.timelimit2 = dlg.LoadingTab.timelimit2.value() + 100
             globals.Area.timelimit3 = dlg.LoadingTab.timelimit3.value() - 200
-            globals.Area.startEntrance = dlg.LoadingTab.entrance.value()
-            globals.Area.unk1 = dlg.LoadingTab.unk1.value()
-            globals.Area.unk2 = dlg.LoadingTab.unk2.value()
-            globals.Area.unk3 = dlg.LoadingTab.unk3.value()
-            globals.Area.unk4 = dlg.LoadingTab.unk4.value()
-            globals.Area.unk5 = dlg.LoadingTab.unk5.value()
-            globals.Area.unk6 = dlg.LoadingTab.unk6.value()
 
             fname = dlg.TilesetsTab.value()
 
