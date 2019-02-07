@@ -27,9 +27,9 @@
 26:Boss Eingang (Fallen Rechts)
 27:Tuer Eingang
 28:Unbekannt (Absturz)
-29:Unbekannt (Einfrieren)
-30:Unbekannt
-31:Unbekannt
-32:Unbekannt
+29:Credits (Spieler 1)
+30:Credits (Spieler 2)
+31:Credits (Spieler 3)
+32:Credits (Spieler 4)
 33:Titelbildschirm
-34:Hintereingang (Center)Hintereingang (Mitte)
+34:Hintereingang (Mitte)
