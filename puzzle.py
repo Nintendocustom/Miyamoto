@@ -174,9 +174,9 @@ class paletteWidget(QtWidgets.QWidget):
 
         path = globals.miyamoto_path + '/miyamotodata/Icons/'
 
-        self.coreTypes = [  ['Standard', QtGui.QIcon(path + 'Core/Default.png'), 'The standard type for tiles.\n\nAny regular terrain or backgrounds\nshould be of this generic type.'],
-                            ['Schienen', QtGui.QIcon(path + 'Core/Rails.png'), 'Used for all types of rails.\n\nRails are replaced in-game with\n3D models, so modifying these\ntiles with different graphics\nwill have no effect.'],
-                            ['Dash-Münze', QtGui.QIcon(path + 'Core/DashCoin.png'), 'Creates a dash coin.\n\nDash coins, also known as\n"coin outlines," turn into\na coin a second or so after they\nare touched by the player.'],
+        self.coreTypes = [  ['Standard', QtGui.QIcon(path + 'Core/Default.png'), 'sollte von diesem generischen Typ sein.\n\nJedes regelmäßige Gelände oder jeder normale Hintergrund\nsollte von diesem generischen Typ sein..'],
+                            ['Schienen', QtGui.QIcon(path + 'Core/Rails.png'), 'Wird für alle Arten von Schienen verwendet.\n\nRails are replaced in-game with\n3D models, so modifying these\ntiles with different graphics\nwill have no effect.'],
+                            ['Dash-Münze', QtGui.QIcon(path + 'Core/DashCoin.png'), 'Erstellt eine Dash-Münze.\n\nDash Coins, auch bekannt als\n"Münzkonturen," turn into\na coin a second or so after they\nare touched by the player.'],
                             ['Münze', QtGui.QIcon(path + 'Core/Coin.png'), 'Creates a coin.\n\nCoins have no solid collision,\nand when touched will disappear\nand increment the coin counter.\nUnused Blue Coins go in this\ncategory, too.'],
                             ['Blaue Münze', QtGui.QIcon(path + 'Core/BlueCoin.png'), 'This is used for the blue coin in Pa0_jyotyu\nthat has a black checkerboard outline.'],
                             ['Gebrauchter Gegenstandsblock, Steinblock, Holzblock, Roter Block', QtGui.QIcon(path + 'Core/UsedWoodStoneRed.png'), 'Defines a used item block, a stone\nblock, a wooden block or a red block.'],
@@ -237,7 +237,7 @@ class paletteWidget(QtWidgets.QWidget):
 
 
         GenericParams = [['Normal', QtGui.QIcon(path + 'Core/Default.png')],
-                         ['Beanstalk Stop', QtGui.QIcon(path + '/Generic/Beanstopper.png')]]
+                         ['Bohnenstange Stop', QtGui.QIcon(path + '/Generic/Beanstopper.png')]]
 
         RailParams = [['Upslope', QtGui.QIcon(path + 'Rails/Upslope.png')],
                       ['Downslope', QtGui.QIcon(path + 'Rails/Downslope.png')],
@@ -466,10 +466,10 @@ class paletteWidget(QtWidgets.QWidget):
         L = QtWidgets.QVBoxLayout(self.collsGroup)
         L.addWidget(self.collsType)
 
-        self.collsTypes = [['No Solidity', QtGui.QIcon(path + 'Collisions/NoSolidity.png')],
-                           ['Solid', QtGui.QIcon(path + 'Collisions/Solid.png')],
+        self.collsTypes = [['Keine Festigkeit', QtGui.QIcon(path + 'Collisions/NoSolidity.png')],
+                           ['Fest', QtGui.QIcon(path + 'Collisions/Solid.png')],
                            ['Solid-on-Top', QtGui.QIcon(path + 'Collisions/SolidOnTop.png')],
-                           ['Solid-on-Bottom', QtGui.QIcon(path + 'Collisions/SolidOnBottom.png')],
+                           ['Fest auf dem Boden', QtGui.QIcon(path + 'Collisions/SolidOnBottom.png')],
                            ['Sloped Solid-on-Top (1)', QtGui.QIcon(path + 'Collisions/SlopedSolidOnTop.png')],
                            ['Sloped Solid-on-Top (2)', QtGui.QIcon(path + 'Collisions/SlopedSolidOnTop.png')],
                            ]
