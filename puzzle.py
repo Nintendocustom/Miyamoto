@@ -168,35 +168,35 @@ class paletteWidget(QtWidgets.QWidget):
 
         # Core Types Radio Buttons and Tooltips
         self.coreType = QtWidgets.QGroupBox()
-        self.coreType.setTitle('Core Type:')
+        self.coreType.setTitle('Kern-Typ:')
         self.coreWidgets = []
         coreLayout = QtWidgets.QGridLayout()
 
         path = globals.miyamoto_path + '/miyamotodata/Icons/'
 
-        self.coreTypes = [  ['Default', QtGui.QIcon(path + 'Core/Default.png'), 'The standard type for tiles.\n\nAny regular terrain or backgrounds\nshould be of this generic type.'],
-                            ['Rails', QtGui.QIcon(path + 'Core/Rails.png'), 'Used for all types of rails.\n\nRails are replaced in-game with\n3D models, so modifying these\ntiles with different graphics\nwill have no effect.'],
-                            ['Dash Coin', QtGui.QIcon(path + 'Core/DashCoin.png'), 'Creates a dash coin.\n\nDash coins, also known as\n"coin outlines," turn into\na coin a second or so after they\nare touched by the player.'],
-                            ['Coin', QtGui.QIcon(path + 'Core/Coin.png'), 'Creates a coin.\n\nCoins have no solid collision,\nand when touched will disappear\nand increment the coin counter.\nUnused Blue Coins go in this\ncategory, too.'],
-                            ['Blue Coin', QtGui.QIcon(path + 'Core/BlueCoin.png'), 'This is used for the blue coin in Pa0_jyotyu\nthat has a black checkerboard outline.'],
-                            ['Used Item Block, Stone Block, Wood Block, Red Block', QtGui.QIcon(path + 'Core/UsedWoodStoneRed.png'), 'Defines a used item block, a stone\nblock, a wooden block or a red block.'],
-                            ['Brick Block', QtGui.QIcon(path + 'Core/Brick.png'), 'Defines a brick block.'],
+        self.coreTypes = [  ['Standard', QtGui.QIcon(path + 'Core/Default.png'), 'The standard type for tiles.\n\nAny regular terrain or backgrounds\nshould be of this generic type.'],
+                            ['Schienen', QtGui.QIcon(path + 'Core/Rails.png'), 'Used for all types of rails.\n\nRails are replaced in-game with\n3D models, so modifying these\ntiles with different graphics\nwill have no effect.'],
+                            ['Dash-Münze', QtGui.QIcon(path + 'Core/DashCoin.png'), 'Creates a dash coin.\n\nDash coins, also known as\n"coin outlines," turn into\na coin a second or so after they\nare touched by the player.'],
+                            ['Münze', QtGui.QIcon(path + 'Core/Coin.png'), 'Creates a coin.\n\nCoins have no solid collision,\nand when touched will disappear\nand increment the coin counter.\nUnused Blue Coins go in this\ncategory, too.'],
+                            ['Blaue Münze', QtGui.QIcon(path + 'Core/BlueCoin.png'), 'This is used for the blue coin in Pa0_jyotyu\nthat has a black checkerboard outline.'],
+                            ['Gebrauchter Gegenstandsblock, Steinblock, Holzblock, Roter Block', QtGui.QIcon(path + 'Core/UsedWoodStoneRed.png'), 'Defines a used item block, a stone\nblock, a wooden block or a red block.'],
+                            ['Ziegelsteinblock', QtGui.QIcon(path + 'Core/Brick.png'), 'Defines a brick block.'],
                             ['? Block', QtGui.QIcon(path + 'Core/Qblock.png'), 'Defines a ? block.'],
-                            ['Quicksand', QtGui.QIcon(path + 'Core/Quicksand.png'), 'Creates a quicksand area. Use with the "Quicksand" terrain type.'],
-                            ['Partial Block', QtGui.QIcon(path + 'Core/Partial.png'), 'DOESN\'T WORK!\n\nUsed for blocks with partial collisions.\n\nVery useful for Mini-Mario secret\nareas, but also for providing a more\naccurate collision map for your tiles.\nUse with the "Solid" setting.'],
-                            ['Invisible Block with Item', QtGui.QIcon(path + 'Core/Invisible.png'), 'Used for invisible item blocks.'],
-                            ['Slope', QtGui.QIcon(path + 'Core/Slope.png'), 'Defines a sloped tile.\n\nSloped tiles have sloped collisions,\nwhich Mario can slide on.'],
-                            ['Reverse Slope', QtGui.QIcon(path + 'Core/RSlope.png'), 'Defines an upside-down slope.\n\nSloped tiles have sloped collisions,\nwhich Mario can hit.'],
-                            ['Default 2', QtGui.QIcon(path + 'Core/Default.png'), 'This is an unused type which seems to be the same as Default.'],
-                            ['Climbable Wall with Ledge', QtGui.QIcon(path + 'Core/ClimbLedge.png'), 'Creates terrain that can be\nclimbed on, with a ledge at\nthe top.\n\nClimable terrain cannot be walked on.\n\nWhen Mario is on top of a climable\ntile and the player presses up, Mario\nwill enter a climbing state.'],
-                            ['Spike', QtGui.QIcon(path + 'Core/Spike.png'), 'Dangerous spikey spikes.\n\nSpike tiles will damage Mario one hit\nwhen they are touched.'],
-                            ['Pipe or Pipe Joint', QtGui.QIcon(path + 'Core/Pipe.png'), 'Denotes a pipe tile, or a pipe joint.\n\nPipe tiles are specified according to\nthe part of the pipe. It\'s important\nto specify the right parts or\nentrances may not function correctly.'],
-                            ['Conveyor Belt', QtGui.QIcon(path + 'Core/Conveyor.png'), 'Defines moving tiles.\n\nMoving tiles will move Mario in one\ndirection or another.'],
+                            ['Treibsand', QtGui.QIcon(path + 'Core/Quicksand.png'), 'Creates a quicksand area. Use with the "Quicksand" terrain type.'],
+                            ['Teilsperre', QtGui.QIcon(path + 'Core/Partial.png'), 'DOESN\'T WORK!\n\nUsed for blocks with partial collisions.\n\nVery useful for Mini-Mario secret\nareas, but also for providing a more\naccurate collision map for your tiles.\nUse with the "Solid" setting.'],
+                            ['Unsichtbarer Block mit Item', QtGui.QIcon(path + 'Core/Invisible.png'), 'Used for invisible item blocks.'],
+                            ['Steigung', QtGui.QIcon(path + 'Core/Slope.png'), 'Defines a sloped tile.\n\nSloped tiles have sloped collisions,\nwhich Mario can slide on.'],
+                            ['Abwärtsneigung', QtGui.QIcon(path + 'Core/RSlope.png'), 'Defines an upside-down slope.\n\nSloped tiles have sloped collisions,\nwhich Mario can hit.'],
+                            ['Standard 2', QtGui.QIcon(path + 'Core/Default.png'), 'This is an unused type which seems to be the same as Default.'],
+                            ['Kletterwand mit Kante', QtGui.QIcon(path + 'Core/ClimbLedge.png'), 'Creates terrain that can be\nclimbed on, with a ledge at\nthe top.\n\nClimable terrain cannot be walked on.\n\nWhen Mario is on top of a climable\ntile and the player presses up, Mario\nwill enter a climbing state.'],
+                            ['Stacheln', QtGui.QIcon(path + 'Core/Spike.png'), 'Dangerous spikey spikes.\n\nSpike tiles will damage Mario one hit\nwhen they are touched.'],
+                            ['Rohr oder Rohrverbindung', QtGui.QIcon(path + 'Core/Pipe.png'), 'Denotes a pipe tile, or a pipe joint.\n\nPipe tiles are specified according to\nthe part of the pipe. It\'s important\nto specify the right parts or\nentrances may not function correctly.'],
+                            ['Förderband', QtGui.QIcon(path + 'Core/Conveyor.png'), 'Defines moving tiles.\n\nMoving tiles will move Mario in one\ndirection or another.'],
                             ['Donut Block', QtGui.QIcon(path + 'Core/Donut.png'), 'Creates a falling donut block.\n\nThese blocks fall after they have been\nstood on for a few seconds, and then\nrespawn later. They are replaced by\nthe game with 3D models, so you can\'t\neasily make your own.'],
-                            ['Cave Entrance', QtGui.QIcon(path + 'Core/Cave.png'), 'Creates a cave entrance.\n\nCave entrances are used to mark secret\nareas hidden behind Layer 0 tiles.'],
-                            ['Hanging Ledge/Climbable Wall', QtGui.QIcon(path + 'Core/ClimbLedge.png'), 'Creates a hanging ledge, or terrain that can be\nclimbed on.\n\nYou cannot climb down from the ledge\nif climable terrian is under it,\nand you cannot climb up from the climable terrian\nif the ledge is above it.'],
-                            ['Rope', QtGui.QIcon(path + 'Core/Rope.png'), 'Unused type that produces a rope you can hang to. If solidity is set to "None," it will have no effect. "Solid on Top" and "Solid on Bottom" produce no useful behavior.'],
-                            ['Climbable Pole', QtGui.QIcon(path + 'Core/Pole.png'), 'Creates a pole that can be climbed. Use with "No Solidity."'],
+                            ['Höhleneingang', QtGui.QIcon(path + 'Core/Cave.png'), 'Creates a cave entrance.\n\nCave entrances are used to mark secret\nareas hidden behind Layer 0 tiles.'],
+                            ['Hängende Leiste/Kletterwand', QtGui.QIcon(path + 'Core/ClimbLedge.png'), 'Creates a hanging ledge, or terrain that can be\nclimbed on.\n\nYou cannot climb down from the ledge\nif climable terrian is under it,\nand you cannot climb up from the climable terrian\nif the ledge is above it.'],
+                            ['Seil', QtGui.QIcon(path + 'Core/Rope.png'), 'Unused type that produces a rope you can hang to. If solidity is set to "None," it will have no effect. "Solid on Top" and "Solid on Bottom" produce no useful behavior.'],
+                            ['Kletterstange', QtGui.QIcon(path + 'Core/Pole.png'), 'Creates a pole that can be climbed. Use with "No Solidity."'],
                         ]
 
         for i, item in enumerate(self.coreTypes):
@@ -218,7 +218,7 @@ class paletteWidget(QtWidgets.QWidget):
 
         # Parameters
         self.parametersGroup = QtWidgets.QGroupBox()
-        self.parametersGroup.setTitle('Parameters:')
+        self.parametersGroup.setTitle('Parameter:')
         parametersLayout = QtWidgets.QVBoxLayout()
 
         self.parameters1 = QtWidgets.QComboBox()
@@ -462,7 +462,7 @@ class paletteWidget(QtWidgets.QWidget):
 
         # Collision Type
         self.collsType = QtWidgets.QComboBox()
-        self.collsGroup = QtWidgets.QGroupBox('Collision Type')
+        self.collsGroup = QtWidgets.QGroupBox('Kollisionsart')
         L = QtWidgets.QVBoxLayout(self.collsGroup)
         L.addWidget(self.collsType)
 
@@ -490,7 +490,7 @@ class paletteWidget(QtWidgets.QWidget):
 
         # Terrain Type
         self.terrainType = QtWidgets.QComboBox()
-        self.terrainGroup = QtWidgets.QGroupBox('Terrain Type')
+        self.terrainGroup = QtWidgets.QGroupBox('Geländetyp')
         L = QtWidgets.QVBoxLayout(self.terrainGroup)
         L.addWidget(self.terrainType)
 
@@ -574,7 +574,7 @@ class InfoBox(QtWidgets.QWidget):
         self.parameterImage.setPixmap(pix)
 
 
-        self.collisionOverlay = QtWidgets.QCheckBox('Overlay Collision')
+        self.collisionOverlay = QtWidgets.QCheckBox('Kollision überschreiben')
         self.collisionOverlay.clicked.connect(window.tileDisplay.update)
 
 
@@ -592,10 +592,10 @@ class InfoBox(QtWidgets.QWidget):
         self.paramInfo.setFont(Font)
 
 
-        self.LabelB = QtWidgets.QLabel('Properties:')
+        self.LabelB = QtWidgets.QLabel('Eigenschaften:')
         self.LabelB.setFont(Font)
 
-        self.hexdata = QtWidgets.QLabel('Hex Data: 0x00 0x00 0x00 0x00\n                0x00 0x00 0x00 0x00')
+        self.hexdata = QtWidgets.QLabel('Hex-Daten: 0x00 0x00 0x00 0x00\n                0x00 0x00 0x00 0x00')
         self.hexdata.setFont(Font)
 
 
@@ -608,15 +608,15 @@ class InfoBox(QtWidgets.QWidget):
         paramLayout.setGeometry(QtCore.QRect(0,0,40,40))
 
 
-        label = QtWidgets.QLabel('Core')
+        label = QtWidgets.QLabel('Kern')
         label.setFont(Font)
         coreLayout.addWidget(label, 0, Qt.AlignCenter)
 
-        label = QtWidgets.QLabel('Terrain')
+        label = QtWidgets.QLabel('Gelände')
         label.setFont(Font)
         terrLayout.addWidget(label, 0, Qt.AlignCenter)
 
-        label = QtWidgets.QLabel('Parameters')
+        label = QtWidgets.QLabel('Parameter')
         label.setFont(Font)
         paramLayout.addWidget(label, 0, Qt.AlignCenter)
 
@@ -2903,30 +2903,30 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def setupMenus(self):
-        fileMenu = self.menuBar().addMenu("&File")
+        fileMenu = self.menuBar().addMenu("&Datei")
 
         pixmap = QtGui.QPixmap(60,60)
         pixmap.fill(Qt.black)
         icon = QtGui.QIcon(pixmap)
 
-        fileMenu.addAction("Import Tileset from file...", self.openTilesetfromFile, QtGui.QKeySequence.Open)
-        fileMenu.addAction("Export Tileset...", self.saveTilesetAs, QtGui.QKeySequence.SaveAs)
-        fileMenu.addAction("Import Image...", self.openImage, QtGui.QKeySequence('Ctrl+I'))
-        fileMenu.addAction("Export Image...", self.saveImage, QtGui.QKeySequence('Ctrl+E'))
-        fileMenu.addAction("Import Normal Map...", self.openNml, QtGui.QKeySequence('Ctrl+Shift+I'))
-        fileMenu.addAction("Export Normal Map...", self.saveNml, QtGui.QKeySequence('Ctrl+Shift+E'))
-        fileMenu.addAction("Save and Quit", self.saveTileset, QtGui.QKeySequence.Save)
-        fileMenu.addAction("Quit", self.close, QtGui.QKeySequence('Ctrl-Q'))
+        fileMenu.addAction("Tileset aus Datei importieren...", self.openTilesetfromFile, QtGui.QKeySequence.Open)
+        fileMenu.addAction("Tileset exportieren...", self.saveTilesetAs, QtGui.QKeySequence.SaveAs)
+        fileMenu.addAction("Bild importieren...", self.openImage, QtGui.QKeySequence('Crtl+I'))
+        fileMenu.addAction("Bild exportieren...", self.saveImage, QtGui.QKeySequence('Crtl+E'))
+        fileMenu.addAction("Normale Karte importieren...", self.openNml, QtGui.QKeySequence('Crtl+Shift+I'))
+        fileMenu.addAction("Normale Karte exportieren...", self.saveNml, QtGui.QKeySequence('Crtl+Shift+E'))
+        fileMenu.addAction("Speichern und beenden", self.saveTileset, QtGui.QKeySequence.Save)
+        fileMenu.addAction("Beenden", self.close, QtGui.QKeySequence('Crtl-Q'))
 
-        taskMenu = self.menuBar().addMenu("&Tasks")
+        taskMenu = self.menuBar().addMenu("&Aufgaben")
 
-        taskMenu.addAction("Toggle Normal Map", self.toggleNormal, QtGui.QKeySequence('Ctrl+Shift+N'))
-        taskMenu.addAction("Show Tiles info...", self.showInfo, QtGui.QKeySequence('Ctrl+P'))
-        taskMenu.addAction("Import object from file...", self.importObjFromFile, '')
-        taskMenu.addAction("Export object...", self.saveObject, '')
-        taskMenu.addAction("Export all objects...", self.saveAllObjects, '')
-        taskMenu.addAction("Clear Collision Data", self.clearCollisions, QtGui.QKeySequence('Ctrl+Shift+Backspace'))
-        taskMenu.addAction("Clear Object Data", self.clearObjects, QtGui.QKeySequence('Ctrl+Alt+Backspace'))
+        taskMenu.addAction("Umschalten der normalen Karte", self.toggleNormal, QtGui.QKeySequence('Crtl+Shift+N'))
+        taskMenu.addAction("Zeige  Tiles info...", self.showInfo, QtGui.QKeySequence('Crtl+P'))
+        taskMenu.addAction("Objekt aus Datei importieren...", self.importObjFromFile, '')
+        taskMenu.addAction("Objekt exportieren...", self.saveObject, '')
+        taskMenu.addAction("Alle Objekte exportieren...", self.saveAllObjects, '')
+        taskMenu.addAction("Kollisionsdaten löschen", self.clearCollisions, QtGui.QKeySequence('Crtl+Shift+Backspace'))
+        taskMenu.addAction("Objektdaten löschen", self.clearObjects, QtGui.QKeySequence('Crtl+Alt+Backspace'))
 
 
 
@@ -2947,13 +2947,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def importObjFromFile(self):
         usedTiles = Tileset.getUsedTiles()
         if len(usedTiles) >= 256:  # It can't be more than 256, oh well
-            QtWidgets.QMessageBox.warning(self, "Open Object",
-                    "There isn't enough room in the Tileset.",
+            QtWidgets.QMessageBox.warning(self, "Objekt öffnen",
+                    "Es gibt nicht genug Platz im Tileset.",
                     QtWidgets.QMessageBox.Cancel)
             return
 
-        file = QtWidgets.QFileDialog.getOpenFileName(self, "Open Object", '',
-                    "Object files (*.json)")[0]
+        file = QtWidgets.QFileDialog.getOpenFileName(self, "Objekt öffnen", '',
+                    "Objektdateien (*.json)")[0]
 
         if not file: return
 
@@ -2995,8 +2995,8 @@ class MainWindow(QtWidgets.QMainWindow):
             numTiles = len(tilesUsed)
 
         if numTiles + len(usedTiles) > 256:
-            QtWidgets.QMessageBox.warning(self, "Open Object",
-                    "There isn't enough room for the object.",
+            QtWidgets.QMessageBox.warning(self, "Objekt öffnen",
+                    "Es ist nicht genug Platz für das Objekt vorhanden.",
                     QtWidgets.QMessageBox.Cancel)
             return
 
@@ -3018,8 +3018,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     break
 
             if not found:
-                QtWidgets.QMessageBox.warning(self, "Open Object",
-                        "There isn't enough room for the object.",
+                QtWidgets.QMessageBox.warning(self, "Objekt öffnen",
+                        "Es gibt nicht genug Platz für das Objekt.",
                         QtWidgets.QMessageBox.Cancel)
                 return
 
@@ -3361,7 +3361,7 @@ class MainWindow(QtWidgets.QMainWindow):
             json.dump(object.jsonData, outfile)
 
     def saveAllObjects(self):
-        save_path = QtWidgets.QFileDialog.getExistingDirectory(None, "Choose where to save the Object folder")
+        save_path = QtWidgets.QFileDialog.getExistingDirectory(None, "Wählen Sie, wo Sie die Objekte speichern möchten")
         if not save_path:
             return
 
@@ -3377,7 +3377,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if dlg.exec_() == QtWidgets.QDialog.Accepted:
             n = dlg.objNum.value()
 
-            file = QtWidgets.QFileDialog.getSaveFileName(None, "Save Objects", "", "Object files (*.json)")[0]
+            file = QtWidgets.QFileDialog.getSaveFileName(None, "Objekte speichern", "", "Objektdateien (*.json)")[0]
             if not file:
                 return
 
@@ -3445,8 +3445,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.container.setLayout(layout)
 
         # Sets the Tabs
-        self.tabWidget.addTab(self.paletteWidget, 'Behaviours')
-        self.tabWidget.addTab(self.container, 'Objects')
+        self.tabWidget.addTab(self.paletteWidget, 'Verhaltensweisen')
+        self.tabWidget.addTab(self.container, 'Objekte')
 
         # Connections do things!
         self.tileDisplay.clicked.connect(self.paintFormat)
