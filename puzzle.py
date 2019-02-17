@@ -495,12 +495,12 @@ class paletteWidget(QtWidgets.QWidget):
         L.addWidget(self.terrainType)
 
         # Quicksand is unused.
-        self.terrainTypes = [['Default', QtGui.QIcon(path + 'Core/Default.png')],
-                        ['Ice', QtGui.QIcon(path + 'Terrain/Ice.png')],
-                        ['Snow', QtGui.QIcon(path + 'Terrain/Snow.png')],
-                        ['Quicksand', QtGui.QIcon(path + 'Terrain/Quicksand.png')],
+        self.terrainTypes = [['Standard', QtGui.QIcon(path + 'Core/Default.png')],
+                        ['Eis', QtGui.QIcon(path + 'Terrain/Ice.png')],
+                        ['Schnee', QtGui.QIcon(path + 'Terrain/Snow.png')],
+                        ['Treibsand', QtGui.QIcon(path + 'Terrain/Quicksand.png')],
                         ['Sand', QtGui.QIcon(path + 'Terrain/Sand.png')],
-                        ['Grass', QtGui.QIcon(path + 'Terrain/Grass.png')],
+                        ['Gras', QtGui.QIcon(path + 'Terrain/Grass.png')],
                         ]
 
         for item in range(len(self.terrainTypes)):
@@ -508,12 +508,12 @@ class paletteWidget(QtWidgets.QWidget):
         self.terrainType.setIconSize(QtCore.QSize(24, 24))
         self.terrainType.setToolTip('Set the various types of terrain.\n\n'
 
-                                    '<b>Default:</b>\nTerrain with no paticular properties.\n\n'
-                                    '<b>Ice:</b>\nWill be slippery.\n\n'
-                                    '<b>Snow:</b>\nWill emit puffs of snow and snow noises.\n\n'
-                                    '<b>Quicksand:</b>\nWill emit puffs of sand. Use with the "Quicksand" core type.\n\n'
-                                    '<b>Grass:</b>\nWill emit grass-like footstep noises.\n\n'
-                                    '<b>Beach Sand:</b>\nWill create sand tufts around\nMario\'s feet.'.replace('\n', '<br>')
+                                    '<b>Standard:</b>\nGelände ohne besondere Eigenschaften.\n\n'
+                                    '<b>Eis:</b>\nWird rutschig sein.\n\n'
+                                    '<b>Schnee:</b>\nStöße von Schnee und Schneegeräuschen ausstoßen.\n\n'
+                                    '<b>Treibsand:</b>\nWird Windstöße von Sand ausstoßen. Verwendung mit dem Kerntyp "Treibsand".\n\n'
+                                    '<b>Gras:</b>\nGibt grasartige Trittgeräusche von sich.\n\n'
+                                    '<b>Strandsand:</b>\nErstellt Sandbüschel um\nMario\s Füße.'.replace('\n', '<br>')
                                    )
 
 
@@ -1143,8 +1143,8 @@ class tileOverlord(QtWidgets.QWidget):
         # Setup Widgets
         self.tiles = tileWidget()
 
-        self.addObject = QtWidgets.QPushButton('Add')
-        self.removeObject = QtWidgets.QPushButton('Remove')
+        self.addObject = QtWidgets.QPushButton('Hinzufügen')
+        self.removeObject = QtWidgets.QPushButton('Entfernen')
 
         self.addRow = QtWidgets.QPushButton('+')
         self.removeRow = QtWidgets.QPushButton('-')
@@ -1155,7 +1155,7 @@ class tileOverlord(QtWidgets.QWidget):
         self.tilingMethod = QtWidgets.QComboBox()
         self.tilesetType = QtWidgets.QLabel('Pa%d' % Tileset.slot)
 
-        self.tilingMethod.addItems(['Repeat',
+        self.tilingMethod.addItems(['Wiederholen',
                                     'Stretch Center',
                                     'Stretch X',
                                     'Stretch Y',
@@ -1168,16 +1168,16 @@ class tileOverlord(QtWidgets.QWidget):
                                     'Downward reverse slope',
                                     'Upward reverse slope'])
 
-        self.randX = QtWidgets.QCheckBox('Randomize Horizontally')
-        self.randY = QtWidgets.QCheckBox('Randomize Vertically')
-        self.randX.setToolTip('<b>Randomize Horizontally:</b><br><br>'
-            'Check this if you want to use randomized replacements for '
-            'this tile, in the <u>horizontal</u> direction. Examples: '
-            'floor tiles and ceiling tiles.')
-        self.randY.setToolTip('<b>Randomize Vertically:</b><br><br>'
-            'Check this if you want to use randomized replacements for '
-            'this tile, in the <u>vertical</u> direction. Example: '
-            'edge tiles.')
+        self.randX = QtWidgets.QCheckBox('Horizontale Zufallsgenerierung')
+        self.randY = QtWidgets.QCheckBox('Vertikale Zufallsgenerierung')
+        self.randX.setToolTip('<b>Horizontale Zufallsgenerierung:</b><br><br>'
+            'Aktivieren Sie dies, wenn Sie zufällige Ersetzungen für folgende Zwecke verwenden möchten '
+            'diese Tile, in der Richtung <u>horizontal</u>. Beispiele:: '
+            'Bodenfliesen und Deckenplatten.')
+        self.randY.setToolTip('<b>Vertikale Zufallsgenerierung:</b><br><br>'
+            'Aktivieren Sie dies, wenn Sie zufällige Ersetzungen für folgende Zwecke verwenden möchten '
+            'diese Kachel, in der Richtung <u>vertikal</u>. Beispiel: '
+            'Randfliesen.')
 
         self.randLenLbl = QtWidgets.QLabel('Total Randomizable Tiles:')
         self.randLen = QtWidgets.QSpinBox()
