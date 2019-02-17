@@ -426,12 +426,12 @@ class paletteWidget(QtWidgets.QWidget):
                               ]
 
 
-        SpikeParams2 = [['Spikes', QtGui.QIcon(path + 'Spikes/Spikes.png')],
-                        ['Muncher (no visible difference)', QtGui.QIcon(path + 'Spikes/Muncher.png')]]
+        SpikeParams2 = [['Stacheln', QtGui.QIcon(path + 'Spikes/Spikes.png')],
+                        ['Muncher (kein sichtbarer Unterschied))', QtGui.QIcon(path + 'Spikes/Muncher.png')]]
 
-        PipeParams2 = [['Green', QtGui.QIcon(path + 'PipeColors/Green.png')],
-                       ['Red', QtGui.QIcon(path + 'PipeColors/Red.png')],
-                       ['Yellow', QtGui.QIcon(path + 'PipeColors/Yellow.png')]]
+        PipeParams2 = [['Grün', QtGui.QIcon(path + 'PipeColors/Green.png')],
+                       ['Rot', QtGui.QIcon(path + 'PipeColors/Red.png')],
+                       ['Gelb', QtGui.QIcon(path + 'PipeColors/Yellow.png')]]
 
         self.ParameterList2 = [
                             None, # 0x0
