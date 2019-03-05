@@ -1,29 +1,29 @@
-0:Absturz
-1:Ueberwelt
-2:Untergrund
-3:Unterwasser
+0:CRASH
+1:Overworld
+2:Underground
+3:Underwater
 4:Athletic
-5:Geiter Haus 
-6:Wueste
-7:Schnee Ueberwelt
-8:Lava/Vulkan
-9:Turm
-10:Schloss
-11:Luftschiff
-12:Bonus Raum
-13:Bowser Boss Raum
-14:Turm Boss Raum
-15:Schloss Boss Raum
-16:Toad Hause
-17:Bowser Jr. Kampf
-18:Wald/Dschungel
+5:Ghost House
+6:Desert
+7:Snow Overworld
+8:Lava/Volcano
+9:Tower
+10:Castle
+11:Airship
+12:Bonus Room
+13:Bowser Boss Room
+14:Tower Boss Room
+15:Castle Boss Room
+16:Toad House
+17:Bowser Jr. Battle
+18:Forest/Jungle
 19:Ambush
-20:Strand
-21:Lava/Vulkan Hoehle
-22:Violett Toad Haus
+20:Beach
+21:Lava/Volcano Cave
+22:Purple Toad House
 23:Credits
-24:Pre-Castle Boss Bereich
-25:Bowser Boss Raum (Duplikat)
-26:Grosser Bowser Boss Raum
-27:Prinzessin Peachs Raum
-28:Finales Schloss
+24:Pre-Castle Boss Area
+25:Bowser Boss Room (Duplicate)
+26:Big Bowser Boss Room
+27:Princess Peach's Room
+28:Final Castle
