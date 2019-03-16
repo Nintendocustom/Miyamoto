@@ -7,7 +7,7 @@
 		description="Night Mode from CoinKiller."
 		forceStyleSheet="true"
 		>
-
+		
 	<qss file="style.qss" />
-
+	
 </theme>

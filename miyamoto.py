@@ -2592,6 +2592,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         if not path: return
         if not isValidObjectsPath(path):
             return
+
         setSetting('ObjPath', path)
 
         self.objAllTab.setTabEnabled(1, True)
@@ -5426,7 +5427,6 @@ def main():
     if setting("FirstRun") is None:
         globals.FirstRun = True
         setSetting("FirstRun", "False")
-
 
     else:
         globals.FirstRun = False
