@@ -161,7 +161,7 @@ class MiyamotoTheme:
         self.style = None
         self.forceUiColor = False
         self.forceStyleSheet = False
-		
+
         # Add the colours                                             # Descriptions:
         self.colors = {
             'bg': QtGui.QColor(119, 136, 153),  # Main scene background fill
@@ -303,7 +303,7 @@ class MiyamotoTheme:
 
         if self.formatver > MaxSupportedXMLVersion:
             return False
-			
+
         if 'name' in root.attrib:
             self.themeName = root.attrib['name']
         else:
@@ -380,7 +380,7 @@ class MiyamotoTheme:
         # Merge dictionaries
         self.colors.update(colorDict)
 
-	def loadStyleSheet(self, file):
+    def loadStyleSheet(self, file):
         """
         Loads a style.qss file
         """
