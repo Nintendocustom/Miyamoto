@@ -72,9 +72,9 @@ class PathPage(QtWidgets.QWizardPage):
 
         self.setLayout(self.verticalLayout)
 
-        self.pathLabel.setText("Path:")
+        self.pathLabel.setText("Pfad:")
         self.pathButton.setText("...")
-        self.isValidLabel.setText("Invalid path!")
+        self.isValidLabel.setText("Ungültiger Pfad!")
 
         self.isValid = False
         self.requireFinish = True
@@ -89,11 +89,11 @@ class PathPage(QtWidgets.QWizardPage):
 
         self.isValid = self.isValidPathMethod(self.pathLineEdit.text())
         if not self.isValid:
-            self.isValidLabel.setText("Invalid path!")
+            self.isValidLabel.setText("Ungültiger Pfad!")
             self.isValidLabel.setStyleSheet("color: rgb(255, 0, 0);")
 
         else:
-            self.isValidLabel.setText("Path validated!")
+            self.isValidLabel.setText("Pfad überprüft!")
             self.isValidLabel.setStyleSheet("color: rgb(0, 127, 0);")
 
         self.completeChanged.emit()
@@ -109,7 +109,7 @@ class GamePathPage(PathPage):
     def __init__(self):
         super().__init__()
 
-        self.setTitle("Game Path (required)")
+        self.setTitle("Spielpfad (erforderlich)")
         self.setSubTitle(globals.trans.string('ChangeGamePath', 0, '[game]', globals.gamedef.name))
 
         self.isValidPathMethod = isValidGamePath
@@ -123,8 +123,8 @@ class ObjectsPathPage(PathPage):
     def __init__(self):
         super().__init__()
 
-        self.setTitle("Objects Path (optional)")
-        self.setSubTitle("Choose the folder containing object folders")
+        self.setTitle("Objektpfad (Optional)")
+        self.setSubTitle("Wähle den Ordner mit den Objekten aus.")
 
         self.requireFinish = False
         self.isValidPathMethod = isValidObjectsPath
@@ -139,8 +139,8 @@ class ThemesPage(ThemesTab):
     def __init__(self):
         super().__init__()
 
-        self.setTitle("Set the theme (optional)")
-        self.setSubTitle("Can be changed later from Miyamoto! Preferences\nYou have to launch the editor for the theme to apply")
+        self.setTitle("Das Design festlegen (Optional)")
+        self.setSubTitle("Kann später von Miyamoto aus geändert werden! Präferenzen\nDu müsst den Editor starten, damit das Design angewendet werden kann")
 
         self.NonWinStyle.currentIndexChanged.connect(self.setStyle); self.setStyle()
 

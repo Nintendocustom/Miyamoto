@@ -1,107 +1,107 @@
-None
-Airship
-Airship Boss
-Airship Boss 2
-Aiship Clouds (Secondary)
-Beach
-Beach (Secondary)
-Beach 2
-Before Boss (Beach)
-Before Boss (Desert)
-Before Boss (Forest)
-Before Boss (Mountain)
-Before Boss (Overworld)
-Before Boss (Snow)
-Before Boss (World 7)
-Boss Clouds (Secondary) (Unused)
+Nichts
+Luftschiff
+Luftschiff-Boss
+Luftfracht-Boss 2
+Luftschiff Wolken (Sekundär)
+Strand
+Strand (Sekundär)
+Strand 2
+Vor dem Boss (Strand)
+Vor dem Boss (Wüste)
+Vor dem Boss (Wald)
+Vor dem Boss (Berg)
+Vor dem Chef (Überwelt)
+Vor dem Boss (Schnee)
+Vor dem Chef (Welt 7)
+Boss-Wolken (Sekundär) (Unbenutzt)
 Bowser
 Bowser Boss
-Castle
-Castle (Vertical)
-Castle (Unused)
-Castle 2
-Castle 2 (Vertical) (Update)
-Castle 3
-Castle Boss (Iggy)
-Castle Boss (Larry)
-Castle Boss (Lemmy)
-Castle Boss (Ludwig)
-Castle Boss (Morton)
-Castle Boss (Roy)
-Castle Boss (Wendy)
-Clouds
-Clouds (Secondary)
-Clouds (Vertical)
+Schloss
+Burg (Vertikal)
+Schloss (Unbenutzt)
+Schloss 2
+Schloss 2 (Vertikal) (Update)
+Schloss 3
+Schlossboss (Iggy)
+Schlossboss (Larry)
+Schlossboss (Lemmy)
+Schlossboss (Ludwig)
+Schlossboss (Morton)
+Schlossboss (Roy)
+Schlossboss (Wendy)
+Wolken
+Wolken (Sekundär)
+Wolken (Vertikal)
 Credits
-Desert
-Desert 2
-Desert Clouds
-Desert Clouds (Secondary)
-Desert Tower
-Desert Underground (Unused)
-Fanfare Cutscene
-Forest
-Forest 2
-Ghost House
-Ghost House (Outside)
-Ghost House (Vertical)
-Ghost House 2
-Ghost House 2 (Outside)
-Ghost House 2 (Vertical)
-Ghost Ship
-Ghost Ship (Outside)
-Ghost Ship (Update)
-Ghost Ship 2
-Ghost Ship 2 (Outside)
+Wüste
+Wüste 2
+Wüstenwolken
+Wüstenwolken (Sekundär)
+Wüstenturm
+Wüstenuntergrund (Ungenutzt)
+Fanfare Kutszene?
+Wald
+Wald 2
+Geisterhaus
+Geisterhaus (Außenbereich)
+Geisterhaus (Vertikal)
+Geisterhaus 2
+Geisterhaus 2 (Außenbereich)
+Geisterhaus 2 (Vertikal)
+Geisterschiff
+Geisterschiff (Außenseite)
+Geisterschiff (Update)
+Geisterschiff 2
+Geisterschiff 2 (Außenseite)
 Lava
-Lava (Secondary)
+Lava (Sekundär)
 Lava 2
-Lava Goal
-Luigi Clouds (Update)
-Mountain
-Mountain 2
-Mountain 3
-Mountain Clouds
-Mountain Clouds (Secondary)
-Mountain Clouds 2
-Mountain Clouds 2 (Secondary)
-Mountain Tower
-NSMBW Overworld (Unused)
-Nabbit
-Overworld
-Overworld 2
-Overworld Clouds
-Painted
-Painted 2
-Painted 2 (Update)
-Peach's Castle
-Slanted Clouds
-Slanted Lava
-Slanted Snow
-Snow
-Snow (Update)
-Snow 2
-Snow Castle
-Snow Tower
-Snow Underground
-Snow Underground 2
-Stormy Clouds
-Toad House
-Tower
-Tower 2
-Tower Boss
+Lavaziel
+Luigi-Wolken (Update)
+Berg
+Berg 2
+Berg 3
+Bergwolken
+Bergwolken (Sekundär)
+Bergwolken 2
+Bergwolken 2 (Sekundär)
+Bergturm
+NSMBW Overworld (Unbenutzt)
+Mopsie
+Überwelt
+Überwelt 2
+Überwelt-Wolken
+Gemalt
+Gemalt 2
+Gemalt 2 (Update)
+Peach Schloss
+Schräge Wolken
+Schräge Lava
+Schiefer Schnee
+Schnee
+Schnee (Update)
+Schnee 2
+Schneeburg
+Schneeturm
+Schnee Untergrund 
+Schnee Untergrund 2
+Stürmische Wolken
+Krötenhaus
+Turm
+Turm 2
+Turm-Boss
 Tower Boss 2
 Tower Boss 3
 Tower Boss 4
 Tower Boss 5
-Underground
-Underground (Vertical)
-Underground 2
-Underground 3
-Underground Desert
-Underground Painted
-Underground Painted 2
-Underwater
-Underwater (Vertical)
-Underwater (Update)
-World 7 Castle
+Unterirdisch
+Unterirdisch (Vertikal)
+Untergrund 2
+Untergrund 3
+Unterirdische Wüste
+Unterirdisch lackiert
+Unterirdisch lackiert 2
+Unterwasser
+Unterwasser (vertikal)
+Unterwasser (Update)
+Welt 7 Burg
