@@ -2,5 +2,5 @@ language: python
 python:
  - "3.4"
 
-install: pip install wheel
-    pip install https://pypi.python.org/packages/3.4/c/cx_Freeze/cx_Freeze-4.3.3-cp34-none-win_amd64.whl
+install: "pip install wheel"
+            "pip install https://pypi.python.org/packages/3.4/c/cx_Freeze/cx_Freeze-4.3.3-cp34-none-win_amd64.whl"
