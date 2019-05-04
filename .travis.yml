@@ -2,4 +2,4 @@ language: python
 python:
  - "3.4"
 
-install: pip install cx_Freeze==4.2.2
+install: pip install https://github.com/anthony-tuininga/cx_Freeze/archive/4.2.2.zip
