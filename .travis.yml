@@ -2,5 +2,7 @@ language: python
 python:
  - "3.4"
 
-install: "pip install cx_freeze==4.3.3"
-script: build.py
+install:
+  - "pip install cx_freeze==4.3.3"
+script: 
+  - python build.py
