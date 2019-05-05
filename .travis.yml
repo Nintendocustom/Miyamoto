@@ -2,4 +2,4 @@ language: python
 python:
  - "3.4"
 
-install: "python -m pip install cx_Freeze --upgrade"
+install: "pip install cx_freeze=4.3.3"
