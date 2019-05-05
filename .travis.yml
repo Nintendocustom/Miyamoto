@@ -4,6 +4,6 @@ python:
 
 install:
   - "pip install cx_freeze==4.3.3"
-  - "pip install Pyqt5"
+  - pip install PyQt5==5.6"
 script: 
   - python build.py
