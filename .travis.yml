@@ -4,6 +4,6 @@ python:
 
 install:
   - "pip install cx_freeze==4.3.3"
-  - "pip install https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.4.1/PyQt-gpl-5.4.1.tar.gz/download"
+  - "https://pypi.anaconda.org/ales-erjavec/simple/pyqt5/5.5.1/PyQt5-5.5.1-cp34-none-win_amd64.whl"
 script: 
   - python build.py
