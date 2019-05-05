@@ -4,7 +4,6 @@ python:
 
 install:
   - "pip install cx_freeze==4.3.3"
-  - "pip install https://sourceforge.mirrorservice.org/p/py/pyqt/PyQt5/PyQt-5.4.1/PyQt5-5.4.1-gpl-Py3.4-Qt5.4.1-x64.exe"
   - "pip install https://github.com/pyqt/python-qt5/releases/download/0.2.0/sip-4.17.tar.gz"
   - "pip install https://github.com/pyqt/python-qt5/releases/download/0.2.0/PyQt-gpl-5.4.1.tar.gz"
 script: 
