@@ -2,4 +2,4 @@ language: python
 python:
  - "3.4"
 
-install: "pip install https://pypi.python.org/packages/3.4/c/cx_Freeze/cx_Freeze-4.3.3.win-amd64-py3.4.exe"
+install: "pip install https://pypi.python.org/packages/3.4/c/cx_Freeze/cx_Freeze-4.3.3-cp34-none-win_amd64.whl"
