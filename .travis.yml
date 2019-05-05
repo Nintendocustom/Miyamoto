@@ -4,6 +4,6 @@ python:
 
 install:
   - "pip install cx_freeze==4.3.3"
-  - "https://pypi.anaconda.org/ales-erjavec/simple/pyqt5/5.5.1/PyQt5-5.5.1-cp34-none-win_amd64.whl"
+  - "pip install https://pypi.anaconda.org/ales-erjavec/simple/pyqt5/5.5.1/PyQt5-5.5.1-cp34-none-win_amd64.whl"
 script: 
   - python build.py
