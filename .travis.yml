@@ -2,4 +2,4 @@ language: python
 python:
  - "3.4"
 
-install: sudo -H pip3 install --upgrade pip
+install: "pip3 install --upgrade pip"
