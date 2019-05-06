@@ -1,9 +1,24 @@
 language: python
 python:
- - "3.4"
+language: python
+sudo: required
+
+python:
+  - 3.4
+
+before_install:
+  - sudo apt-add-repository ppa:beineri/opt-qt551 -y
+  - sudo apt-get update
+  - sudo apt-get install qt-latest
+  - source /opt/qt55/bin/qt55-env.sh
 
 install:
-  - "pip install cx_freeze==4.3.3"
-  - "pip install https://files.pythonhosted.org/packages/12/8a/83d96cef5f8155bc4eb140713bc479f56c15e542bec0c4340f65a0e8317a/PyQt5-5.7.1-5.7.1-cp34.cp35.cp36-abi3-manylinux1_x86_64.whl#sha256=9b6e7e17242c3ca6581bed06b5c16b2ab0207f66865d3b27334aef01965b49fc"
-script: 
-  - python build.py
+  - pip install cx_freeze==4.3.3
+  - sudo mkdir -p /builds && sudo chmod a+rw /builds
+  - sudo mkdir -p /downloads && sudo chmod a+rw /downloads
+  - curl -L -o /downloads/sip.tar.gz http://sourceforge.net/projects/pyqt/files/sip/sip-4.17/sip-4.17.tar.gz
+  - curl -L -o /downloads/pyqt.tar.gz http://skylink.dl.sourceforge.net/project/pyqt/PyQt5/PyQt-5.5.1/PyQt-gpl-5.5.1.tar.gz
+  - tar xzf /downloads/sip.tar.gz -C /builds --keep-newer-files
+  - tar xzf /downloads/pyqt.tar.gz -C /builds --keep-newer-files
+  - cd /builds/sip-4.17 && python configure.py && sudo make && sudo make install
+  - cd /builds/PyQt-gpl-5.5.1 && python configure.py --confirm-license && sudo make && sudo make install
