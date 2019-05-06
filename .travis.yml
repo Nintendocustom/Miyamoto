@@ -1,24 +1,16 @@
+sudo: required
+
+dist: trusty
+
 language: python
+
 python:
-  - "2.6"
-  - "2.7"
-  - "3.4"
+- 2.7_with_system_site_packages  # For importing PyQt5 in virtual environment
+
 before_install:
-  - cd ..
-  - curl -L -O http://sourceforge.net/projects/pyqt/files/sip/sip-4.14.1/sip-4.14.1.tar.gz
-  - tar -xvf sip-4.14.1.tar.gz
-  - cd sip-4.14.1
-  - python configure.py
-  - make -j 2
-  - sudo make install
-  - cd ..
-  - curl -L -O http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.9.5/PyQt-x11-gpl-4.9.5.tar.gz
-  - tar -xvf PyQt-x11-gpl-4.9.5.tar.gz
-  - cd PyQt-x11-gpl-4.9.5
-  - python configure.py --confirm-license
-  - make -j 2
-  - sudo make install
-  - cd ../gayeogi
-install:
-  - pip install mutagen
-script: nosetests tests/
+- bash install_qt.sh
+
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"  # For testing UI in travis-ci
+  - sleep 3
