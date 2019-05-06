@@ -10,15 +10,4 @@ install:
  - sudo apt-get -y install python3-pyqt5
 
 script:
- - build.py
- 
- 
-language: python
-python:
- - "3.4"
-
-install: "pip install cx_freeze==4.3.3"
- - pip install libyaz0
- - pip install sarclib
- - sudo apt-get update
- - sudo apt-get -y install python3-pyqt5
+ - python build.py
