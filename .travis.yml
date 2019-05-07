@@ -9,4 +9,4 @@ install:
  - pip install PyQt5==5.6
 
 script:
- - python build.py
+ - py build.py
