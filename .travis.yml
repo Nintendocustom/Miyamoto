@@ -1,16 +1,9 @@
-sudo: required
-
-dist: trusty
-
 language: python
 
 python:
-- 2.7_with_system_site_packages  # For importing PyQt5 in virtual environment
-
-before_install:
-- bash install_qt.sh
-
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"  # For testing UI in travis-ci
-  - sleep 3
+  - "3.7"
+install:
+ - pip install cx_freeze==4.3.3
+ - pip install libyaz0
+ - pip install sarclib
+ - pip install pyqt5
