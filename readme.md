@@ -1,4 +1,13 @@
-# Miyamoto! !https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat!:https://travis-ci.org/Nintendocustom/Miyamoto
+# Miyamoto! 
+https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat
+[![Build Status](https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat)](https://travis-ci.org/Nintendocustom/Miyamoto)
+!https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat!:https://travis-ci.org/Nintendocustom/Miyamoto
+{<img src="https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat" alt="Build Status" />}[https://travis-ci.org/Nintendocustom/Miyamoto]
+image:https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat["Build Status", link="https://travis-ci.org/Nintendocustom/Miyamoto"]
+.. image:: https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat
+:target: https://travis-ci.org/Nintendocustom/Miyamoto
+#https://api.travis-ci.org/repos/Nintendocustom/Miyamoto/cc.xml?branch=teat
+=for html <a href="https://travis-ci.org/Nintendocustom/Miyamoto"><img src="https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat"></a>
 ## The New Super Mario Bros. U / New Super Luigi U Editor
 A level editor for NSMBU and NSLU by AboodXD and Gota7, based on Reggie! Next by RoadrunnerWMC, which is based on Reggie by Treeki, Tempus et al. Uses Python 3, PyQt5, SarcLib and libyaz0.
 
