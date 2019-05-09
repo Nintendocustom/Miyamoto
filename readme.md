@@ -1,4 +1,4 @@
-# Miyamoto!
+# Miyamoto! !https://travis-ci.org/Nintendocustom/Miyamoto.svg?branch=teat!:https://travis-ci.org/Nintendocustom/Miyamoto
 ## The New Super Mario Bros. U / New Super Luigi U Editor
 A level editor for NSMBU and NSLU by AboodXD and Gota7, based on Reggie! Next by RoadrunnerWMC, which is based on Reggie by Treeki, Tempus et al. Uses Python 3, PyQt5, SarcLib and libyaz0.
 
