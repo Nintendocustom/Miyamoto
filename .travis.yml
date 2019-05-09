@@ -16,3 +16,4 @@ install:
  
 script:
 python build.py
+py build.py
