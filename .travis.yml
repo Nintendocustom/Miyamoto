@@ -13,7 +13,6 @@ install:
  - pip install cx_freeze==4.3.3
  - pip install libyaz0
  - pip install sarclib
- 
+
 script:
-python build.py
-py build.py
+ - python build.py
