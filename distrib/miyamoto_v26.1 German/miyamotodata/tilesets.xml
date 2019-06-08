@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<tilesets>
+    <slot num="0" sorted="true">
+        <category name="Normal">
+            <tileset filename="Pa0_jyotyu" name="Overworld" />
+            <tileset filename="Pa0_jyotyu_chika" name="Underground" />
+            <tileset filename="Pa0_jyotyu_yougan" name="Lava" />
+            <tileset filename="Pa0_jyotyu_yougan2" name="Lava Ungerground" />
+        </category>
+    </slot>
+</tilesets>

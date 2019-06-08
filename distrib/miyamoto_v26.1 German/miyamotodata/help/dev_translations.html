@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		
+		<title>Übersetzungen</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="style/stylesBlack.css"  />
+		<link rel="stylesheet" type="text/css" media="screen" href="style/black.css" />
+	</head>
+	
+<body>
+<div id="container"><!-- Start container -->
+
+	<div class="top">&nbsp;</div>
+	
+	<div id="pageHeader"><!-- Start page header -->
+		<a href="index.html"><img src="style/images/button_main.png" align="right" hspace="12" onMouseOver="this.src='style/images/button_main_hl.png'" onMouseOut="this.src='style/images/button_main.png'"></a>
+		<h1>Miyamoto! Entwicklerdokumentation</h1>
+		<h2>Das New Super Mario Bros. U Editor Programm</h2>
+	</div><!-- End page header -->
+
+	<div id="navcontainer"><!-- Start Navigation -->
+        <ul>
+            <li><a href="dev_index.html" rel="self">Index</a></li>
+            <li><a href="dev_themes.html" rel="self">Themen</a></li>
+            <li><a href="dev_translations.html" rel="self" id="current">Übersetzungen</a></li>
+            <li><a href="dev_gamepatches.html" rel="self">Spielpatches</a></li>
+			<li><a href="dev_spriteimgs.html" rel="self">Sprite-Bilder</a></li>
+        </ul>
+	</div><!-- End navigation -->
+	
+	<div id="contentContainer"><!-- Start main content wrapper -->
+		<div id="content"><!-- Start content -->
+
+			<!-- Main info -->
+            <h1><b>Miyamoto! Übersetzungen</b></h1>
+                <p>Auf dieser Seite wird erklärt, wie man Miyamoto Übersetzungs-Plug-Ins erstellt. Jede Übersetzung besteht aus mehreren Dateien mit Text, den der Editor anstelle der Standardversionen verwendet.</p>
+				
+			<!-- Index -->
+			<h2><b>Index</b></h2>
+				<p>Use the following links to navigate this page:<br>
+				<a href="#HowHardWillItBe">How Hard will it Be?</a><br>
+				<a href="#CreatingMainXml">Getting Started: Creating main.xml</a><br>
+				<a href="#AddingFiles">Adding Files</a><br>
+				<a href="#ExplanationOfStrings">Explanation of Strings</a><br>
+				</p>
+				<p><br></p>
+            
+			<!-- How Hard will it Be? -->
+			<a name="HowHardWillItBe"></a>
+			<h2><b>How Hard will it Be?</b></h2>
+				<p>Übersetzungen sind relativ einfach zu erstellen, da die Dateiformate, mit denen du arbeitest, ziemlich einfach sind. Diese Dateien sind jedoch sehr groß und es wird mehrere Stunden dauern, bis du den gesamten Editor übersetzt hast. Plane, ein paar Tage bis zu einer Woche zu verbringen, je nachdem, wie viel Zeit du jeden Tag damit verbringen kannst.</p>
+				<p>Darüber hinaus musst du wissen, was XML-Dateien sind und wie man sie erstellt. Wenn du damit nicht vertraut bist, Google es und fahre dann fort.</p>
+				
+			<!-- Getting Started: Creating main.xml -->
+			<a name="CreatingMainXml"></a>
+			<h2><b>Getting Started: Creating main.xml</b></h2>
+				<p>Jede Miyamoto! Übersetzung befindet sich in einem eigenen Ordner in <i>miyamotodata/translations/</i>. Der Name des Ordners spielt keine Rolle, macht ihn aber zu etwas Einzigartigem und Beschreibendem.</p>
+				<p>Erstelle in diesem Ordner eine Datei namens <i>main.xml</i>. Öffne es mit einem Klartext-Editor oder XML-Editor und füge den folgenden Code hinzu:</p>
+				<div class="code">
+					&lt;?xml version="1.0"?&gt;<br>
+					&lt;translation name="" version="1.0" translator=""&gt;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&lt;strings path="strings.xml" /&gt;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&lt;file name="bgTrans" path="bgTrans.txt" /&gt;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&lt;file name="entrancetypes" path="entrancetypes.txt" /&gt;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&lt;file name="levelnames" path="levelnames.xml" /&gt;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&lt;file name="spritecategories" path="spritecategories.xml" /&gt;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&lt;file name="spritedata" path="spritedata.xml" /&gt;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&lt;file name="tilesets" path="tilesets.xml" /&gt;<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&lt;file name="ts1_descriptions" path="ts1_descriptions.txt" /&gt;<br>
+					&lt;/translation&gt;
+				</div>
+				<p>Füge den Namen der Sprache zwischen den Anführungszeichen des Attributs <i>name</i> im Tag <i>&lt;translation&gt;</i> hinzu und füge deinen Namen zwischen den Anführungszeichen des Attributs <i>translator</i> hinzu.</p>
+				
+			<!-- Adding Files -->
+			<a name="AddingFiles"></a>
+			<h2><b>Hinzufügen von Dateien</b></h2>
+				<p>Die von dir erstellte main.xml weist Reggie an, verschiedene Dateien aus dem Ordner deiner Übersetzung zu laden. Da diese Dateien dort noch nicht vorhanden sind, musst du dort Kopien machen. Kopiere die folgenden Dateien in deinen Patch-Ordner:</p>
+				<ul>
+					<li>reggiedata/translations/strings.xml</li>
+					<li>reggiedata/bga.txt</li>
+					<li>reggiedata/bgb.txt</li>
+					<li>reggiedata/entrancetypes.txt</li>
+					<li>reggiedata/levelnames.xml</li>
+					<li>reggiedata/spritecategories.xml</li>
+					<li>reggiedata/spritedata.xml</li>
+					<li>reggiedata/tilesets.xml</li>
+					<li>reggiedata/ts1_descriptions.txt</li>
+				</ul>
+				<p>Nachdem du jede dieser Dateien in den Ordner deiner Übersetzung kopiert hast, übersetze sie nacheinander. Jedes hat ein anderes Format; öffne jedes mit einem Klartext-Editor und sehen, wie es funktioniert. strings.xml und spritedata.xml sind bei weitem die größten Dateien, so dass du vielleicht mit diesen beginnen möchtest.</p>
+					
+			<!-- Explanation of Strings -->
+			<a name="ExplanationOfStrings"></a>
+			<h2><b>Erklärung der Zeichenketten</b></h2>
+				<p>Wenn du kein Programmierer bist, hast du vielleicht keine Ahnung, was mit &quot;strings.&quot; &quot;String&quot; gemeint ist, ist der Fachausdruck für einen Textabschnitt, der vom einzelnen Buchstaben bis zum ganzen Absatz reichen kann. Um den Rest des Textes in Miyamoto! zu ändern, musst du strings.xml bearbeiten. strings.xml enthält alle verschiedenen Zeichenketten im Editor, die nirgendwo sonst passen.</p>
+				
+			<div class="clearer"></div>
+
+		</div><!-- End content -->
+	</div><!-- End main content wrapper -->
+	
+   <div class="clearer"></div>
+   
+        <div id="footer"><!-- Start Footer -->
+        	<p>&copy; 2009 Treeki, Tempus, etc... &copy; 2013 RoadrunnerWMC</p>
+        </div><!-- End Footer -->
+        
+   <div class="bottom">&nbsp;</div>
+   
+</div><!-- End container -->
+</body>
+</html>
