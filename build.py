@@ -108,6 +108,9 @@ elif platform.system() == 'Linux':
 else:
     if os.path.isdir(dir_ + '/macTools'): shutil.rmtree(dir_ + '/macTools') 
     shutil.copytree('macTools', dir_ + '/macTools')
+
+shutil.copytree('addrlib', dir_ + '/addrlib')
+shutil.copytree('bc3', dir_ + '/bc3')
 shutil.copy('license.txt', dir_)
 shutil.copy('README.md', dir_)
 print('>> Files copied!')
