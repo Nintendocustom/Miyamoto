@@ -25,3 +25,12 @@ deploy:
     all_branches: true
     tags: false
 
+install:
+ - pip install cx_freeze==4.3.3
+ - pip install libyaz0
+ - pip install sarclib
+ - pip install pyqt5
+ - pip install sip
+
+script:
+  - py build.py
