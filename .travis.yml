@@ -13,5 +13,15 @@ matrix:
   include:
     - name: "Python 3.5: Run tests"
       <<: *py35-steps
-      
- 
+
+deploy:
+  provider: releases
+  api_key: ${api_key}
+  file_glob: true
+  file: distrib/*
+  skip_cleanup: true
+  draft: true
+  on:
+    all_branches: true
+    tags: false
+
