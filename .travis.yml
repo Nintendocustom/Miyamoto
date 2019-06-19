@@ -4,7 +4,7 @@ language: sh
 py35-steps: &py34-steps
   env: PATH=/c/Python34:/c/Python34/Scripts:$PATH
   before_install:
-    - choco install python --version 3.4
+    - choco install python --version 3.4.4 
 
 matrix:
   allow_failures:
