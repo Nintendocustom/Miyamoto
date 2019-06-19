@@ -1,73 +1,36 @@
-language: python
-python:
-  - "3.5"
-before_install:
-    - sudo mkdir -p /downloads
-    - sudo chmod a+rw /downloads
-    - curl -L language: python
-python:
-  - "3.5"
-before_install:
-    - sudo mkdir -p /downloads
-    - sudo chmod a+rw /downloads
-    - curl -L http://sourceforge.net/projects/pyqt/files/sip/sip-4.16.5/sip-4.16.5.tar.gz -o /downloads/sip.tar.gz 
-    - curl -L http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.3/PyQt-x11-gpl-4.11.3.tar.gz -o /downloads/pyqt4.tar.gz
-    # Builds
-    - sudo mkdir -p /builds
-    - sudo chmod a+rw /builds
+os: windows
+language: sh
+
+py35-steps: &py34-steps
+  env: PATH=/c/Python34:/c/Python34/Scripts:$PATH
+  before_install:
+    - choco install python --version 3.4
+    - python -m pip install --upgrade pip
+
+matrix:
+  allow_failures:
+    - python: 3.4
+  include:
+    - name: "Python 3.4: Run tests"
+      <<: *py34-steps
+
+deploy:
+  provider: releases
+  api_key: ${api_key}
+  file_glob: true
+  file: distrib/*
+  skip_cleanup: true
+  draft: true
+  on:
+    all_branches: true
+    tags: false
 
 install:
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
-    - sudo apt-get install -y libqt4-dev
-    - sudo apt-get install -y mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
-#    - sudo apt-get install -y python3-sip python3-sip-dev python3-pyqt4 cmake
-    # Qt4
-    - pushd /builds
-    # SIP
-    - tar xzf /downloads/sip.tar.gz --keep-newer-files
-    - pushd sip-4.16.5
-    - python configure.py
-    - make
-    - sudo make install
-    - popd
-    # PyQt4
-    - tar xzf /downloads/pyqt4.tar.gz --keep-newer-files
-    - pushd PyQt-x11-gpl-4.11.3
-    - python configure.py -c --confirm-license --no-designer-plugin -e QtCore -e QtGui -e QtTest
-    - make
-    - sudo make install
-    - popd
-    # Builds Complete
-    - popd
-    - pip install -r requirements.txt -o /downloads/sip.tar.gz 
-    - curl -L http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.3/PyQt-x11-gpl-4.11.3.tar.gz -o /downloads/pyqt4.tar.gz
-    # Builds
-    - sudo mkdir -p /builds
-    - sudo chmod a+rw /builds
+ - pip install cx_freeze==4.3.3
+ - pip install libyaz0
+ - pip install sarclib
+ - pip install pyqt5
+ - pip install sip
 
-install:
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
-    - sudo apt-get install -y libqt4-dev
-    - sudo apt-get install -y mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
-#    - sudo apt-get install -y python3-sip python3-sip-dev python3-pyqt4 cmake
-    # Qt4
-    - pushd /builds
-    # SIP
-    - tar xzf /downloads/sip.tar.gz --keep-newer-files
-    - pushd sip-4.16.5
-    - python configure.py
-    - make
-    - sudo make install
-    - popd
-    # PyQt4
-    - tar xzf /downloads/pyqt4.tar.gz --keep-newer-files
-    - pushd PyQt-x11-gpl-4.11.3
-    - python configure.py -c --confirm-license --no-designer-plugin -e QtCore -e QtGui -e QtTest
-    - make
-    - sudo make install
-    - popd
-    # Builds Complete
-    - popd
-    - pip install -r requirements.txt
+script:
+  - py build.py
