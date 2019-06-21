@@ -1,6 +1,6 @@
 # Miyamoto!
-## The New Super Mario Bros. U / New Super Luigi U Editor
-A level editor for NSMBU and NSLU by AboodXD and Gota7, based on Reggie! Next by RoadrunnerWMC, which is based on Reggie by Treeki, Tempus et al. Uses Python 3, PyQt5, SarcLib and libyaz0.
+## Der New Super Mario Bros. U / New Super Luigi U Editor
+Ein Level-Editor für NSMBU und NSLU von AboodXD und Gota7, basierend auf Reggie! Next von RoadrunnerWMC, das auf Reggie von Treeki basiert, Tempus et al. verwendet Python 3, PyQt5, SarcLib und libyaz0.
 
 ----------------------------------------------------------------
 
@@ -10,61 +10,61 @@ GitHub: https://github.com/aboood40091/Miyamoto
 ----------------------------------------------------------------
 
 ### Credits
-#### Reggie! & Reggie! Next
-* Treeki -- Creator of Reggie!
-* RoadrunnerWMC -- Creator of Reggie! Next
+##### Reggie! & Reggie! Next
+* Treeki -- Ersteller von Reggie!
+* RoadrunnerWMC -- Ersteller von Reggie! Weiter
   
-#### Miyamoto
-* AboodXD -- Lead Coder, Spritedata, Graphics
-* Gota7 -- Coding, Spritedata, Graphics
-* Grop -- Coding, Spritedata
+###### Miyamoto
+* AboodXD -- Hauptprogrammierer, Spritedaten, Grafiken
+* Gota7 -- Programmierung, Spritedaten, Grafiken, etc.
+* Gruppe -- Programmierer, Spritedaten
 * Gregory Haskins -- Gibberish
-* John10v10 -- Quick Paint Tool
+* John10v10 -- Schnellmalwerkzeug
 * libtxc_dxtn -- Original DXT5 (De)compressor in C
-* Luzifer -- Graphics
-* Mayro -- Graphics
-* mrbengtsson -- Graphics
-* Meorge -- Testing on macOS
+* Luzifer -- Grafiken
+* Mayro -- Grafiken
+* mrbengtsson -- Grafiken
+* Meorge -- Tests unter macOS
 * NVIDIA -- NVCOMPRESS
-* RicBent -- Graphics
+* RicBent -- Grafiken
 * reece stone -- Spritedata, Graphics
-* Shawn Shea -- Graphics
-* Toms -- Spritedata, Graphics
-* Wexos -- Original BC3 Compressor in C#
+* Shawn Shea -- Grafiken
+* Toms -- Spritedaten, Grafiken
+* Wexos -- Original BC3 Kompressor in C#
 * Wiimm -- WSZST
   
 #### Reggie NSMBU
-* Grop -- Coding, Spritedata, Graphics
-* Hiccup -- Spritedata
-* Kinnay -- Spritedata
-* MrRean -- Coding, Spritedata, Categories, Graphics
-* RoadrunnerWMC -- Coding, Spritedata, Graphics
+* Gruppe -- Programmierer, Spritedaten, Grafiken
+* Schluckauf -- Spritedaten
+* Kinnay -- Spritedaten
+* MrRean -- Programmierer, Spritedaten, Kategorien, Grafiken, etc.
+* RoadrunnerWMC -- Programmierer, Spritedaten, Grafiken
 
 ----------------------------------------------------------------
 
-### TODO
-- Get unknown area fields figured out
-- Sprite images / HD screenshots (a lot of them)
-- Improve Zones and Objects resizing
+#### TODO
+- Unbekannte Bereiche herausfinden
+- Sprite-Bilder / HD-Screenshots (viele davon)
+- Verbessern der Größenänderung von Zonen und Objekten
 
 ----------------------------------------------------------------
 
-### How To Use
-First, download this repo (either by using ```git clone``` or ```git pull``` if you've already cloned it), or by downloading a release, or by just downloading this repo as a whole.
+### Wie man es benutzt
+Zuerst lädst du diesen Repo herunter (entweder durch die Verwendung von ```git clone``` oder ```git pull```, wenn du es bereits geklont hast), oder durch das Herunterladen einer Version, oder indem du einfach diesen Repo als Ganzes herunterlädst.
 
-Second, you need the filesystem for New Super Mario Bros. U. You can get it by dumping the game using ddd: https://gbatemp.net/threads/ddd-wiiu-title-dumper.418492/
+Zweitens benötigst du das Dateisystem von New Super Mario Bros. U. Du kannst es bekommen, indem du das Spiel mit ddd dumpst: https://gbatemp.net/threads/ddd-wiiu-title-dumper.418492/
 
-Thirdly, Download and install the following:
- * Python 3.4 (or newer) - http://www.python.org
- * PyQt 5.3 (or newer) - http://www.riverbankcomputing.co.uk/software/pyqt/intro
+Drittens, Lade das Folgende herunter und installiere es:
+ * Python 3.4 (oder neuer) - http://www.python.org
+ * PyQt 5.3 (oder neuer) - http://www.riverbankcomputing.co.uk/software/pyqt/intro
  * SarcLib (pip3 install SarcLib)
  * libyaz0 (pip3 install libyaz0)
- * cx_Freeze 4.3 (or newer) (optional) - http://cx-freeze.sourceforge.net  
+ * cx_Freeze 4.3 (oder neuer) (optional) - http://cx-freeze.sourceforge.net  
 
-Run the following in a command prompt:  
+Führe Folgendes in einer Eingabeaufforderung aus:  
 `python3 miyamoto.py`  
-You can replace `python3` with the path to python.exe (including "python.exe" at the end) and `miyamoto.py` with the path to miyamoto.py (including "miyamoto.py" at the end)  
+Sie können `python3` durch den Pfad zu python.exe (mit "python.exe" am Ende) und `miyamoto.py` durch den Pfad zu miyamoto.py (mit "miyamoto.py" am Ende) ersetzen.  
   
-It should ask you to choose a folder. Choose the course_res_pack folder, or where you've stored the levels (1-1.szs, at least).
+Es wird dich bitten, einen Ordner zu wählen. Wähle den Ordner course_res_pack, oder wo du die Level gespeichert hast (mindestens 1-1.szs).
 
-Enjoy.
+Viel Spaß.
