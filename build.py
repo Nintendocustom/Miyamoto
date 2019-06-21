@@ -112,7 +112,6 @@ else:
 shutil.copytree('addrlib', dir_ + '/addrlib')
 shutil.copytree('bc3', dir_ + '/bc3')
 shutil.copy('license.txt', dir_)
-shutil.copy('README.md', dir_)
 print('>> Files copied!')
 
 print('>> Miyamoto! has been frozen to %s !' % dir_)
