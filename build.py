@@ -42,7 +42,7 @@ dir_ = 'distrib/' + PackageName
 
 # Print some stuff
 print('[[ Freezing Miyamoto! ]]')
-print('>> Destination directory: %s' % dir_)
+print('>> Zielverzeichnis: %s' % dir_)
 
 # Add the "build" parameter to the system argument list
 if 'build' not in sys.argv:
@@ -92,7 +92,7 @@ if platform.system() == 'Windows':
     except: pass
 else: pass
 
-print('>> Attempting to copy required files...')
+print('>> Versucht, die benötigten Dateien zu kopieren.....')
 if os.path.isdir(dir_ + '/miyamotodata'): shutil.rmtree(dir_ + '/miyamotodata') 
 if os.path.isdir(dir_ + '/miyamotoextras'): shutil.rmtree(dir_ + '/miyamotoextras')
 shutil.copytree('miyamotodata', dir_ + '/miyamotodata') 
@@ -112,6 +112,6 @@ else:
 shutil.copytree('addrlib', dir_ + '/addrlib')
 shutil.copytree('bc3', dir_ + '/bc3')
 shutil.copy('license.txt', dir_)
-print('>> Files copied!')
+print('>> Dateien kopiert!')
 
 print('>> Miyamoto! has been frozen to %s !' % dir_)

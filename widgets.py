@@ -434,7 +434,7 @@ class QuickPaintConfigWidget(QtWidgets.QWidget):
                                                                                       int(elements[4]), z, 0)
 
             except:
-                print("Preset parse failed.")
+                print("Preset-Parse fehlgeschlagen.")
 
             f.close()
 
@@ -1918,7 +1918,7 @@ class ObjectPickerWidget(QtWidgets.QListView):
                 found = True
                 for f in ["colls", "meta", "objlyt", "img", "nml"]:
                     if not os.path.isfile(dir + jsonData[f]):
-                        print("%s not found!" % (dir + jsonData[f]))
+                        print("%s nicht gefunden!" % (dir + jsonData[f]))
                         found = False
                         break
 
@@ -3421,7 +3421,7 @@ class NabbitPathNodeEditorWidget(QtWidgets.QWidget):
             self.action.setCurrentIndex(self.indecies[path.nodeinfo['action']])
 
         else:
-            print("Unknown nabbit path node action found: %d" % path.nodeinfo['action'])
+            print("Unbekannte Aktion für Nabbit-Pfadknoten gefunden: %d" % path.nodeinfo['action'])
             self.action.setCurrentIndex(0)
 
         self.UpdateFlag = False

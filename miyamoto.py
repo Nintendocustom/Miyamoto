@@ -86,8 +86,8 @@ try:
     import cython_available
 
 except:
-    print("Cython is not available!")
-    print("Expect Miyamoto to be very slow!\n")
+    print("Cython ist nicht verfügbar!")
+    print("Erwarte, dass Miyamoto sehr langsam ist!\n")
 
 else:
     del cython_available
@@ -1546,7 +1546,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         name = self.getInnerSarcName()
         if "-" not in name:
-            print('HEY THERE IS NO -, THIS WILL NOT WORK!')
+            print('HEY ES GIBT KEIN -, DAS WIRD NICHT FUNKTIONIEREN!')
         if name == '':
             return
 
@@ -2377,12 +2377,12 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         # Decompress, if needed (Yaz0)
         if data.startswith(b'Yaz0'):
-            print('Beginning Yaz0 decompression...')
+            print('Beginn der Yaz0-Dekompression.....')
             data = DecompYaz0(data)
-            print('Decompression finished.')
+            print('Dekompression beendet.')
 
         elif data.startswith(b'SARC'):
-            print('Yaz0 decompression skipped.')
+            print('Die Yaz0-Dekompression wurde übersprungen.')
 
         else:
             return False  # keep it from crashing by loading things it shouldn't
@@ -2532,7 +2532,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         name = self.getInnerSarcName()
         if "-" not in name:
-            print('HEY THERE IS NO -, THIS WILL NOT WORK!')
+            print('HEY ES GIBT KEIN -, DAS WIRD NICHT FUNKTIONIEREN!')
         if name == '':
             return
 
@@ -2696,7 +2696,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         name = self.getInnerSarcName()
         if "-" not in name:
-            print('HEY THERE IS NO -, THIS WILL NOT WORK!')
+            print('HEY ES GIBT KEIN -, DAS WIRD NICHT FUNKTIONIEREN!')
         if name == '':
             return False
 
@@ -2736,7 +2736,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         name = self.getInnerSarcName()
         if "-" not in name:
-            print('HEY THERE IS NO -, THIS WILL NOT WORK!')
+            print('HEY ES GIBT KEIN -, DAS WIRD NICHT FUNKTIONIEREN!')
         if name == '':
             return False
 

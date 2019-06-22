@@ -305,8 +305,8 @@ class Level_NSMBU(AbstractLevel):
 
                 # Throw a warning because the file was not found...
                 else:
-                    print("WARNING: Could not find the file: %s" % sprite_name)
-                    print("Expect the level to crash ingame...")
+                    print("WARNUNG: Die Datei konnte nicht gefunden werden: %s" % sprite_name)
+                    print("Erwarte, dass der Level im Spiel zum Absturz kommt...")
 
             # Add each tileset to our archive
             for tileset_name in tilesets_names:

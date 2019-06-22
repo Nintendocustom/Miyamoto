@@ -106,8 +106,8 @@ class AboutDialog(QtWidgets.QDialog):
         description += '.main {font-size: 12px}'
         description += '</style></head><body>'
         description += '<center><h1><i>Miyamoto!</i> Level Editor</h1><div class=\'main\'>'
-        description += '<i>Miyamoto! Level Editor</i> is a fork of Reggie! Level Editor, an open-source global project started by Treeki in 2010 that aimed to bring New Super Mario Bros. Wii&trade; levels. Now in later years, brings you New Super Mario Bros. U&trade;!<br>'
-        description += 'Interested? Check out <a href=\'https://github.com/aboood40091/Miyamoto\'>the Github repository</a> for updates and related downloads, or <a href=\'https://discord.gg/AvFEHpp\'>our Discord group</a> to get in touch with the developers.<br>'
+        description += '<i>Miyamoto!</i> ist eine Weiterentwicklung von Reggie!, einem globalen Open-Source-Projekt, das von Treeki im Jahr 2010 gestartet wurde und darauf abzielte, New Super Mario Bros. Wii&trade; Levels zu erschaffen. Jetzt in späteren Jahren, bringt dir New Super Mario Bros. U&trade;!<br>'
+        description += 'Interessiert? Schau dir <a href=\'https://github.com/aboood40091/Miyamoto\'>das Github-Repository</a> für Updates und zugehörige Downloads an, oder <a href=\'https://discord.gg/AvFEHpp\'>unsere Discord-Gruppe</a>, um mit den Entwicklern Kontakt aufzunehmen.<br>'
         description += '</div></center></body></html>'
 
         # Description label
@@ -1403,7 +1403,7 @@ class PreferencesDialog(QtWidgets.QDialog):
                 """
                 Read the preferences and check the respective boxes
                 """
-                self.Trans.addItem('English')
+                self.Trans.addItem('German')
                 self.Trans.setItemData(0, None, Qt.UserRole)
                 self.Trans.setCurrentIndex(0)
                 i = 1
