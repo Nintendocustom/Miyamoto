@@ -2,10 +2,10 @@
 <tilesets>
     <slot num="0" sorted="true">
         <category name="Normal">
-            <tileset filename="Pa0_jyotyu" name="Overworld" />
-            <tileset filename="Pa0_jyotyu_chika" name="Underground" />
+            <tileset filename="Pa0_jyotyu" name="Überwelt" />
+            <tileset filename="Pa0_jyotyu_chika" name="Untergrund" />
             <tileset filename="Pa0_jyotyu_yougan" name="Lava" />
-            <tileset filename="Pa0_jyotyu_yougan2" name="Lava Ungerground" />
+            <tileset filename="Pa0_jyotyu_yougan2" name="Lava Untergrund" />
         </category>
     </slot>
 </tilesets>

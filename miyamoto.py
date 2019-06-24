@@ -1596,7 +1596,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         """
         Sets the window title accordingly
         """
-        self.setWindowTitle('You Make Good Level Now! - %s%s' % (
+        self.setWindowTitle('Du machst jetzt ein gutes Level! - %s%s' % (
         self.fileTitle, (' ' + globals.trans.string('MainWindow', 0)) if globals.Dirty else ''))
 
     def CheckDirty(self):
