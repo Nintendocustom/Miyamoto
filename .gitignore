@@ -10,3 +10,4 @@ miyamotodata/patches/OtherSMBU/
 build.bat
 dlls.zip
 log.txt
+*.tmp

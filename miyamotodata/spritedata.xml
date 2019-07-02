@@ -1,46 +1,46 @@
 <?xml version="1.0"?>
 <sprites>
-	<sprite id="0" name="Goomba" notes="A simple walking mushroom head that takes 1 hit to kill.">
-		<list nybble="6" title="Spawned Child Direction (No ground pound)" comment="Controls the direction (and z order) of the Goombas spawned by a Medium Goomba, without ground pound. Higher values cause an overflow with probably unexpected results.">
-			<entry value="0">Right</entry>
-			<entry value="1">Left</entry>
+	<sprite id="0" name="Gumba" notes="Ein einfacher, wandelnder Pilzkopf, der 1 Treffer braucht, um zu sterben.">
+		<list nybble="6" title="Spawned Child Direction (No ground pound)" comment="Steuert die Richtung (und Z-Reihenfolge) der Gumbas, die von einem mittleren Gumbas gespawnt werden können, ohne Stampfattacke. Höhere Werte führen zu einem Überlauf mit wahrscheinlich unerwarteten Ergebnissen.">
+			<entry value="0">Rechts</entry>
+			<entry value="1">Links</entry>
 			<entry value="2">???</entry>
 			<entry value="3">???</entry>
 		</list>
-		<value nybble="6" title="Additional Pipe Goomba Z-Order" comment="Additional Z-Order nybble"/>
-		<list nybble="6" title="Spawned Child Direction (Ground pound)" comment="Controls the direction (and z order) of the Goombas spawned by a bigger Goomba with a ground pound. Higher values cause an overflow with probably unexpected results.">
-			<entry value="0">Right/High</entry>
-			<entry value="1">Left/High</entry>
-			<entry value="2">Right/Low</entry>
-			<entry value="3">Left/Low</entry>
+		<value nybble="6" title="Additional Pipe Gumba Z-Order" comment="Additional Z-Order nybble"/>
+		<list nybble="6" title="Spawned Child Direction (Ground pound)" comment="Steuert die Richtung (und Z-Reihenfolge) der Gumbas, die von einem mittleren Gumbas gespawnt werden können mit einer Stampfattacke. Höhere Werte führen zu einem Überlauf mit wahrscheinlich unerwarteten Ergebnissen.">
+			<entry value="0">Rechts/Hoch</entry>
+			<entry value="1">Links/Hoch</entry>
+			<entry value="2">Rechts/Niedrig</entry>
+			<entry value="3">Links/Niedrig</entry>
 		</list>
-		<list nybble="7" title="Yoshi player">
-			<entry value="0">Player 1</entry>
-			<entry value="1">Player 2</entry>
-			<entry value="2">Player 3</entry>
-			<entry value="3">Player 4</entry>
+		<list nybble="7" title="Yoshi Spieler">
+			<entry value="0">Spieler 1</entry>
+			<entry value="1">Spieler 2</entry>
+			<entry value="2">Spieler 3</entry>
+			<entry value="3">Spieler 4</entry>
 		</list>
-		<checkbox nybble="8" title="Z-Order" comment="Unused! Checking this box places the Goomba behind layer 1 tiles and other sprites."/>
-		<checkbox nybble="9" title="Doesn't disappear" comment="When checked, this Goomba doesn't despawn when leaving the visible camera window."/>
-		<list nybble="11" title="Pipe Direction" comment="This sets the pipe direction for Pipe Enemy Generator Goombas.">
-			<entry value="0">Up</entry>
-			<entry value="1">Down</entry>
-			<entry value="2">Left</entry>
-			<entry value="3">Right</entry>
+		<checkbox nybble="8" title="Z-Reihenfolge" comment="Unbenutzt! Wenn du dieses Kästchen ankreuzst, wird der Gumba hinter die Ebene-1 und andere Sprites gesetzt."/>
+		<checkbox nybble="9" title="Verschwindet nicht" comment="Wenn diese Option aktiviert ist, wird dieser Gumba beim Verlassen des sichtbaren Kamerafensters nicht despawnen."/>
+		<list nybble="11" title="Rohrrichtung" comment="Hiermit wird die Rohrrichtung für den Röhren Feind Generator Gumbas festgelegt.">
+			<entry value="0">Hoch</entry>
+			<entry value="1">Runter</entry>
+			<entry value="2">Links</entry>
+			<entry value="3">Rechts</entry>
 		</list>
-		<list nybble="12" title="Type" comment="This nybble is not used by sprites, but by other sprites spawning the Goomba. It makes the Goomba change its initial behavior, for example jump a little when it comes out of a Big Goomba. The Yoshi state does nothing, because no Yoshi is linked to the Goomba.">
+		<list nybble="12" title="Type" comment="Dieser Noppen wird nicht von Sprites verwendet, sondern von anderen Sprites, die die Gumbas spawnen. Es ändert das anfängliche Verhalten der Gumbas, z.B. ein wenig springen, wenn sie aus einem großen Gumba herauskommen. Der Zustand Yoshi tut nichts, denn kein Yoshi ist mit dem Gumba verbunden.">
 			<entry value="0">Normal</entry>
-			<entry value="1">Spins in circles (used by kamek icicle)</entry>
-			<entry value="2">Pipe Enemy Generator</entry>
-			<entry value="3">Very slow animation for a short time then normal</entry>
-			<entry value="4">Spawned by Medium Goomba</entry>
-			<entry value="5">Spawned by Medium or Big Goomba (ground pound)</entry>
-			<entry value="6">Eaten by Yoshi</entry>
-			<entry value="7">Balloon</entry>
-			<entry value="8">Kamek Battle</entry>
+			<entry value="1">Dreht sich im Kreis (used by kamek icicle)</entry>
+			<entry value="2">Röhren Gegner Generator</entry>
+			<entry value="3">Sehr langsame Animation für eine kurze Zeit, dann normale Animation.</entry>
+			<entry value="4">Erstellt von einem mittleren Gumba</entry>
+			<entry value="5">Erstellt von einem mittleren oder großen Gumba (Stampfattacke)</entry>
+			<entry value="6">Von Yoshi gefressen</entry>
+			<entry value="7">Ballon</entry>
+			<entry value="8">Kamek Kampf</entry>
 		</list>
 	</sprite>
-	<sprite id="1" name="Paragoomba" notes="A Goomba that is able to jump using its wings. It can jump two blocks high at max. Jumping on it makes it a normal Goomba.">
+	<sprite id="1" name="Paragoomba" notes="A Gumba that is able to jump using its wings. It can jump two blocks high at max. Jumping on it makes it a normal Gumba.">
 		<checkbox nybble="8" title="Z-Order" comment="This places the sprite behind Layer 1 tiles if checked."/>
 	</sprite>
 	<sprite id="2" name="Pipe Piranha Plant - Up" notes="A Piranha Plant that comes out of a pipe, then hides in the pipe, then comes out of it again and so on.">
@@ -1399,7 +1399,7 @@
 		<checkbox nybble="7" title="Unknown Flag 7"/>
 		<value nybble="8" title="Unknown Value 8"/>
 		<list nybble="11" title="Enemy Type">
-			<entry value="0">Goombas</entry>
+			<entry value="0">Gumbas</entry>
 			<entry value="1">Bob-ombs</entry>
 			<entry value="2">Goombrats</entry>
 			<entry value="3">Green Koopa Troopas</entry>
@@ -1913,7 +1913,7 @@
 		</list>
 		<value nybble="11" title="Unknown Value 11" comment="Only used if the bubble contains a player."/>
 		<list nybble="12" title="Player ID" comment="The player that's in the bubble. WARNING: Setting this to a player that isn't playing the game crashes if nybble 11 is set to a specific value.">
-			<entry value="0">Player 1</entry>
+			<entry value="0">Spieler</entry>
 			<entry value="1">Player 2</entry>
 			<entry value="2">Player 3</entry>
 			<entry value="3">Player 4</entry>
@@ -3145,7 +3145,7 @@
 		<value nybble="20" title="Unknown Value 20"/>
 	</sprite>
 	<sprite id="246" name="Boom Boom (W4)" notes="The Frosted Glacier version of Boom boom."/>
-	<sprite id="247" name="Prickly Goomba"/>
+	<sprite id="247" name="Prickly Gumba"/>
 	<sprite id="248" name="Ghost House Box Frame Platform">
 		<value nybble="21-22" title="Movement ID" comment="Use this to hook the sprite to a movement controller."/>
 	</sprite>
@@ -3194,7 +3194,7 @@
 		<value nybble="22" title="Movement ID"/>
 	</sprite>
 	<sprite id="254" name="Lighting - Underwater Lamp" notes="Looks like a porthole with a metal stripe in the middle."/>
-	<sprite id="255" name="Micro Goomba" notes="A tiny version of the Goomba. They can not hurt the player directly, but they can cling to him and so adversely affect his jump height and width. "/>
+	<sprite id="255" name="Micro Gumba" notes="A tiny version of the Gumba. They can not hurt the player directly, but they can cling to him and so adversely affect his jump height and width. "/>
 	<sprite id="256" name="Rotation-controlled Mushroom Block [Crashes] [UNUSED]"/>
 	<sprite id="257" name="Stretching Mushroom Platform" notes="A pinkish platform that stretches and contracts. Includes stem.">
 		<value nybble="5" title="Unknown Value 5" comment="No visible effect."/>
@@ -4551,14 +4551,14 @@
 		</list>
 		<checkbox nybble="11" title="Delay" comment="If checked, the tendril stretches out about three seconds later."/>
 	</sprite>
-	<sprite id="426" name="Balloon with Goomba or Coin">
+	<sprite id="426" name="Balloon with Gumba or Coin">
 		<list nybble="11" title="Balloon Color" comment="The color the balloon is.">
 			<entry value="0">Red</entry>
 			<entry value="1">Green?</entry>
 			<entry value="2">Blue</entry>
 			<entry value="3">Yellow</entry>
 		</list>
-		<checkbox nybble="12" title="Coin" mask="2" comment="If checked, a coin will be spawned instead of a Goomba."/>
+		<checkbox nybble="12" title="Coin" mask="2" comment="If checked, a coin will be spawned instead of a Gumba."/>
 		<value nybble="16" title="Speed" comment="The higher the value, the faster the balloon wil rise."/>
 	</sprite>
 	<sprite id="427" name="Floating Snowy Box[es]" notes="Boxes that float on water and have a snowy top. When you step on them, they sink and will eventually spring up.">
@@ -4608,28 +4608,28 @@
 	</sprite>
 	<sprite id="435" name="Sumo Bro Boss Battle Cutscene Controller" notes="Only used in 6-22, of both NSMBU and NSLU."/>
 	<sprite id="436" name="Nothing [UNUSED]"/>
-	<sprite id="437" name="Goomba (duplicate) [UNUSED]" notes="A classic Mario enemy. Stomp on its head to defeat it.">
+	<sprite id="437" name="Gumba (duplicate) [UNUSED]" notes="A classic Mario enemy. Stomp on its head to defeat it.">
 		<value nybble="5" title="Unknown Value 5"/>
 		<value nybble="9" title="Unknown Value 9"/>
 		<value nybble="11" title="Unknown Value 11"/>
-		<list nybble="12" title="Type" comment="This nybble is not used by sprites, but by other sprites spawning the Goomba. It makes the Goomba change its initial behavior, for example jump a little when it comes out of a Mega Goomba.">
+		<list nybble="12" title="Type" comment="This nybble is not used by sprites, but by other sprites spawning the Gumba. It makes the Gumba change its initial behavior, for example jump a little when it comes out of a Mega Gumba.">
 			<entry value="0">Normal</entry>
 			<entry value="2">Pipe enemy generator</entry>
-			<entry value="4">Spawned by big Goomba</entry>
-			<entry value="5">Spawned by big or large Goomba (ground pound)</entry>
+			<entry value="4">Spawned by big Gumba</entry>
+			<entry value="5">Spawned by big or large Gumba (ground pound)</entry>
 			<entry value="7">Balloon</entry>
 			<entry value="8">Kamek Battle</entry>
 		</list>
 	</sprite>
-	<sprite id="438" name="Goomba (duplicate 2) [UNUSED]" notes="Actor: 0x191&#13;&#10;A classic Mario enemy. Stomp on its head to defeat it.">
+	<sprite id="438" name="Gumba (duplicate 2) [UNUSED]" notes="Actor: 0x191&#13;&#10;A classic Mario enemy. Stomp on its head to defeat it.">
 		<value nybble="5" title="Unknown Value 5"/>
 		<value nybble="9" title="Unknown Value 9"/>
 		<value nybble="11" title="Unknown Value 11"/>
-		<list nybble="12" title="Type" comment="This nybble is not used by sprites, but by other sprites spawning the Goomba. It makes the Goomba change its initial behavior, for example jump a little when it comes out of a Mega Goomba.">
+		<list nybble="12" title="Type" comment="This nybble is not used by sprites, but by other sprites spawning the Gumba. It makes the Gumba change its initial behavior, for example jump a little when it comes out of a Mega Gumba.">
 			<entry value="0">Normal</entry>
 			<entry value="2">Pipe enemy generator</entry>
-			<entry value="4">Spawned by big Goomba</entry>
-			<entry value="5">Spawned by big or large Goomba (ground pound)</entry>
+			<entry value="4">Spawned by big Gumba</entry>
+			<entry value="5">Spawned by big or large Gumba (ground pound)</entry>
 			<entry value="7">Balloon</entry>
 			<entry value="8">Kamek Battle</entry>
 		</list>
@@ -4785,9 +4785,9 @@
 		<value nybble="3-4" title="Target Event ID" comment="The event that the ring triggers."/>
 		<value nybble="12" title="Coin Set ID" comment="Use this to connect the ring to Red Coins. 0 is a valid value."/>
 	</sprite>
-	<sprite id="471" name="Medium Goomba"/>
-	<sprite id="472" name="Big Goomba">
-		<checkbox nybble="12" title="Don't disappear" comment="When checked, this Goomba and its children don't despawn when leaving the visible camera window."/>
+	<sprite id="471" name="Medium Gumba"/>
+	<sprite id="472" name="Big Gumba">
+		<checkbox nybble="12" title="Don't disappear" comment="When checked, this Gumba and its children don't despawn when leaving the visible camera window."/>
 	</sprite>
 	<sprite id="473" name="Final Bowser" notes="The final bowser battle sprite."/>
 	<sprite id="474" name="Toad House Coin/Bowser/1-Up Cannon" notes="Shoots bursts of 1-up balloons, Bowser balloons, and coins. These cannons are located in 1-up houses throughout the game. They will shoot at different angles after 9 seconds, with about 45 degrees being its lowest and about 80 degrees being its highest. At the very end, the cannons may even go at an even higher angle and shoot bigger bursts of balloons and coins.">
@@ -5764,7 +5764,7 @@
 			<entry value="1">Right</entry>
 		</list>
 	</sprite>
-	<sprite id="595" name="Goombrat" notes="Loaded Files: kakibo.szs&#13;&#10;A sub-species of a Goomba which stays on platforms. ">
+	<sprite id="595" name="Goombrat" notes="Loaded Files: kakibo.szs&#13;&#10;A sub-species of a Gumba which stays on platforms. ">
 		<value nybble="11" title="Unknown Value 11"/>
 	</sprite>
 	<sprite id="596" name="Red Skull Box (Targeting Ted Launcher)">
