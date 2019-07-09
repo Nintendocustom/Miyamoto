@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# Copyright (C) 2009-2017 Treeki, Tempus, angelsl, JasonP27, Kinnay,
 # MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
 
 # This file is part of Miyamoto!.
@@ -387,7 +387,7 @@ class Area_NSMBU(AbstractArea):
         """
         entdata = self.blocks[6]
         entcount = len(entdata) // 24
-        entstruct = struct.Struct('>HHhhBBBBBBxBHBBBBBx')
+        entstruct = struct.Struct('>HHHHBBBBBBBBHBBBBBx')
         offset = 0
         entrances = []
         for i in range(entcount):
@@ -678,16 +678,16 @@ class Area_NSMBU(AbstractArea):
         Saves the entrances back to block 7
         """
         offset = 0
-        entstruct = struct.Struct('>HHhhBBBBBBxBHBBBBBx')
+        entstruct = struct.Struct('>HHHHBBBBBBBBHBBBBBx')
         buffer = bytearray(len(self.entrances) * 24)
         zonelist = self.zones
         for entrance in self.entrances:
             zoneID = SLib.MapPositionToZoneID(zonelist, entrance.objx, entrance.objy)
             entstruct.pack_into(buffer, offset, int(entrance.objx), int(entrance.objy), int(entrance.camerax),
                                 int(entrance.cameray), int(entrance.entid), int(entrance.destarea), int(entrance.destentrance),
-                                int(entrance.enttype), int(entrance.players), zoneID, int(entrance.playerDistance),
-                                int(entrance.entsettings), int(entrance.otherID), int(entrance.coinOrder),
-                                int(entrance.pathID), int(entrance.pathnodeindex), int(entrance.transition))
+                                int(entrance.enttype), int(entrance.unk0C), int(entrance.entzone), int(entrance.entlayer),
+                                int(entrance.entpath), int(entrance.entsettings), int(entrance.unk12), int(entrance.cpdirection),
+                                int(entrance.pathID), int(entrance.pathnodeindex), int(entrance.unk16))
             offset += 24
         self.blocks[6] = bytes(buffer)
 

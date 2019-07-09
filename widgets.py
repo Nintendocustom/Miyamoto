@@ -434,7 +434,7 @@ class QuickPaintConfigWidget(QtWidgets.QWidget):
                                                                                       int(elements[4]), z, 0)
 
             except:
-                print("Preset-Parse fehlgeschlagen.")
+                print("Preset parse failed.")
 
             f.close()
 
@@ -1572,8 +1572,12 @@ class ObjectPickerWidget(QtWidgets.QListView):
         delete = QtWidgets.QAction('Delete', self)
         delete.triggered.connect(self.HandleObjDelete)
 
+        delIns = QtWidgets.QAction('Delete instances', self)
+        delIns.triggered.connect(self.HandleObjDeleteInstances)
+
         self.menu.addAction(export)
         self.menu.addAction(delete)
+        self.menu.addAction(delIns)
 
         self.menu.popup(QtGui.QCursor.pos())
 
@@ -1715,6 +1719,46 @@ class ObjectPickerWidget(QtWidgets.QListView):
 
         globals.mainWindow.scene.update()
         SetDirty()
+
+    def HandleObjDeleteInstances(self, index):
+        """
+        Deletes all instances of an object from the level scene
+        """
+        idx = globals.CurrentPaintType
+        objNum = globals.CurrentObject
+
+        if objNum == -1: return
+
+        # Check if the object is in the scene
+        matchingObjs = []
+        for i, layer in enumerate(globals.Area.layers):
+            for j, obj in enumerate(layer):
+                if obj.tileset == idx and obj.type == objNum:
+                    matchingObjs.append(obj)
+
+        if not matchingObjs:
+            return
+
+        dlgTxt = "Are you sure you want to remove all instances of this object from the scene?"
+        dlgTxt += '\nThis cannot be undone!'
+
+        result = QtWidgets.QMessageBox.warning(self, 'Confirm', dlgTxt,
+                                               QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+
+        if result != QtWidgets.QMessageBox.Yes:
+            return
+
+        for obj in matchingObjs:
+            obj.delete()
+            obj.setSelected(False)
+            globals.mainWindow.scene.removeItem(obj)
+            globals.mainWindow.levelOverview.update()
+            del obj
+
+        globals.mainWindow.scene.update()
+        SetDirty()
+        globals.mainWindow.SelectionUpdateFlag = False
+        globals.mainWindow.ChangeSelectionHandler()
 
     ObjChanged = QtCore.pyqtSignal(int)
     ObjReplace = QtCore.pyqtSignal(int)
@@ -1918,7 +1962,7 @@ class ObjectPickerWidget(QtWidgets.QListView):
                 found = True
                 for f in ["colls", "meta", "objlyt", "img", "nml"]:
                     if not os.path.isfile(dir + jsonData[f]):
-                        print("%s nicht gefunden!" % (dir + jsonData[f]))
+                        print("%s not found!" % (dir + jsonData[f]))
                         found = False
                         break
 
@@ -2943,11 +2987,14 @@ class EntranceEditorWidget(QtWidgets.QWidget):
 
         layout.addWidget(createHorzLine(), 7, 0, 1, 5)
 
+        horizontalLayout = QtWidgets.QHBoxLayout()
+        horizontalLayout.addWidget(self.player1Checkbox)
+        horizontalLayout.addWidget(self.player2Checkbox)
+        horizontalLayout.addWidget(self.player3Checkbox)
+        horizontalLayout.addWidget(self.player4Checkbox)
+
         layout.addWidget(QtWidgets.QLabel('Players to spawn:'), 9, 0)
-        layout.addWidget(self.player1Checkbox, 9, 1)
-        layout.addWidget(self.player2Checkbox, 9, 2)
-        layout.addWidget(self.player3Checkbox, 9, 3)
-        layout.addWidget(self.player4Checkbox, 9, 4)
+        layout.addLayout(horizontalLayout, 9, 1)
         layout.addWidget(QtWidgets.QLabel('Players Distance:'), 10, 0)
         layout.addWidget(self.playerDistance, 10, 1, 1, 3)
 
@@ -3421,7 +3468,7 @@ class NabbitPathNodeEditorWidget(QtWidgets.QWidget):
             self.action.setCurrentIndex(self.indecies[path.nodeinfo['action']])
 
         else:
-            print("Unbekannte Aktion für Nabbit-Pfadknoten gefunden: %d" % path.nodeinfo['action'])
+            print("Unknown nabbit path node action found: %d" % path.nodeinfo['action'])
             self.action.setCurrentIndex(0)
 
         self.UpdateFlag = False
