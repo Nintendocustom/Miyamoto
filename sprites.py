@@ -1458,12 +1458,13 @@ class SpriteImage_StarCoin(SLib.SpriteImage_Static):  # 45
         SLib.loadIfNotInImageCache('StarCoin', 'star_coin.png')
 
 
-class SpriteImage_LineControlledStarCoin(SLib.SpriteImage_Static):  # 46
+class SpriteImage_LineControlledStarCoin(SLib.SpriteImage_Static):  # 46, 607
     def __init__(self, parent):
         super().__init__(
             parent,
             3.75,
             ImageCache['LineStarCoin'],
+            (-16, -12),
         )
 
     @staticmethod
@@ -1484,7 +1485,7 @@ class SpriteImage_BoltControlledStarCoin(SLib.SpriteImage_Static):  # 47
         SLib.loadIfNotInImageCache('BoltStarCoin', 'star_coin.png')
 
 
-class SpriteImage_MvmtRotControlledStarCoin(SLib.SpriteImage_Static):  # 48
+class SpriteImage_MvmtRotControlledStarCoin(SLib.SpriteImage_Static):  # 48, 480
     # Movement Controlled, Rotation Controlled Star Coin
     def __init__(self, parent):
         super().__init__(
@@ -1493,7 +1494,7 @@ class SpriteImage_MvmtRotControlledStarCoin(SLib.SpriteImage_Static):  # 48
             ImageCache['MRStarCoin'],
         )
 
-        self.xOffset = -16
+        self.yOffset = 6
 
     @staticmethod
     def loadImages():
@@ -1642,7 +1643,7 @@ class SpriteImage_QBlock(SLib.SpriteImage_Static):  # 59
         self.contents = self.parent.spritedata[9] & 0xF
         self.acorn = (self.parent.spritedata[6] >> 4) & 1
 
-        items = {0: 0x800 + 160, 1: 49, 2: 32, 3: 32, 4: 37, 5: 38, 6: 36, 7: 33, 8: 34, 9: 41, 12: 35, 13: 42, 15: 39}
+        items = {0: 0x800 + len(globals.Overrides) - 1, 1: 49, 2: 32, 3: 32, 4: 37, 5: 38, 6: 36, 7: 33, 8: 34, 9: 41, 12: 35, 13: 42, 15: 39}
 
         self.dopaint = True
         self.image = None
@@ -3616,7 +3617,7 @@ class SpriteImage_FlyingQBlock(SLib.SpriteImage):  # 154
         self.contents = self.parent.spritedata[9] & 0xF
         self.acorn = (self.parent.spritedata[6] >> 4) & 1
 
-        items = {0: 0x800 + 160, 1: 49, 2: 32, 3: 32, 4: 37, 5: 38, 6: 36, 7: 33, 8: 34, 9: 41, 12: 35, 13: 42, 15: 39}
+        items = {0: 0x800 + len(globals.Overrides) - 1, 1: 49, 2: 32, 3: 32, 4: 37, 5: 38, 6: 36, 7: 33, 8: 34, 9: 41, 12: 35, 13: 42, 15: 39}
 
         self.dopaint = True
         self.image = None
@@ -4589,7 +4590,7 @@ class SpriteImage_MovingPlatformSpawner(SLib.SpriteImage_StaticMultiple):  # 192
             painter.drawPixmap(30, 0, ImageCache['MovPlatNR'])
 
 
-class SpriteImage_LineMovingPlatform(SLib.SpriteImage_StaticMultiple):  # 193
+class SpriteImage_LineMovingPlatform(SLib.SpriteImage_StaticMultiple):  # 193, 573
     def __init__(self, parent):
         super().__init__(
             parent,
@@ -4616,11 +4617,13 @@ class SpriteImage_LineMovingPlatform(SLib.SpriteImage_StaticMultiple):  # 193
         if not self.width:
             self.width = 4
 
-        self.xOffset = (1.5 - 0.5 * (self.width - 1)) * 16
+        self.xOffset = (1.5 - 0.5 * (self.width - 1))
 
         if self.width == 1:
+            self.xOffset = 1.25
             self.width = 1.5
 
+        self.xOffset *= 16
         self.width *= 16
 
         self.imgType = 'R'
@@ -4827,7 +4830,7 @@ class SpriteImage_Fuzzy(SLib.SpriteImage_StaticMultiple):  # 204
         giant = self.parent.spritedata[4] & 1
 
         self.image = ImageCache['FuzzyGiant'] if giant else ImageCache['Fuzzy']
-        self.offset = (-18, -18) if giant else (-7, -7)
+        self.offset = (-18, -18) if giant else (-8, -7)
 
         super().dataChanged()
 
@@ -7194,7 +7197,7 @@ class SpriteImage_BigQBlock(SLib.SpriteImage):  # 475
         self.contents = self.parent.spritedata[9] & 0xF
         self.acorn = (self.parent.spritedata[6] >> 4) & 1
 
-        items = {0: 0x800 + 160, 1: 49, 2: 32, 3: 32, 4: 37, 5: 38, 6: 36, 7: 33, 8: 34, 9: 41, 12: 35, 13: 42, 15: 39}
+        items = {0: 0x800 + len(globals.Overrides) - 1, 1: 49, 2: 32, 3: 32, 4: 37, 5: 38, 6: 36, 7: 33, 8: 34, 9: 41, 12: 35, 13: 42, 15: 39}
 
         self.dopaint = True
         self.image = None
@@ -7269,19 +7272,6 @@ class SpriteImage_BowserJrBlock(SLib.SpriteImage_Static):  # 478
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('BowserJrBlock', 'bowser_jr_block.png')
-
-
-class SpriteImage_MovementControlledStarCoin(SLib.SpriteImage_Static):  # 480
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            3.75,
-            ImageCache['MovementStarCoin'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MovementStarCoin', 'star_coin.png')
 
 
 class SpriteImage_WaddleWing(SLib.SpriteImage_StaticMultiple):  # 481
@@ -7553,7 +7543,7 @@ class SpriteImage_FlyingQBlockAmbush(SLib.SpriteImage):  # 523
         super().paint(painter)
 
         painter.drawPixmap(0, 0, ImageCache['FlyingQBlock'])
-        painter.drawPixmap(45, 57.5, SLib.Tiles[0x800 + 160].main)
+        painter.drawPixmap(45, 57.5, SLib.Tiles[0x800 + len(globals.Overrides) - 1].main)
 
 
 class SpriteImage_MovementControlledTowerBlock(SLib.SpriteImage_Static):  # 524
@@ -7649,50 +7639,104 @@ class SpriteImage_MushroomMovingPlatform(SLib.SpriteImage):  # 544
                                ImageCache['CyanStemB' if self.color else 'PinkStemB'])
 
 
-class SpriteImage_Flowers(SLib.SpriteImage_StaticMultiple):  # 546
+class SpriteImage_Flowers(SLib.SpriteImage):  # 546
     def __init__(self, parent):
         super().__init__(
             parent,
             3.75,
         )
 
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Flower1', 'flower_1.png')
-        SLib.loadIfNotInImageCache('Flower2', 'flower_2.png')
-        SLib.loadIfNotInImageCache('Flower3', 'flower_3.png')
-        SLib.loadIfNotInImageCache('Flower4', 'flower_4.png')
-        SLib.loadIfNotInImageCache('Flower5', 'flower_5.png')
-        SLib.loadIfNotInImageCache('Flower15', 'flower_15.png')
-        SLib.loadIfNotInImageCache('WTF', 'wtf.png')
-
-    #    TODO: Find out wtf are the other nybbles other than 0.
+        self.height = 16
+        self.spritebox.shown = False
 
     def dataChanged(self):
-
-        otherid = self.parent.spritedata[5]
-
-        if otherid == 33:
-            self.image = ImageCache['Flower1']
-            self.xOffset = -32
-        elif otherid == 35:
-            self.image = ImageCache['Flower5']
-            self.xOffset = -24
-        elif otherid == 39:
-            self.image = ImageCache['Flower4']
-            self.xOffset = -24
-        elif otherid == 43:
-            self.image = ImageCache['Flower2']
-        elif otherid == 44:
-            self.image = ImageCache['Flower3']
-            self.xOffset = -16
-        elif otherid == 47:
-            self.image = ImageCache['Flower15']
-            self.xOffset = -32
-        else:
-            self.image = ImageCache['WTF']
-
         super().dataChanged()
+
+        self.type = self.parent.spritedata[5] & 0xF
+        if self.type == 0:
+            self.type = 1
+
+        if self.type < 6 or self.type == 7:
+            self.width = 64
+
+        elif self.type == 6 or self.type > 13:
+            self.width = 48
+
+        elif self.type == 8:
+            self.width = 80
+
+        elif self.type < 12:
+            self.width = 16
+
+        else:
+            self.width = 32
+
+        self.xOffset = -(self.width / 2) + 8
+
+    def paint(self, painter):
+        super().paint(painter)
+
+        # Draw the first tile
+        if self.type < 9:
+            painter.drawPixmap(0, 0, SLib.Tiles[178].main)
+
+        elif self.type in [9, 12, 14]:
+            painter.drawPixmap(0, 0, SLib.Tiles[211].main)
+
+        elif self.type in [10, 15]:
+            painter.drawPixmap(0, 0, SLib.Tiles[212].main)
+
+        else:
+            painter.drawPixmap(0, 0, SLib.Tiles[210].main)
+
+        # Draw the second tile
+        if self.type < 3:
+            painter.drawPixmap(60, 0, SLib.Tiles[214].main)
+
+        elif self.type < 5:
+            painter.drawPixmap(60, 0, SLib.Tiles[213].main)
+
+        elif self.type < 9:
+            painter.drawPixmap(60, 0, SLib.Tiles[179].main)
+
+        elif self.type > 11 and self.type < 14:
+            painter.drawPixmap(60, 0, SLib.Tiles[212].main)
+
+        elif self.type > 11:
+            painter.drawPixmap(60, 0, SLib.Tiles[210].main)
+
+        # Draw the third tile
+        if self.type in [1, 3]:
+            painter.drawPixmap(120, 0, SLib.Tiles[215].main)
+
+        elif self.type == 2:
+            painter.drawPixmap(120, 0, SLib.Tiles[213].main)
+
+        elif self.type < 6:
+            painter.drawPixmap(120, 0, SLib.Tiles[214].main)
+
+        elif self.type == 6:
+            painter.drawPixmap(120, 0, SLib.Tiles[182].main)
+
+        elif self.type < 9:
+            painter.drawPixmap(120, 0, SLib.Tiles[180].main)
+
+        elif self.type == 14:
+            painter.drawPixmap(120, 0, SLib.Tiles[212].main)
+
+        elif self.type == 15:
+            painter.drawPixmap(120, 0, SLib.Tiles[211].main)
+
+        # Draw the fourth tile
+        if self.type < 8 and self.type != 6:
+            painter.drawPixmap(180, 0, SLib.Tiles[182].main)
+
+        elif self.type == 8:
+            painter.drawPixmap(180, 0, SLib.Tiles[179].main)
+
+        # Draw the fifth tile
+        if self.type == 8:
+            painter.drawPixmap(240, 0, SLib.Tiles[182].main)
 
 
 class SpriteImage_RecordSignboard(SLib.SpriteImage):  # 561
@@ -8199,7 +8243,7 @@ ImageClasses = {
     476: SpriteImage_BigKoopaTroopa,
     478: SpriteImage_BowserJrBlock,
     479: SpriteImage_Crash,
-    480: SpriteImage_MovementControlledStarCoin,
+    480: SpriteImage_MvmtRotControlledStarCoin,
     481: SpriteImage_WaddleWing,
     483: SpriteImage_MultiSpinningFirebar,
     484: SpriteImage_ControllerSpinning,
@@ -8238,6 +8282,7 @@ ImageClasses = {
     566: SpriteImage_NabbitMetal,
     569: SpriteImage_NabbitPrize,
     572: SpriteImage_Crash,
+    573: SpriteImage_LineMovingPlatform,
     575: SpriteImage_PipeLeft,
     576: SpriteImage_PipeRight,
     577: SpriteImage_PipeUp,
@@ -8249,6 +8294,7 @@ ImageClasses = {
     600: SpriteImage_MoonBlock,
     602: SpriteImage_SwingingChain,
     606: SpriteImage_BigBuzzyBeetle,
+    607: SpriteImage_LineControlledStarCoin,
     612: SpriteImage_PacornBlock,
     615: SpriteImage_CheepCheep,
     618: SpriteImage_SteelBlock,
@@ -8256,6 +8302,7 @@ ImageClasses = {
     631: SpriteImage_PaintGoal,
     643: SpriteImage_LavaBubble,
     644: SpriteImage_LavaBubble,
+    655: SpriteImage_SnakeBlock,
     659: SpriteImage_BigGrrrol,
     662: SpriteImage_BlueRing,
     673: SpriteImage_TileGod,
@@ -8267,4 +8314,5 @@ ImageClasses = {
     706: SpriteImage_BrickBlock,
     707: SpriteImage_QBlock,
     716: SpriteImage_Foo,
+    717: SpriteImage_SnakeBlock,
 }

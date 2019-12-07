@@ -27,7 +27,8 @@
 import os, sys
 
 MiyamotoID = 'Miyamoto! Level Editor by AboodXD, Gota7, John10v10, Based on Reggie! NSMBU by RoadrunnerWMC, MrRean, Grop, and Reggie! by Treeki and Tempus'
-MiyamotoVersion = '26.0'
+MiyamotoVersion = '27.0'
+MiyamotoVersionFloat = 27.0
 
 generateStringsXML = False
 app = None
@@ -92,6 +93,8 @@ CurrentLevelNameForAutoOpenScript = 'AAAAAAAAAAAAAAAAAAAAAAAAAA'
 TileWidth = 60
 szsData = {}
 levelNameCache = ''
+UseRGBA8 = False
+NumSprites = 0
 miyamoto_path = os.path.dirname(os.path.realpath(sys.argv[0])).replace("\\", "/")
 cython_available = False
 libyaz0_available = False

@@ -503,6 +503,42 @@ class ZonesDialog(QtWidgets.QDialog):
     Dialog which lets you choose among various from tabs
     """
 
+    class ScrollArea(QtWidgets.QScrollArea):
+        def __init__(self, widget=None, initialWidth=-1, initialHeight=-1):
+            super().__init__()
+
+            self.setWidgetResizable(True)
+            self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+            deltaWidth = globals.app.style().pixelMetric(QtWidgets.QStyle.PM_ScrollBarExtent)
+
+            if widget:
+                self.setWidget(widget)
+
+                if initialWidth == -1:
+                    initialWidth = widget.sizeHint().width()
+
+                if initialHeight == -1:
+                    initialHeight = widget.sizeHint().height()
+
+            if initialWidth == -1:
+                initialWidth = super().sizeHint().width()
+
+            else:
+                initialWidth += deltaWidth
+
+            if initialHeight == -1:
+                initialHeight = super().sizeHint().height()
+
+            else:
+                initialHeight += deltaWidth
+
+            self.initialWidth = initialWidth
+            self.initialHeight = initialHeight
+
+        def sizeHint(self):
+            return QtCore.QSize(self.initialWidth, self.initialHeight)
+
     def __init__(self):
         """
         Creates and initializes the tab dialog
@@ -515,12 +551,24 @@ class ZonesDialog(QtWidgets.QDialog):
 
         i = 0
         self.zoneTabs = []
+        self.BGTabs = []
         for z in globals.Area.zones:
             i = i + 1
             ZoneTabName = globals.trans.string('ZonesDlg', 3, '[num]', i)
-            tab = ZoneTab(z)
+            tab = ZoneTab(z); tab.adjustSize()
             self.zoneTabs.append(tab)
-            self.tabWidget.addTab(tab, ZoneTabName)
+
+            bgTab = BGTab(z.background)
+            bgTab.adjustSize()
+            self.BGTabs.append(bgTab)
+
+            tabWidget = QtWidgets.QTabWidget()
+            tabWidget.addTab(tab, 'Options')
+            tabWidget.addTab(bgTab, 'Background')
+            tabWidget.adjustSize()
+
+            scrollArea = ZonesDialog.ScrollArea(tabWidget)
+            self.tabWidget.addTab(scrollArea, ZoneTabName)
 
         if self.tabWidget.count() > 5:
             for tab in range(0, self.tabWidget.count()):
@@ -535,7 +583,8 @@ class ZonesDialog(QtWidgets.QDialog):
 
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
-        # self.NewButton.setEnabled(len(self.zoneTabs) < 8)
+
+        self.NewButton.setEnabled(len(self.zoneTabs) < 8)
         self.NewButton.clicked.connect(self.NewZone)
         self.DeleteButton.clicked.connect(self.DeleteZone)
 
@@ -543,6 +592,9 @@ class ZonesDialog(QtWidgets.QDialog):
         mainLayout.addWidget(self.tabWidget)
         mainLayout.addWidget(buttonBox)
         self.setLayout(mainLayout)
+
+        self.resize(self.sizeHint())
+        self.setFixedWidth(self.sizeHint().width())
 
     def NewZone(self):
         if len(self.zoneTabs) >= 15:
@@ -552,23 +604,31 @@ class ZonesDialog(QtWidgets.QDialog):
                 return
 
         id = len(self.zoneTabs)
-
-        i = 0
-        while i in globals.Area.bgblockid:
-            i += 1
-
-        bg = (i, 0, to_bytes('Black', 16), 0)
-
-        z = ZoneItem(256, 256, 448, 224, 0, 0, id, 0, 0, 0, 0, i, 0, 1, 0, 0, (0, 0, 0, 0, 0, 0xF), bg, id)
+        z = ZoneItem(256, 256, 448, 224, 0, 0, id, 0, 0, 0, 0, id, 0, 1, 0, 0, (0, 0, 0, 0, 0, 0xF), (0, 0, 0, 0, to_bytes('Black', 16), 0), id)
         ZoneTabName = globals.trans.string('ZonesDlg', 3, '[num]', id + 1)
-        tab = ZoneTab(z)
+        tab = ZoneTab(z); tab.adjustSize()
         self.zoneTabs.append(tab)
-        self.tabWidget.addTab(tab, ZoneTabName)
+
+        bgTab = BGTab(z.background)
+        bgTab.adjustSize()
+        self.BGTabs.append(bgTab)
+
+        tabWidget = QtWidgets.QTabWidget()
+        tabWidget.addTab(tab, 'Options')
+        tabWidget.addTab(bgTab, 'Background')
+        tabWidget.adjustSize()
+
+        scrollArea = ZonesDialog.ScrollArea(tabWidget)
+        self.tabWidget.addTab(scrollArea, ZoneTabName)
+
         if self.tabWidget.count() > 5:
             for tab in range(0, self.tabWidget.count()):
                 self.tabWidget.setTabText(tab, str(tab + 1))
 
         self.NewButton.setEnabled(len(self.zoneTabs) < 8)
+
+        self.resize(self.sizeHint())
+        self.setFixedWidth(self.sizeHint().width())
 
     def DeleteZone(self):
         curindex = self.tabWidget.currentIndex()
@@ -579,15 +639,19 @@ class ZonesDialog(QtWidgets.QDialog):
         for tab in range(curindex, tabamount):
             if self.tabWidget.count() < 6:
                 self.tabWidget.setTabText(tab, globals.trans.string('ZonesDlg', 3, '[num]', tab + 1))
-            if self.tabWidget.count() > 5:
+            else:
                 self.tabWidget.setTabText(tab, str(tab + 1))
 
         self.zoneTabs.pop(curindex)
+        self.BGTabs.pop(curindex)
         if self.tabWidget.count() < 6:
             for tab in range(0, self.tabWidget.count()):
                 self.tabWidget.setTabText(tab, globals.trans.string('ZonesDlg', 3, '[num]', tab + 1))
 
                 # self.NewButton.setEnabled(len(self.zoneTabs) < 8)
+
+        self.resize(self.sizeHint())
+        self.setFixedWidth(self.sizeHint().width())
 
 
 class ZoneTab(QtWidgets.QWidget):
@@ -789,31 +853,21 @@ class ZoneTab(QtWidgets.QWidget):
     def createVisibility(self, z):
         self.Visibility = QtWidgets.QGroupBox(globals.trans.string('ZonesDlg', 19))
 
-        self.Zone_vnormal = QtWidgets.QRadioButton(globals.trans.string('ZonesDlg', 24))
-        self.Zone_vnormal.setToolTip(globals.trans.string('ZonesDlg', 25))
-
-        self.Zone_vspotlight = QtWidgets.QRadioButton(globals.trans.string('ZonesDlg', 26))
+        self.Zone_vspotlight = QtWidgets.QCheckBox(globals.trans.string('ZonesDlg', 26))
         self.Zone_vspotlight.setToolTip(globals.trans.string('ZonesDlg', 27))
 
-        self.Zone_vfulldark = QtWidgets.QRadioButton(globals.trans.string('ZonesDlg', 28))
+        self.Zone_vfulldark = QtWidgets.QCheckBox(globals.trans.string('ZonesDlg', 28))
         self.Zone_vfulldark.setToolTip(globals.trans.string('ZonesDlg', 29))
 
         self.Zone_visibility = QtWidgets.QComboBox()
-
         self.zv = z.visibility
-        VRadioDiv = self.zv // 16
 
-        if VRadioDiv == 0:
-            self.Zone_vnormal.setChecked(True)
-        elif VRadioDiv == 1:
+        if self.zv & 16 == 16:
             self.Zone_vspotlight.setChecked(True)
-        elif VRadioDiv == 2:
-            self.Zone_vfulldark.setChecked(True)
-        elif VRadioDiv == 3:
+        if self.zv & 32 == 32:
             self.Zone_vfulldark.setChecked(True)
 
         self.ChangeList()
-        self.Zone_vnormal.clicked.connect(self.ChangeList)
         self.Zone_vspotlight.clicked.connect(self.ChangeList)
         self.Zone_vfulldark.clicked.connect(self.ChangeList)
 
@@ -860,11 +914,11 @@ class ZoneTab(QtWidgets.QWidget):
         self.Zone_directionmode = QtWidgets.QComboBox()
         self.Zone_directionmode.addItems(directionmodeValues)
         self.Zone_directionmode.setToolTip(globals.trans.string('ZonesDlg', 40))
-        if z.camtrack < 0: z.camtrack = 0
-        if z.camtrack >= 6: z.camtrack = 6
-        idx = z.camtrack / 2
-        if z.camtrack == 1: idx = 1
-        self.Zone_directionmode.setCurrentIndex(idx)
+        
+        if z.camtrack < 8:
+            self.Zone_directionmode.setCurrentIndex(z.camtrack)
+        else:
+            self.Zone_directionmode.setCurrentIndex(0)
 
         # Layouts
         ZoneZoomLayout = QtWidgets.QFormLayout()
@@ -876,7 +930,6 @@ class ZoneTab(QtWidgets.QWidget):
         ZoneCameraLayout.addRow(globals.trans.string('ZonesDlg', 36), self.Zone_camerabias)
 
         ZoneVisibilityLayout = QtWidgets.QHBoxLayout()
-        ZoneVisibilityLayout.addWidget(self.Zone_vnormal)
         ZoneVisibilityLayout.addWidget(self.Zone_vspotlight)
         ZoneVisibilityLayout.addWidget(self.Zone_vfulldark)
 
@@ -895,26 +948,27 @@ class ZoneTab(QtWidgets.QWidget):
         self.Visibility.setLayout(InnerLayout)
 
     def ChangeList(self):
-        VRadioMod = self.zv % 16
+        SelectedIndex = self.zv & 15
+        self.Zone_visibility.clear()
 
-        if self.Zone_vnormal.isChecked():
-            self.Zone_visibility.clear()
-            addList = globals.trans.stringList('ZonesDlg', 41)
-            self.Zone_visibility.addItems(addList)
+        if not self.Zone_vspotlight.isChecked() and not self.Zone_vfulldark.isChecked():
+            self.Zone_visibility.addItem(globals.trans.string('ZonesDlg', 41))
             self.Zone_visibility.setToolTip(globals.trans.string('ZonesDlg', 42))
-            self.Zone_visibility.setCurrentIndex(VRadioMod)
+            SelectedIndex = 0
+        elif self.Zone_vspotlight.isChecked() and self.Zone_vfulldark.isChecked():
+            self.Zone_visibility.addItem(globals.trans.string('ZonesDlg', 80))
+            self.Zone_visibility.setToolTip(globals.trans.string('ZonesDlg', 81))
+            SelectedIndex = 0
         elif self.Zone_vspotlight.isChecked():
-            self.Zone_visibility.clear()
-            addList = globals.trans.stringList('ZonesDlg', 43)
-            self.Zone_visibility.addItems(addList)
+            self.Zone_visibility.addItems(globals.trans.stringList('ZonesDlg', 43))
             self.Zone_visibility.setToolTip(globals.trans.string('ZonesDlg', 44))
-            self.Zone_visibility.setCurrentIndex(VRadioMod)
+            if SelectedIndex > 2: SelectedIndex = 0
         elif self.Zone_vfulldark.isChecked():
-            self.Zone_visibility.clear()
-            addList = globals.trans.stringList('ZonesDlg', 45)
-            self.Zone_visibility.addItems(addList)
+            self.Zone_visibility.addItems(globals.trans.stringList('ZonesDlg', 45))
             self.Zone_visibility.setToolTip(globals.trans.string('ZonesDlg', 46))
-            self.Zone_visibility.setCurrentIndex(VRadioMod)
+            if SelectedIndex > 5: SelectedIndex = 5
+        
+        self.Zone_visibility.setCurrentIndex(SelectedIndex)
 
     def createBounds(self, z):
         self.Bounds = QtWidgets.QGroupBox(globals.trans.string('ZonesDlg', 47))
@@ -1089,77 +1143,47 @@ class ZoneTab(QtWidgets.QWidget):
         self.AutoChangingSize = False
 
 
-class BGDialog(QtWidgets.QDialog):
-    """
-    Dialog which lets you choose backgrounds
-    """
-
-    def __init__(self):
-        """
-        Creates and initializes the tab dialog
-        """
-        super().__init__()
-        self.setWindowTitle('Backgrounds')
-        self.setWindowIcon(GetIcon('background'))
-
-        self.tabWidget = QtWidgets.QTabWidget()
-        self.BGTabs = {}
-
-        for z in globals.Area.zones:
-            BGTabName = 'Zone ' + str(z.id + 1)
-
-            try:
-                tab = BGTab(z.background[1], globals.names_bg.index(bytes_to_string(z.background[2])), z.background[3])
-
-            except ValueError:
-                pass
-
-            else:
-                self.BGTabs[z.id] = tab
-                self.tabWidget.addTab(tab, BGTabName)
-
-        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
-
-        buttonBox.accepted.connect(self.accept)
-        buttonBox.rejected.connect(self.reject)
-
-        mainLayout = QtWidgets.QVBoxLayout()
-        mainLayout.addWidget(self.tabWidget)
-        mainLayout.addWidget(buttonBox)
-        self.setLayout(mainLayout)
-
-
 class BGTab(QtWidgets.QWidget):
-    def __init__(self, unk1, name, unk2):
+    def __init__(self, background):
         super().__init__()
 
         self.createBGViewers()
 
         self.bg_name = QtWidgets.QComboBox()
         self.bg_name.addItems(globals.names_bgTrans)
-        self.bg_name.setCurrentIndex(name)
+        self.bg_name.setCurrentIndex(globals.names_bg.index(bytes_to_string(background[4])))
         self.bg_name.activated.connect(self.handleNameBox)
 
         self.unk1 = QtWidgets.QSpinBox()
-        self.unk1.setRange(0, 0xFF)
-        self.unk1.setValue(unk1)
+        self.unk1.setRange(0, 0xFFFF)
+        self.unk1.setValue(background[1])
 
         self.unk2 = QtWidgets.QSpinBox()
         self.unk2.setRange(0, 0xFFFF)
-        self.unk2.setValue(unk2)
+        self.unk2.setValue(background[2])
+
+        self.unk3 = QtWidgets.QSpinBox()
+        self.unk3.setRange(0, 0xFFFF)
+        self.unk3.setValue(background[3])
+
+        self.unk4 = QtWidgets.QSpinBox()
+        self.unk4.setRange(0, 0xFF)
+        self.unk4.setValue(background[5])
 
         self.BGSettings = QtWidgets.QGroupBox('Settings')
         settingsLayout = QtWidgets.QFormLayout()
         settingsLayout.addRow('Background:', self.bg_name)
         settingsLayout.addRow('Unknown Value 1:', self.unk1)
         settingsLayout.addRow('Unknown Value 2:', self.unk2)
+        settingsLayout.addRow('Unknown Value 3:', self.unk3)
+        settingsLayout.addRow('Unknown Value 4:', self.unk4)
         settingsLayout2 = QtWidgets.QGridLayout()
         settingsLayout2.addLayout(settingsLayout, 0, 0)
         self.BGSettings.setLayout(settingsLayout2)
 
-        Layout = QtWidgets.QGridLayout()
-        Layout.addWidget(self.BGViewer, 0, 1)
-        Layout.addWidget(self.BGSettings, 0, 0)
+        Layout = QtWidgets.QVBoxLayout()
+        Layout.addWidget(self.BGViewer)
+        Layout.addWidget(self.BGSettings)
         self.setLayout(Layout)
 
         self.updatePreview()
@@ -1379,11 +1403,16 @@ class PreferencesDialog(QtWidgets.QDialog):
                     self.compLevel.addItem(globals.trans.string('PrefsDlg', 42))
                     self.compLevel.setCurrentIndex(0)
 
+                # Add the Embedded tab type determiner
+                self.separate = QtWidgets.QCheckBox()
+                self.separate.setChecked(globals.isEmbeddedSeparate)
+
                 # Create the main layout
                 L = QtWidgets.QFormLayout()
                 L.addRow(globals.trans.string('PrefsDlg', 14), self.Trans)
                 L.addRow(globals.trans.string('PrefsDlg', 15), ClearRecentBtn)
                 L.addRow(globals.trans.string('PrefsDlg', 32), self.compLevel)
+                L.addRow(globals.trans.string('PrefsDlg', 43), self.separate)
                 self.setLayout(L)
 
                 # Set the buttons
@@ -1632,13 +1661,13 @@ class PreferencesDialog(QtWidgets.QDialog):
                 keys = QtWidgets.QStyleFactory().keys()
 
                 if themeObj.color('ui') is not None and not themeObj.forceStyleSheet:
-                    if "WindowsXP" in keys:
-                        keys.remove("WindowsXP")
+                    styles = ["WindowsXP", "WindowsVista"]
+                    for _style in styles:
+                        for key in _style, _style.lower():
+                            if key in keys:
+                                keys.remove(key)
 
-                    if "WindowsVista" in keys:
-                        keys.remove("WindowsVista")
-
-                    if style in ["WindowsXP", "WindowsVista"]:
+                    if style in styles + [_style.lower() for _style in styles]:
                         style = "Fusion"
 
                 self.NonWinStyle.clear()

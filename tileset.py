@@ -56,6 +56,7 @@ class TilesetTile:
     Class that represents a single tile in a tileset
     """
     exists = True
+    _collisionedImgCache = {}
 
     def __init__(self, main=None, nml=None):
         """
@@ -78,6 +79,24 @@ class TilesetTile:
         self.animTiles = []
         self.collData = ()
         self.collOverlay = None
+
+    def imgWithCollisions(self, img):
+        """
+        Return a copy of "img" with self.collOverlay applied.
+        Uses self._collisionedImgCache, which has to be reset if
+        self.collOverlay changes.
+        """
+        imgId = id(img)
+        if imgId not in self._collisionedImgCache:
+            newImg = QtGui.QPixmap(img)
+            p = QtGui.QPainter(newImg)
+            p.drawPixmap(0, 0, self.collOverlay)
+            del p
+
+            self._collisionedImgCache[imgId] = newImg
+
+        return self._collisionedImgCache[imgId]
+
 
     def addAnimationData(self, data):
         """
@@ -139,9 +158,7 @@ class TilesetTile:
             result = QtGui.QPixmap(self.animTiles[self.animFrame])
 
         if globals.CollisionsShown and (self.collOverlay is not None):
-            painter = QtGui.QPainter(result)
-            painter.drawPixmap(0, 0, self.collOverlay)
-            del painter
+            result = self.imgWithCollisions(result)
 
         return result
 
@@ -531,6 +548,7 @@ class TilesetTile:
             painter.drawRect(0, 0, globals.TileWidth, globals.TileWidth)
 
         self.collOverlay = collPix
+        self._collisionedImgCache = {}
 
 
 class ObjectDef:
@@ -656,6 +674,162 @@ def getUsedTiles():
     return usedTiles
 
 
+def objFitsInTileset(obj, idx):
+    if globals.ObjectDefinitions[idx] is not None and None not in globals.ObjectDefinitions[idx]:
+        # Skip to to the next tileset because we can't add any more objects to this tileset
+        return None
+
+    # Get the number of used tiles in this tileset
+    usedTiles = getUsedTiles()[idx]
+    if len(usedTiles) >= 256:  # It can't be more than 256, oh well
+        # Skip to to the next tileset because no free tiles were found
+        return None
+
+    # Get the number of tiles in this object
+    ## Check if the object *can* be randomized
+    if (obj.width, obj.height) == (1, 1) and len(obj.rows) == 1:
+        # If it can be randomized, the number is the random tiles length
+        randLen = obj.randByte & 0xF
+
+    else:
+        randLen = 0
+
+    if randLen:
+        numTiles = randLen
+
+    else:
+        tilesUsed = []
+        for row in obj.rows:
+            for tile in row:
+                if len(tile) == 3:
+                    if tile != [0, 0, 0]:
+                        if tile[1] & 0xFF not in tilesUsed:
+                            tilesUsed.append(tile[1] & 0xFF)
+
+        numTiles = len(tilesUsed)
+        del tilesUsed
+
+    if numTiles + len(usedTiles) > 256:
+        # Free tiles are not enough
+        return None
+
+    # Add the free tiles to a list
+    freeTiles = [i for i in range(256) if i not in usedTiles]
+
+    # Add additional check for randomized objects
+    tileNum = 0
+    if randLen:
+        # Look for any free tiles in a row with length "randLen"
+        found = False
+        for i in freeTiles:
+            for z in range(randLen):
+                if i + z not in freeTiles:
+                    break
+
+                if z == randLen - 1:
+                    tileNum = i
+                    found = True
+                    break
+
+            if found:
+                break
+
+        if not found:
+            # No free tiles in a row with length "randLen" were found
+            return None
+
+    # If we got to this point, the object fits!
+    return randLen, tileNum, freeTiles
+
+
+def addObjToTilesetImpl(obj, colldata, img, nml, idx, fits):
+    randLen, tileNum, freeTiles = fits
+    tileoffset = idx * 256
+
+    # Handle randomized objects differently
+    if randLen:
+        # Set the object's tiles' indecies
+        for ctile, tile in enumerate(obj.rows[0]):
+            if len(tile) == 3:
+                obj.rows[0][ctile][1] = tileNum | (idx << 8)
+
+        # Adds the object's tiles to the Tiles dict.
+        tileNum += tileoffset
+        for z in range(randLen):
+            T = TilesetTile(img.copy(z * 60, 0, 60, 60), nml.copy(z * 60, 0, 60, 60))
+            T.setCollisions(struct.unpack_from('>8B', colldata, z * 8))
+            globals.Tiles[tileNum + z] = T
+
+    else:
+        # Set the object's tiles' indecies
+        tilesUsed = {}
+
+        i = 0
+        for row in obj.rows:
+            for tile in row:
+                if len(tile) == 3:
+                    if tile != [0, 0, 0]:
+                        tileIdx = tile[1] & 0xFF
+                        if tileIdx not in tilesUsed:
+                            tilesUsed[tileIdx] = i
+                            tile[1] = freeTiles[i] | (idx << 8)
+                            i += 1
+
+                        else:
+                            tile[1] = freeTiles[tilesUsed[tileIdx]] | (idx << 8)
+
+        # Adds the object's tiles to the Tiles dict.
+        tilesReplaced = []
+
+        if obj.reversed:
+            for crow, row in enumerate(obj.rows):
+                if obj.subPartAt != -1:
+                    if crow >= obj.subPartAt:
+                        crow -= obj.subPartAt
+
+                    else:
+                        crow += obj.height - obj.subPartAt
+
+                x = 0; i = 0
+                y = crow * 60
+
+                for tile in row:
+                    if len(tile) == 3:
+                        if tile != [0, 0, 0]:
+                            tileNum = (tile[1] & 0xFF) + tileoffset
+                            if tileNum not in tilesReplaced:
+                                tilesReplaced.append(tileNum)
+                                T = TilesetTile(img.copy(x, y, 60, 60), nml.copy(x, y, 60, 60))
+                                colls = struct.unpack_from('>8B', colldata, (crow * obj.width * 8) + i)
+                                T.setCollisions(colls)
+                                globals.Tiles[tileNum] = T
+
+                        x += 60
+                        i += 8
+
+        else:
+            i = 0
+
+            for crow, row in enumerate(obj.rows):
+                x = 0
+                y = crow * 60
+
+                for tile in row:
+                    if len(tile) == 3:
+                        if tile != [0, 0, 0]:
+                            tileNum = (tile[1] & 0xFF) + tileoffset
+                            if tileNum not in tilesReplaced:
+                                tilesReplaced.append(tileNum)
+                                T = TilesetTile(img.copy(x, y, 60, 60), nml.copy(x, y, 60, 60))
+                                T.setCollisions(struct.unpack_from('>8B', colldata, i))
+                                globals.Tiles[tileNum] = T
+
+                        x += 60
+                        i += 8
+
+    return obj
+
+
 def addObjToTileset(obj, colldata, img, nml, isfromAll=False):
     """
     Adds a specific object to one of the tilesets
@@ -667,175 +841,27 @@ def addObjToTileset(obj, colldata, img, nml, isfromAll=False):
         paintType = 11
 
     objNum = -1
-    usedTiles = getUsedTiles()
 
     for idx in range(1, 4):
-        # Get the number of used tiles in this tileset
-        usedTiles = getUsedTiles()[idx]
-        if len(usedTiles) >= 256:  # It can't be more than 256, oh well
-            # Skip to to the next tileset because no free tiles were found
+        # Check if the object fits in the tileset
+        fits = objFitsInTileset(obj, idx)
+        if fits is None:
             continue
 
-        # Get the number of tiles in this object
-        if (obj.width, obj.height) == (1, 1) and len(obj.rows) == 1:
-            randLen = obj.randByte & 0xF
+        obj = addObjToTilesetImpl(obj, colldata, img, nml, idx, fits)
 
-        else:
-            randLen = 0
+        if globals.ObjectDefinitions[idx] is None:
+            # Make us a new ObjectDefinitions for this tileset
+            globals.ObjectDefinitions[idx] = [None] * 256
 
-        if randLen:
-            numTiles = randLen
+        defs = globals.ObjectDefinitions[idx]
 
-        else:
-            tilesUsed = []
-            for row in obj.rows:
-                for tile in row:
-                    if len(tile) == 3:
-                        if tile != [0, 0, 0]:
-                            if tile[1] & 0xFF not in tilesUsed:
-                                tilesUsed.append(tile[1] & 0xFF)
+        # Set the object's number
+        for objNum, def_ in enumerate(defs):
+            if def_ is None:
+                break
 
-            numTiles = len(tilesUsed)
-
-        if numTiles + len(usedTiles) > 256:
-            # Skip to to the next tileset because the free tiles are not enough
-            continue
-
-        tileoffset = idx * 256
-
-        # Add the free tiles to a list
-        freeTiles = [i for i in range(256) if i not in usedTiles]
-
-        # Handle randomized objects differently
-        if randLen:
-            # Look for any "randLen" free tiles in a row
-            tileNum = 0
-            found = False
-            for i in freeTiles:
-                for z in range(randLen):
-                    if i + z not in freeTiles:
-                        break
-
-                    if z == randLen - 1:
-                        tileNum = i
-                        found = True
-                        break
-
-                if found:
-                    break
-
-            if not found:
-                # Skip to to the next tileset because no "randLen" free tiles in a row were found
-                continue
-
-            # Set the object's tiles' indecies
-            for ctile, tile in enumerate(obj.rows[0]):
-                if len(tile) == 3:
-                    obj.rows[0][ctile][1] = tileNum | (idx << 8)
-
-            if globals.ObjectDefinitions[idx] is None:
-                # Make us a new ObjectDefinitions for this tileset
-                globals.ObjectDefinitions[idx] = [None] * 256
-
-            defs = globals.ObjectDefinitions[idx]
-
-            # Set the object's number
-            for objNum, def_ in enumerate(defs):
-                if def_ is None:
-                    break
-            else:
-                continue  # Should never happen
-
-            globals.ObjectDefinitions[idx][objNum] = obj
-
-            # Adds the object's tiles to the Tiles dict.
-            tileNum += tileoffset
-            for z in range(randLen):
-                T = TilesetTile(img.copy(z * 60, 0, 60, 60), nml.copy(z * 60, 0, 60, 60))
-                T.setCollisions(struct.unpack_from('>8B', colldata, z * 8))
-                globals.Tiles[tileNum + z] = T
-
-        else:
-            # Set the object's tiles' indecies
-            tilesUsed = {}
-
-            i = 0
-            for row in obj.rows:
-                for tile in row:
-                    if len(tile) == 3:
-                        if tile != [0, 0, 0]:
-                            tileIdx = tile[1] & 0xFF
-                            if tileIdx not in tilesUsed:
-                                tilesUsed[tileIdx] = i
-                                tile[1] = freeTiles[i] | (idx << 8)
-                                i += 1
-
-                            else:
-                                tile[1] = freeTiles[tilesUsed[tileIdx]] | (idx << 8)
-
-            if globals.ObjectDefinitions[idx] is None:
-                # Make us a new ObjectDefinitions for this tileset
-                globals.ObjectDefinitions[idx] = [None] * 256
-
-            defs = globals.ObjectDefinitions[idx]
-
-            # Set the object's number
-            for objNum, def_ in enumerate(defs):
-                if def_ is None:
-                    break
-            else:
-                continue  # Should never happen
-
-            globals.ObjectDefinitions[idx][objNum] = obj
-
-            # Adds the object's tiles to the Tiles dict.
-            tilesReplaced = []
-
-            if obj.reversed:
-                for crow, row in enumerate(obj.rows):
-                    if obj.subPartAt != -1:
-                        if crow >= obj.subPartAt:
-                            crow -= obj.subPartAt
-
-                        else:
-                            crow += obj.height - obj.subPartAt
-
-                    x = 0; i = 0
-                    y = crow * 60
-
-                    for tile in row:
-                        if len(tile) == 3:
-                            if tile != [0, 0, 0]:
-                                tileNum = (tile[1] & 0xFF) + tileoffset
-                                if tileNum not in tilesReplaced:
-                                    tilesReplaced.append(tileNum)
-                                    T = TilesetTile(img.copy(x, y, 60, 60), nml.copy(x, y, 60, 60))
-                                    colls = struct.unpack_from('>8B', colldata, (crow * obj.width * 8) + i)
-                                    T.setCollisions(colls)
-                                    globals.Tiles[tileNum] = T
-
-                            x += 60
-                            i += 8
-
-            else:
-                i = 0
-
-                for crow, row in enumerate(obj.rows):
-                    x = 0
-                    y = crow * 60
-
-                    for tile in row:
-                        if len(tile) == 3:
-                            if tile != [0, 0, 0]:
-                                tileNum = (tile[1] & 0xFF) + tileoffset
-                                if tileNum not in tilesReplaced:
-                                    tilesReplaced.append(tileNum)
-                                    T = TilesetTile(img.copy(x, y, 60, 60), nml.copy(x, y, 60, 60))
-                                    T.setCollisions(struct.unpack_from('>8B', colldata, i))
-                                    globals.Tiles[tileNum] = T
-
-                            x += 60
-                            i += 8
+        globals.ObjectDefinitions[idx][objNum] = obj
 
         # Set the paint type
         paintType = idx
@@ -994,7 +1020,7 @@ def exportObject(name, baseName, idx, objNum):
 
     jsonData['objlyt'] = baseName + ".objlyt"
 
-    indexfile = struct.pack('>HBBxB', 0, obj.width, obj.height, obj.randByte)
+    indexfile = struct.pack('>HBBH', 0, obj.width, obj.height, obj.randByte)
 
     with open(name + ".meta", "wb+") as meta:
         meta.write(indexfile)
@@ -1016,7 +1042,7 @@ def HandleTilesetEdited(fromPuzzle=False):
     globals.mainWindow.updateNumUsedTilesLabel()
 
 
-def DeleteObject(idx, objNum):
+def DeleteObject(idx, objNum, soft=False):
     # Get the tiles used by this object
     obj = globals.ObjectDefinitions[idx][objNum]
     usedTiles = []
@@ -1044,11 +1070,15 @@ def DeleteObject(idx, objNum):
     objAllIndex = obj.objAllIndex
 
     # Completely remove the object's definition
-    del globals.ObjectDefinitions[idx][objNum]
-    globals.ObjectDefinitions[idx].append(None)
+    if soft:
+        globals.ObjectDefinitions[idx][objNum] = None
+
+    else:
+        del globals.ObjectDefinitions[idx][objNum]
+        globals.ObjectDefinitions[idx].append(None)
 
     # Replace the object's tiles with empty tiles
-    # if they are not used by other objects in the save tileset
+    # if they are not used by other objects in the same tileset
     tilesetUsedTiles = getUsedTiles()[idx]
 
     T = TilesetTile()
@@ -1059,6 +1089,10 @@ def DeleteObject(idx, objNum):
     for i in usedTiles:
         if i not in tilesetUsedTiles:
             globals.Tiles[i + tileoffset] = T
+
+    # If soft deletion, stop here
+    if soft:
+        return
 
     # Unload the tileset if it's empty
     if globals.ObjectDefinitions[idx] == [None] * 256:
@@ -1193,7 +1227,7 @@ def writeGTX(tex, idx):
     else:
         tile_path = globals.miyamoto_path + '/macTools'
 
-    if idx != 0:  # Save as DXT5/BC3
+    if idx != 0 and not globals.UseRGBA8:  # Save as DXT5/BC3
         if platform.system() == 'Darwin':
             _compressBC3_libtxc_dxtn(tex, tile_path)
 
@@ -1323,7 +1357,7 @@ def SaveTileset(idx):
         if obj is None:
             break
 
-        indexfile += struct.pack('>HBBxB', len(deffile), obj.width, obj.height, obj.randByte)
+        indexfile += struct.pack('>HBBH', len(deffile), obj.width, obj.height, obj.randByte)
 
         for row in obj.rows:
             for tile in row:
@@ -1411,7 +1445,8 @@ def _loadGTX_gtx_extract(gtxdata):
         os.system('./gtx_extract.elf texture.gtx texture.bmp')
 
     else:
-        os.system(tile_path + '/gtx_extract_bmp texture.gtx')
+        os.system('chmod +x ./gtx_extract_bmp')
+        os.system('./gtx_extract_bmp texture.gtx')
 
     os.chdir(globals.miyamoto_path)
 
@@ -1846,7 +1881,7 @@ def ProcessOverrides(name):
                 t[i].main = t[offset + i].main
 
             ## ?
-            t[offset + 160].main = t[49].main
+            t[offset + len(globals.Overrides) - 1].main = t[49].main
             t[49].main = t[offset + 46].main
             for i in range(32, 43):
                 t[i].main = t[offset + i].main
@@ -1972,18 +2007,48 @@ def ProcessOverrides(name):
             t[46].main = t[offset + 47].main
 
             # Flowers / Grass
+            grassType = 5
+            for sprite in globals.Area.sprites:
+                if sprite.type == 564:
+                    grassType = min(sprite.spritedata[5] & 0xf, 5)
+                    if grassType < 2:
+                        grassType = 0
+
+                    elif grassType in [3, 4]:
+                        grassType = 3
+
+            if grassType == 0:  # Forest
+                replace_flowers = offset + 160
+                replace_grass = offset + 163
+                replace_both = offset + 168
+
+            elif grassType == 2:  # Underground
+                replace_flowers = offset + 55
+                replace_grass = offset + 171
+                replace_both = offset + 188
+
+            elif grassType == 3:  # Sky
+                replace_flowers = offset + 176
+                replace_grass = offset + 179
+                replace_both = offset + 184
+
+            else:  # Normal
+                replace_flowers = offset + 55
+                replace_grass = offset + 58
+                replace_both = offset + 106
+
             ## Flowers
-            replace = offset + 55
+            replace = replace_flowers
             for i in range(210, 213):
                 t[i].main = t[replace].main
                 replace += 1
             ## Grass
-            replace = offset + 58
+            replace = replace_grass
             for i in range(178, 183):
                 t[i].main = t[replace].main
                 replace += 1
             ## Flowers and grass
-            replace = offset + 106
+            replace = replace_both
             for i in range(213, 216):
                 t[i].main = t[replace].main
                 replace += 1

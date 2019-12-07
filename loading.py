@@ -192,14 +192,35 @@ def LoadSpriteData():
     """
     Ensures that the sprite data info is loaded
     """
-    globals.Sprites = [None] * 724
     errors = []
     errortext = []
+
+    spriteIds = [-1]
 
     # It works this way so that it can overwrite settings based on order of precedence
     paths = [(globals.trans.files['spritedata'], None)]
     for pathtuple in globals.gamedef.multipleRecursiveFiles('spritedata', 'spritenames'):
         paths.append(pathtuple)
+
+    for sdpath, snpath in paths:
+
+        # Add XML sprite data, if there is any
+        if sdpath not in (None, ''):
+            path = sdpath if isinstance(sdpath, str) else sdpath.path
+            tree = etree.parse(path)
+            root = tree.getroot()
+
+            for sprite in root:
+                if sprite.tag.lower() != 'sprite':
+                    continue
+
+                try:
+                    spriteIds.append(int(sprite.attrib['id']))
+                except ValueError:
+                    continue
+
+    globals.NumSprites = max(spriteIds) + 1
+    globals.Sprites = [None] * globals.NumSprites
 
     for sdpath, snpath in paths:
 
@@ -324,7 +345,7 @@ def LoadSpriteCategories(reload_=False):
                                 CurrentCategory.append(i)
 
     # Add a Search category
-    globals.SpriteCategories.append((globals.trans.string('Sprites', 19), [(globals.trans.string('Sprites', 16), list(range(0, 724)))], []))
+    globals.SpriteCategories.append((globals.trans.string('Sprites', 19), [(globals.trans.string('Sprites', 16), list(range(globals.NumSprites)))], []))
     globals.SpriteCategories[-1][1][0][1].append(9999)  # 'no results' special case
 
 
@@ -552,10 +573,10 @@ def LoadOverrides():
     Load overrides
     """
     OverrideBitmap = QtGui.QPixmap('miyamotodata/overrides.png')
-    globals.Overrides = [None] * 256
     idx = 0
     xcount = OverrideBitmap.width() // globals.TileWidth
     ycount = OverrideBitmap.height() // globals.TileWidth
+    globals.Overrides = [None] * (xcount * ycount)
     sourcex = 0
     sourcey = 0
 
@@ -565,9 +586,8 @@ def LoadOverrides():
             globals.Overrides[idx] = TilesetTile(bmp)
 
             # Set collisions if it's a brick or question
-            if y in [1, 2]:
-                if x < 11 or x == 14: globals.Overrides[idx].setQuestionCollisions()
-                elif x < 12: globals.Overrides[idx].setBrickCollisions()
+            if (x < 11 or x == 14) and y == 2: globals.Overrides[idx].setQuestionCollisions()
+            elif x < 12 and y == 1: globals.Overrides[idx].setBrickCollisions()
 
             idx += 1
             sourcex += globals.TileWidth
@@ -578,8 +598,8 @@ def LoadOverrides():
             idx += 16
 
     # ? Block for Sprite 59
-    bmp = OverrideBitmap.copy(44 * globals.TileWidth, 2 * globals.TileWidth, globals.TileWidth, globals.TileWidth)
-    globals.Overrides[160] = TilesetTile(bmp)
+    bmp = OverrideBitmap.copy(14 * globals.TileWidth, 2 * globals.TileWidth, globals.TileWidth, globals.TileWidth)
+    globals.Overrides.append(TilesetTile(bmp))
 
 
 def LoadTranslation():
@@ -695,6 +715,7 @@ def LoadActionsLists():
         (globals.trans.string('MenuItems', 0), True, 'newlevel'),
         (globals.trans.string('MenuItems', 2), True, 'openfromname'),
         (globals.trans.string('MenuItems', 4), False, 'openfromfile'),
+        (globals.trans.string('MenuItems', 6), False, 'openrecent'),
         (globals.trans.string('MenuItems', 8), True, 'save'),
         (globals.trans.string('MenuItems', 10), False, 'saveas'),
         (globals.trans.string('MenuItems', 12), False, 'metainfo'),
@@ -711,6 +732,8 @@ def LoadActionsLists():
         (globals.trans.string('MenuItems', 26), True, 'cut'),
         (globals.trans.string('MenuItems', 28), True, 'copy'),
         (globals.trans.string('MenuItems', 30), True, 'paste'),
+        (globals.trans.string('MenuItems', 146), True, 'raise'),
+        (globals.trans.string('MenuItems', 148), True, 'lower'),
         (globals.trans.string('MenuItems', 32), False, 'shiftitems'),
         (globals.trans.string('MenuItems', 34), False, 'mergelocations'),
         (globals.trans.string('MenuItems', 38), False, 'freezeobjects'),
@@ -737,10 +760,9 @@ def LoadActionsLists():
     globals.SettingsActions = (
         (globals.trans.string('MenuItems', 72), True, 'areaoptions'),
         (globals.trans.string('MenuItems', 74), True, 'zones'),
-        (globals.trans.string('MenuItems', 76), True, 'backgrounds'),
-        (globals.trans.string('MenuItems', 78), False, 'addarea'),
+        (globals.trans.string('MenuItems', 78), True, 'addarea'),
         (globals.trans.string('MenuItems', 80), False, 'importarea'),
-        (globals.trans.string('MenuItems', 82), False, 'deletearea'),
+        (globals.trans.string('MenuItems', 82), True, 'deletearea'),
         (globals.trans.string('MenuItems', 128), False, 'reloaddata'),
     )
     globals.HelpActions = (

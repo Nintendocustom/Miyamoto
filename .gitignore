@@ -4,9 +4,11 @@ __pycache__/
 build/
 data/
 dist/
-miyamotodata/patches/OtherSMBU/
+distrib/
+miyamotodata/patches/
 *.qpp
 *.spec
 build.bat
 dlls.zip
 log.txt
+settings.ini
