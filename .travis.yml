@@ -16,12 +16,12 @@ install:
 py35-steps: &py35-steps
   env: PATH=/c/Python35:/c/Python35/Scripts:$PATH
   before_install:
-    - choco install python --version 3.5.4
+    - choco install python --version 3.7.1
     - python -m pip install --upgrade pip
 
 matrix:
   allow_failures:
-    - python: 3.5  # f-strings are available on Python >= 3.6
+    - python: 3.7 # f-strings are available on Python >= 3.6
   include:
     - name: "Python 3.5: Run tests"
       <<: *py35-steps
