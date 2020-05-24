@@ -31,6 +31,8 @@ install:
  - pip install pyqt5
  - pip install sip
  - pip install cx_freeze==4.3.3
-
+ - pip install --user sip
+ - pip install python-sip
+ - pip install -U --user PyQt5 PyQt5_sip
 script:
   - py build.py
