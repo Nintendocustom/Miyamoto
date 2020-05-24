@@ -23,6 +23,8 @@ install:
   - pip install --user sip
   - pip install -U --user PyQt5 PyQt5_sip
   - pip install --upgrade --force-reinstall pyqt5;
+  - pip install wheel
+  - pip install https://files.pythonhosted.org/packages/1f/fe/189ffef78c7261584d0db017471d8ca8f91f1379dc884645507efed803ce/sip-5.2.0-cp35-cp35m-win_amd64.whl
   
 deploy:
   provider: releases
