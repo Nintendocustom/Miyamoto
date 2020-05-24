@@ -19,7 +19,7 @@ install:
   - pip install sarclib
   - pip install pyqt5
   - pip install sip
-  - pip install cx_freeze==4.3.3
+  - pip install cx_freeze
   - pip install --user sip
   - pip install -U --user PyQt5 PyQt5_sip
   - pip install --upgrade --force-reinstall pyqt5;
