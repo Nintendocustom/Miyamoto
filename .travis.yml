@@ -20,11 +20,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install wheel
-        pip install PyQt5 PyInstaller nsmblib
+        pip install PyQt5 Cython libyaz0 SarcLib
     - name: Build
       run: |
-        python -OO build_release.py
+        python -OO build.py
     - name: Tar (Linux/Mac)
       run: |
         cd distrib
