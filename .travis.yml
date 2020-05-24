@@ -26,17 +26,46 @@ install:
   - pip install -U --user PyQt5 PyQt5_sip
   - pip install --upgrade --force-reinstall pyqt5;
   
-deploy:
-  provider: releases
-  api_key: ${api_key}
-  file_glob: true
-  file: distrib/*
-  skip_cleanup: true
-  draft: true
-  on:
-    all_branches: true
-    tags: false
+on: [push]
 
+jobs:
+  build:
 
-script:
-  - py build.py
+    strategy:
+      matrix:
+        python-version: [3.8]
+        platform: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install wheel
+        pip install PyQt5 PyInstaller libyaz0 sarclib cx_freeze
+    - name: Build 
+      run: |
+        python -OO build.py
+    - name: Tar (Linux/Mac)
+      run: |
+        cd distrib
+        tar -czvf ../build-${{ matrix.platform }}.tar.gz ./*
+        cd ..
+      if: ${{ matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-latest' }}
+    - name: Upload artifacts (Linux/Mac)
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-${{ matrix.platform }}
+        path: build-${{ matrix.platform }}.tar.gz
+      if: ${{ matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-latest' }}
+    - name: Upload artifacts (Win)
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-${{ matrix.platform }}
+        path: distrib/*
+      if: ${{ matrix.platform == 'windows-latest' }}
