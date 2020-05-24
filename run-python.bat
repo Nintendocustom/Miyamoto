@@ -21,9 +21,10 @@ echo Done!
 
 @echo OFF
 echo Downloading latest cateogry data...
-powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/Gota7/Miyamoto/master/miyamotodata/spritecategories.xml -OutFile miyamotodata/spritecategories.xml"
+powershell -Command "Invoke-WebRequest https://raw.githubusercontent.com/aboood40091/Miyamoto/master/miyamotodata/spritecategories.xml -OutFile miyamotodata/spritecategories.xml"
 echo Done!
 echo Starting Miyamoto!
 py miyamoto.py
 pause
 EXIT
+

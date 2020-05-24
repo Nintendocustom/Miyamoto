@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -28,7 +29,7 @@
 ################################################################
 
 # Python version: sanity check
-minimum = 3.4
+minimum = 3.5
 import sys
 
 currentRunningVersion = sys.version_info.major + (.1 * sys.version_info.minor)
@@ -264,6 +265,9 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         # create the various panels
         self.SetupDocksAndPanels()
 
+        # Load the most recently used gamedef
+        LoadGameDef(setting('LastGameDef'), False)
+
         # now get stuff ready
         loaded = False
 
@@ -321,9 +325,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             self.restoreGeometry(setting('MainWindowGeometry'))
         if globals.settings.contains('MainWindowState'):
             self.restoreState(setting('MainWindowState'), 0)
-
-        # Load the most recently used gamedef
-        LoadGameDef(setting('LastGameDef'), False)
 
         # Aaaaaand... initializing is done!
         globals.Initializing = False
@@ -470,6 +471,20 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             globals.trans.string('MenuItems', 30),
             globals.trans.string('MenuItems', 31),
             QtGui.QKeySequence.Paste,
+        )
+
+        self.CreateAction(
+            'raise', self.HandleRaiseObjects, GetIcon('raise'),
+            globals.trans.string('MenuItems', 146),
+            globals.trans.string('MenuItems', 147),
+            None,
+        )
+
+        self.CreateAction(
+            'lower', self.HandleLowerObjects, GetIcon('lower'),
+            globals.trans.string('MenuItems', 148),
+            globals.trans.string('MenuItems', 149),
+            None,
         )
 
         self.CreateAction(
@@ -687,13 +702,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         )
 
         self.CreateAction(
-            'backgrounds', self.HandleBG, GetIcon('background'),
-            globals.trans.string('MenuItems', 76),
-            globals.trans.string('MenuItems', 77),
-            QtGui.QKeySequence('Ctrl+Alt+B'),
-        )
-
-        self.CreateAction(
             'addarea', self.HandleAddNewArea, GetIcon('add'),
             globals.trans.string('MenuItems', 78),
             globals.trans.string('MenuItems', 79),
@@ -728,13 +736,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             None, True,
         )
 
-        self.CreateAction(
-            'overridetilesetsaving', self.HandleOverrideTilesetSaving, GetIcon('folderpath'),
-            globals.trans.string('MenuItems', 140),
-            globals.trans.string('MenuItems', 141),
-            None, True,
-        )
-
         # Tilesets
         self.CreateAction(
             'editslot1', self.EditSlot1, GetIcon('animation'),
@@ -764,6 +765,20 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             None,
         )
 
+        self.CreateAction(
+            'overridetilesetsaving', self.HandleOverrideTilesetSaving, GetIcon('folderpath'),
+            globals.trans.string('MenuItems', 140),
+            globals.trans.string('MenuItems', 141),
+            None, True,
+        )
+
+        self.CreateAction(
+            'usergba8', self.HandleUseRGBA8, GetIcon('folderpath'),
+            globals.trans.string('MenuItems', 144),
+            globals.trans.string('MenuItems', 145),
+            None, True,
+        )
+
         # Help actions are created later
 
         # Configure them
@@ -788,6 +803,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         self.actions['overwritesprite'].setChecked(not globals.OverwriteSprite)
         self.actions['overridetilesetsaving'].setChecked(globals.OverrideTilesetSaving)
+        self.actions['usergba8'].setChecked(globals.UseRGBA8)
 
         self.actions['cut'].setEnabled(False)
         self.actions['copy'].setEnabled(False)
@@ -824,6 +840,9 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         emenu.addAction(self.actions['cut'])
         emenu.addAction(self.actions['copy'])
         emenu.addAction(self.actions['paste'])
+        emenu.addSeparator()
+        emenu.addAction(self.actions['raise'])
+        emenu.addAction(self.actions['lower'])
         emenu.addSeparator()
         emenu.addAction(self.actions['shiftitems'])
         emenu.addAction(self.actions['mergelocations'])
@@ -867,7 +886,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         lmenu = menubar.addMenu(globals.trans.string('Menubar', 3))
         lmenu.addAction(self.actions['areaoptions'])
         lmenu.addAction(self.actions['zones'])
-        lmenu.addAction(self.actions['backgrounds'])
         lmenu.addSeparator()
         lmenu.addAction(self.actions['addarea'])
         lmenu.addAction(self.actions['importarea'])
@@ -885,6 +903,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         tmenu.addAction(self.actions['editslot4'])
         tmenu.addSeparator()
         tmenu.addAction(self.actions['overridetilesetsaving'])
+        tmenu.addAction(self.actions['usergba8'])
 
         hmenu = menubar.addMenu(globals.trans.string('Menubar', 5))
         self.SetupHelpMenu(hmenu)
@@ -950,6 +969,9 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 'copy',
                 'paste',
             ), (
+                'raise',
+                'lower',
+            ), (
                 'shiftitems',
                 'mergelocations',
             ), (
@@ -978,7 +1000,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             ), (
                 'areaoptions',
                 'zones',
-                'backgrounds',
             ), (
                 'addarea',
                 'importarea',
@@ -994,7 +1015,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         )
 
         # Determine which keys are activated
-        if globals.FirstRun or setting('ToolbarActs') in (None, 'None', 'none', '', 0):
+        if setting('ToolbarActs') is None:
             # Get the default settings
             toggled = {}
             for List in (globals.FileActions, globals.EditActions, globals.ViewActions, globals.SettingsActions, globals.HelpActions):
@@ -1011,7 +1032,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         for group in Groups:
             addedButtons = False
             for key in group:
-                if key in toggled and toggled[key] and key != 'save':
+                if key in toggled and toggled[key]:
                     act = self.actions[key]
                     self.toolbar.addAction(act)
                     addedButtons = True
@@ -1172,6 +1193,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         # add tabs to it
         tabs = QtWidgets.QTabWidget()
+        tabs.setTabBar(IconsOnlyTabBar())
         tabs.setIconSize(QtCore.QSize(16, 16))
         tabs.currentChanged.connect(self.CreationTabChanged)
         dock.setWidget(tabs)
@@ -1187,7 +1209,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         self.objTS0Tab = QtWidgets.QWidget()
         self.objTSAllTab = QtWidgets.QWidget()
-        self.objTS123Tab = QtWidgets.QWidget()
+        self.objTS123Tab = EmbeddedTabSeparate() if globals.isEmbeddedSeparate else EmbeddedTabJoined()
         self.objAllTab.addTab(self.objTS0Tab, tsicon, 'Main')
         self.objAllTab.addTab(self.objTSAllTab, tsicon, 'All')
         self.objAllTab.addTab(self.objTS123Tab, tsicon, 'Embedded')
@@ -1596,7 +1618,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         """
         Sets the window title accordingly
         """
-        self.setWindowTitle('You Make Good Level Now! - %s%s' % (
+        self.setWindowTitle('%s%s' % (
         self.fileTitle, (' ' + globals.trans.string('MainWindow', 0)) if globals.Dirty else ''))
 
     def CheckDirty(self):
@@ -1914,6 +1936,17 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         self.scene.clearSelection()
 
         if len(selitems) > 0:
+            # Get the previous flower/grass type
+            oldGrassType = 5
+            for sprite in globals.Area.sprites:
+                if sprite.type == 564:
+                    oldGrassType = min(sprite.spritedata[5] & 0xf, 5)
+                    if oldGrassType < 2:
+                        oldGrassType = 0
+
+                    elif oldGrassType in [3, 4]:
+                        oldGrassType = 3
+
             clipboard_o = []
             clipboard_s = []
             ii = isinstance
@@ -1938,6 +1971,32 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 self.actions['paste'].setEnabled(True)
                 self.clipboard = self.encodeObjects(clipboard_o, clipboard_s)
                 self.systemClipboard.setText(self.clipboard)
+
+                # Get the current flower/grass type
+                grassType = 5
+                for sprite in globals.Area.sprites:
+                    if sprite.type == 564:
+                        grassType = min(sprite.spritedata[5] & 0xf, 5)
+                        if grassType < 2:
+                            grassType = 0
+
+                        elif grassType in [3, 4]:
+                            grassType = 3
+
+                # If the current type is not the previous type, reprocess the Overrides
+                # update the objects and flower sprite instances and update the scene
+                if grassType != oldGrassType and globals.Area.tileset0:
+                    ProcessOverrides(globals.Area.tileset0)
+                    self.objPicker.LoadFromTilesets()
+                    for layer in globals.Area.layers:
+                        for tObj in layer:
+                            tObj.updateObjCache()
+
+                    for sprite in globals.Area.sprites:
+                        if sprite.type == 546:
+                            sprite.UpdateDynamicSizing()
+
+                    self.scene.update()
 
         self.levelOverview.update()
         self.SelectionUpdateFlag = False
@@ -1971,7 +2030,44 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         Paste the selected items
         """
         if self.clipboard is not None:
+            # Get the previous flower/grass type
+            oldGrassType = 5
+            for sprite in globals.Area.sprites:
+                if sprite.type == 564:
+                    oldGrassType = min(sprite.spritedata[5] & 0xf, 5)
+                    if oldGrassType < 2:
+                        oldGrassType = 0
+
+                    elif oldGrassType in [3, 4]:
+                        oldGrassType = 3
+
             self.placeEncodedObjects(self.clipboard)
+
+            # Get the current flower/grass type
+            grassType = 5
+            for sprite in globals.Area.sprites:
+                if sprite.type == 564:
+                    grassType = min(sprite.spritedata[5] & 0xf, 5)
+                    if grassType < 2:
+                        grassType = 0
+
+                    elif grassType in [3, 4]:
+                        grassType = 3
+
+            # If the current type is not the previous type, reprocess the Overrides
+            # update the objects and flower sprite instances and update the scene
+            if grassType != oldGrassType and globals.Area.tileset0:
+                ProcessOverrides(globals.Area.tileset0)
+                self.objPicker.LoadFromTilesets()
+                for layer in globals.Area.layers:
+                    for tObj in layer:
+                        tObj.updateObjCache()
+
+                for sprite in globals.Area.sprites:
+                    if sprite.type == 546:
+                        sprite.UpdateDynamicSizing()
+
+                self.scene.update()
 
     def encodeObjects(self, clipboard_o, clipboard_s):
         """
@@ -2193,6 +2289,59 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             pass
 
         return layers, sprites
+
+    def HandleRaiseObjects(self):
+        """
+        Raise selected objects to the front of all other objects in the scene
+        """
+        objlist = [obj for obj in self.scene.selectedItems() if isinstance(obj, ObjectItem)]
+        objlist.sort(key=lambda obj: obj.zValue())
+        numObjs = len(objlist)
+
+        for i, obj in enumerate(objlist):
+            layer = globals.Area.layers[obj.layer]
+            layer.sort(key=lambda obj: obj.zValue())
+            if layer[i-numObjs] == obj:
+                continue
+
+            layer.remove(obj)
+
+            newZ = layer[-1].zValue() + 1
+            obj.setZValue(newZ)
+
+            layer.append(obj)
+
+        if numObjs:
+            SetDirty()
+            self.scene.update()
+
+    def HandleLowerObjects(self):
+        """
+        Lower selected objects behind all other objects in the scene
+        """
+        objlist = [obj for obj in self.scene.selectedItems() if isinstance(obj, ObjectItem)]
+        objlist.sort(key=lambda obj: -obj.zValue())
+        numObjs = len(objlist)
+
+        for i, obj in enumerate(objlist):
+            layer = globals.Area.layers[obj.layer]
+            layer.sort(key=lambda obj: obj.zValue())
+            if layer[numObjs-i-1] == obj:
+                continue
+
+            layer.remove(obj)
+
+            newZ = (2 - obj.layer) * 8192
+            obj.setZValue(newZ)
+
+            for oObj in layer:
+                oObj.setZValue(oObj.zValue() + 1)
+
+            layer.insert(0, obj)
+
+        if numObjs:
+            SetDirty()
+            self.scene.update()
 
     def ShiftItems(self):
         """
@@ -2590,12 +2739,13 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                                                           'Choose the folder containing Object folders')
 
         if not path: return
-        if not isValidObjectsPath(path):
-            return
+        if not isValidObjectsPath(path): return
 
         setSetting('ObjPath', path)
 
-        self.objAllTab.setTabEnabled(1, True)
+        if not self.objAllTab.isTabEnabled(1):
+            QtWidgets.QMessageBox.warning(None, 'Warning', 'A restart of Miyamoto is required for the All tab to be enabled!')
+
         self.folderPicker.clear()
 
         folders = os.listdir(path)
@@ -2630,6 +2780,10 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         # Get the compression level
         globals.CompLevel = int(dlg.generalTab.compLevel.currentIndex())
         setSetting('CompLevel', globals.CompLevel)
+
+        # Determine the Embedded tab type
+        globals.isEmbeddedSeparate = dlg.generalTab.separate.isChecked()
+        setSetting('isEmbeddedSeparate', globals.isEmbeddedSeparate)
 
         # Get the Toolbar tab settings
         boxes = (
@@ -2925,10 +3079,10 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         Handle toggling of sprite images
         """
         globals.SpriteImagesShown = checked
-
         setSetting('ShowSpriteImages', globals.SpriteImagesShown)
 
         if globals.Area is not None:
+            globals.OverrideSnapping = True
             globals.DirtyOverride += 1
             for spr in globals.Area.sprites:
                 spr.UpdateRects()
@@ -2943,6 +3097,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                         spr.objy * (globals.TileWidth / 16),
                     )
             globals.DirtyOverride -= 1
+            globals.OverrideSnapping = False
 
         self.scene.update()
 
@@ -3110,6 +3265,14 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         globals.OverrideTilesetSaving = checked
 
         setSetting('OverrideTilesetSaving', globals.OverrideTilesetSaving)
+
+    def HandleUseRGBA8(self, checked):
+        """
+        Handle setting overwriting sprites
+        """
+        globals.UseRGBA8 = checked
+
+        setSetting('UseRGBA8', globals.UseRGBA8)
 
     def HandleFullscreen(self, checked):
         """
@@ -3513,6 +3676,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                     globals.ObjectAddedtoEmbedded[globals.CurrentArea][i] = {}
                     self.folderPicker.addItem(folder)
 
+        # Prevent things from snapping when they're created
         globals.OverrideSnapping = True
 
         # Load the actual level
@@ -3580,7 +3744,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         self.UpdateTitle()
 
         # Update UI things
-        self.scene.update()
+        self.scene.update(0, 0, self.scene.width(), self.scene.height())
 
         self.levelOverview.Reset()
         self.levelOverview.update()
@@ -3631,8 +3795,13 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
         self.objPicker.LoadFromTilesets()
 
-        self.objAllTab.setCurrentIndex(0)
-        self.objAllTab.setTabEnabled(0, (globals.Area.tileset0 != ''))
+        if globals.Area.tileset0 != '':
+            self.objAllTab.setCurrentIndex(0)
+            self.objAllTab.setTabEnabled(0, True)
+
+        else:
+            self.objAllTab.setCurrentIndex(2)
+            self.objAllTab.setTabEnabled(0, False)
 
         # Load events
         self.LoadEventTabFromLevel()
@@ -3674,20 +3843,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             self.scene.addItem(location)
             location.UpdateListItem()
 
-        for path in globals.Area.paths:
-            path.positionChanged = self.HandlePathPosChange
-            path.listitem = ListWidgetItem_SortsByOther(path)
-            self.pathList.addItem(path.listitem)
-            self.scene.addItem(path)
-            path.UpdateListItem()
-
-        for path in globals.Area.nPaths:
-            path.positionChanged = self.HandlePathPosChange
-            path.listitem = ListWidgetItem_SortsByOther(path)
-            self.nabbitPathList.addItem(path.listitem)
-            self.scene.addItem(path)
-            path.UpdateListItem()
-
         for path in globals.Area.pathdata:
             peline = PathEditorLineItem(path['nodes'])
             path['peline'] = peline
@@ -3701,9 +3856,17 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             self.scene.addItem(peline)
 
         for path in globals.Area.paths:
+            path.positionChanged = self.HandlePathPosChange
+            path.listitem = ListWidgetItem_SortsByOther(path)
+            self.pathList.addItem(path.listitem)
+            self.scene.addItem(path)
             path.UpdateListItem()
 
         for path in globals.Area.nPaths:
+            path.positionChanged = self.HandlePathPosChange
+            path.listitem = ListWidgetItem_SortsByOther(path)
+            self.nabbitPathList.addItem(path.listitem)
+            self.scene.addItem(path)
             path.UpdateListItem()
 
         for com in globals.Area.comments:
@@ -3732,10 +3895,24 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         self.scene.update()
 
     def ReloadSpriteData(self):
-        globals.Sprites = None
         LoadSpriteData()
+        LoadSpriteListData(True)
+        LoadSpriteCategories(True)
+
+        self.spriteViewPicker.clear()
+        for cat in globals.SpriteCategories:
+            self.spriteViewPicker.addItem(cat[0])
+
+        self.sprPicker.LoadItems()
+        self.spriteViewPicker.setCurrentIndex(0)
+        self.spriteDataEditor.setSprite(self.spriteDataEditor.spritetype, True)
+        self.spriteDataEditor.update()
+
+        self.NewSearchTerm(self.spriteSearchTerm.text())
+
         for sprite in globals.Area.sprites:
             sprite.InitializeSprite()
+
         self.scene.update()
 
     def ChangeSelectionHandler(self):
@@ -4242,17 +4419,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         Handles a new object being chosen
         """
         if globals.CurrentPaintType not in [0, 10]:
-            type += 1
-            if type > globals.numObj[1]:
-                globals.CurrentPaintType = 3
-                globals.CurrentObject = type - globals.numObj[1]
-            elif type > globals.numObj[0]:
-                globals.CurrentPaintType = 2
-                globals.CurrentObject = type - globals.numObj[0]
-            else:
-                globals.CurrentPaintType = 1
-                globals.CurrentObject = type
-            globals.CurrentObject -= 1
+            globals.CurrentObject, globals.CurrentPaintType = self.objTS123Tab.getObjectAndPaintType(type)
 
         else:
             globals.CurrentObject = type
@@ -4267,21 +4434,25 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         type_obj = ObjectItem
         tileset = globals.CurrentPaintType
         changed = False
+        data = 0
 
         if globals.CurrentPaintType != 0:
-            type += 1
+            type, _ = self.objTS123Tab.getObjectAndPaintType(type)
 
-            if type > globals.numObj[1]:
-                type -= globals.numObj[1]
+        else:
+            oItems = {16: 1, 17: 2, 18: 3, 19: 4, 20: 5, 21: 6, 22: 7, 23: 8,
+                     24: 9, 25: 10, 26: 11, 27: 12, 28: data, 29: 14, 30: 15,
+                     31: 16, 32: 17, 33: 18, 34: 19, 35: 20, 36: 21, 37: 22, 38: 23, 39: 24}
 
-            elif type > globals.numObj[0]:
-                type -= globals.numObj[0]
-
-            type -= 1
+            if type in oItems:
+                data = oItems[type]
+                type = 28
+                if data == 0: data = 13
 
         for x in items:
-            if isinstance(x, type_obj) and (x.tileset != tileset or x.type != type):
+            if isinstance(x, type_obj) and (x.tileset != tileset or x.type != type or x.data != data):
                 x.SetType(tileset, type)
+                x.data = data
                 x.update()
                 changed = True
 
@@ -4330,7 +4501,7 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         cat = globals.SpriteCategories[type]
         self.sprPicker.SwitchView(cat)
 
-        isSearch = (type == len(globals.SpriteCategories) - 1)
+        isSearch = (type == 0)
         layout = self.spriteSearchLayout
         layout.itemAt(0).widget().setVisible(isSearch)
         layout.itemAt(1).widget().setVisible(isSearch)
@@ -4362,7 +4533,69 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         """
         if self.spriteEditorDock.isVisible():
             obj = self.selObj
+
+            # If the sprite with updated spritedata is the Flower/Grass Type Setter
+            if obj.type == 564:
+                # Get the previous type
+                oldGrassType = 5
+                for sprite in globals.Area.sprites:
+                    if sprite.type == 564:
+                        oldGrassType = min(sprite.spritedata[5] & 0xf, 5)
+                        if oldGrassType < 2:
+                            oldGrassType = 0
+
+                        elif oldGrassType in [3, 4]:
+                            oldGrassType = 3
+
+                # Get the current type
+                grassType = min(data[5] & 0xf, 5)
+                if grassType < 2:
+                    grassType = 0
+
+                elif grassType in [3, 4]:
+                    grassType = 3
+
+                # If the current type is not the previous type, reprocess the Overrides
+                # update the objects and flower sprite instances and update the scene
+                if grassType != oldGrassType and globals.Area.tileset0:
+                    obj.spritedata = data
+                    ProcessOverrides(globals.Area.tileset0)
+                    self.objPicker.LoadFromTilesets()
+                    for layer in globals.Area.layers:
+                        for tObj in layer:
+                            tObj.updateObjCache()
+
+                    for sprite in globals.Area.sprites:
+                        if sprite.type == 546:
+                            sprite.UpdateDynamicSizing()
+
+                    self.scene.update()
+
             obj.spritedata = data
+            obj.UpdateListItem()
+            SetDirty()
+
+            obj.UpdateDynamicSizing()
+
+    def SpriteLayerUpdated(self, layer):
+        """
+        Handle the current sprite's layer being updated
+        """
+        if self.spriteEditorDock.isVisible():
+            obj = self.selObj
+            obj.layer = layer
+            obj.UpdateListItem()
+            SetDirty()
+
+            obj.UpdateDynamicSizing()
+
+    def SpriteInitialStateUpdated(self, initialState):
+        """
+        Handle the current sprite's initial state being updated
+        """
+        if self.spriteEditorDock.isVisible():
+            obj = self.selObj
+            obj.initialState = initialState
             obj.UpdateListItem()
             SetDirty()
 
@@ -4623,6 +4856,8 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         if self.spriteEditorDock.isVisible():
             obj = self.selObj
             self.spriteDataEditor.setSprite(obj.type)
+            self.spriteDataEditor.activeLayer.setCurrentIndex(obj.layer)
+            self.spriteDataEditor.initialState.setValue(obj.initialState)
             self.spriteDataEditor.data = obj.spritedata
             self.spriteDataEditor.update()
         elif self.entranceEditorDock.isVisible():
@@ -4711,6 +4946,17 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
             sel = self.scene.selectedItems()
             self.SelectionUpdateFlag = True
             if len(sel) > 0:
+                # Get the previous flower/grass type
+                oldGrassType = 5
+                for sprite in globals.Area.sprites:
+                    if sprite.type == 564:
+                        oldGrassType = min(sprite.spritedata[5] & 0xf, 5)
+                        if oldGrassType < 2:
+                            oldGrassType = 0
+
+                        elif oldGrassType in [3, 4]:
+                            oldGrassType = 3
+
                 for obj in sel:
                     obj.delete()
                     obj.setSelected(False)
@@ -4720,10 +4966,37 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 event.accept()
                 self.SelectionUpdateFlag = False
                 self.ChangeSelectionHandler()
-                return
-        self.levelOverview.update()
 
-        QtWidgets.QMainWindow.keyPressEvent(self, event)
+                # Get the current flower/grass type
+                grassType = 5
+                for sprite in globals.Area.sprites:
+                    if sprite.type == 564:
+                        grassType = min(sprite.spritedata[5] & 0xf, 5)
+                        if grassType < 2:
+                            grassType = 0
+
+                        elif grassType in [3, 4]:
+                            grassType = 3
+
+                # If the current type is not the previous type, reprocess the Overrides
+                # update the objects and flower sprite instances and update the scene
+                if grassType != oldGrassType and globals.Area.tileset0:
+                    ProcessOverrides(globals.Area.tileset0)
+                    self.objPicker.LoadFromTilesets()
+                    for layer in globals.Area.layers:
+                        for tObj in layer:
+                            tObj.updateObjCache()
+
+                    for sprite in globals.Area.sprites:
+                        if sprite.type == 546:
+                            sprite.UpdateDynamicSizing()
+
+                    self.scene.update()
+
+        else:
+            QtWidgets.QMainWindow.keyPressEvent(self, event)
+
+        self.levelOverview.update()
 
     def HandleAreaOptions(self):
         """
@@ -4765,8 +5038,14 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 UnloadTileset(0)
 
             self.objPicker.LoadFromTilesets()
-            self.objAllTab.setCurrentIndex(0)
-            self.objAllTab.setTabEnabled(0, (globals.Area.tileset0 != ''))
+
+            if globals.Area.tileset0 != '':
+                self.objAllTab.setCurrentIndex(0)
+                self.objAllTab.setTabEnabled(0, True)
+
+            else:
+                self.objAllTab.setCurrentIndex(2)
+                self.objAllTab.setTabEnabled(0, False)
 
             for layer in globals.Area.layers:
                 for obj in layer:
@@ -4781,7 +5060,6 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
         dlg = ZonesDialog()
         if dlg.exec_() == QtWidgets.QDialog.Accepted:
             SetDirty()
-            i = 0
 
             # resync the zones
             items = self.scene.items()
@@ -4794,9 +5072,11 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
 
             globals.Area.zones = []
 
-            for tab in dlg.zoneTabs:
+            ygn2Used = False
+
+            for id, (tab, bgTab) in enumerate(zip(dlg.zoneTabs, dlg.BGTabs)):
                 z = tab.zoneObj
-                z.id = i
+                z.id = id
                 z.UpdateTitle()
                 globals.Area.zones.append(z)
                 self.scene.addItem(z)
@@ -5054,19 +5334,13 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                                 QtWidgets.QMessageBox.warning(None, globals.trans.string('ZonesDlg', 61),
                                                               globals.trans.string('ZonesDlg', 67))
 
-                if tab.Zone_vnormal.isChecked():
-                    z.visibility = 0
-                    z.visibility = z.visibility + tab.Zone_visibility.currentIndex()
+                z.visibility = tab.Zone_visibility.currentIndex()
                 if tab.Zone_vspotlight.isChecked():
-                    z.visibility = 16
-                    z.visibility = z.visibility + tab.Zone_visibility.currentIndex()
+                    z.visibility = z.visibility + 16
                 if tab.Zone_vfulldark.isChecked():
-                    z.visibility = 32
-                    z.visibility = z.visibility + tab.Zone_visibility.currentIndex()
+                    z.visibility = z.visibility + 32
 
-                val = tab.Zone_directionmode.currentIndex() * 2
-                if val == 2: val = 1
-                z.camtrack = val
+                z.camtrack = tab.Zone_directionmode.currentIndex()
 
                 z.yupperbound = tab.Zone_yboundup.value()
                 z.ylowerbound = tab.Zone_ybounddown.value()
@@ -5079,42 +5353,26 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 if tab.Zone_boss.isChecked():
                     z.sfxmod = z.sfxmod + 1
 
-                if tab.Zone_type.currentIndex() == 0:
-                    z.type = 0
-                elif tab.Zone_type.currentIndex() == 1:
-                    z.type = 1
-                elif tab.Zone_type.currentIndex() == 2:
-                    z.type = 5
-                elif tab.Zone_type.currentIndex() == 3:
-                    z.type = 12
-                elif tab.Zone_type.currentIndex() == 4:
-                    z.type = 160
+                z.type = 0
+                for i in range(8):
+                    if tab.Zone_settings[i].isChecked():
+                        z.type |= 1 << i
 
-                i = i + 1
-        self.levelOverview.update()
+                name = bgTab.bgFname.text()
+                unk1 = bgTab.unk1.value()
+                unk2 = bgTab.unk2.value()
+                unk3 = bgTab.unk3.value()
+                unk4 = bgTab.unk4.value()
+                z.background = (z.id, unk1, unk2, unk3, to_bytes(name, 16), unk4)
 
-    # Handles setting the backgrounds
-    def HandleBG(self):
-        """
-        Pops up the Background settings Dialog
-        """
-        dlg = BGDialog()
-        if dlg.exec_() == QtWidgets.QDialog.Accepted:
-            SetDirty()
-
-            ygn2Used = False
-
-            for z in globals.Area.zones:
-                name = globals.names_bg[globals.names_bgTrans.index(str(dlg.BGTabs[z.id].bg_name.currentText()))]
-                unk1 = dlg.BGTabs[z.id].unk1.value()
-                unk2 = dlg.BGTabs[z.id].unk2.value()
-                z.background = (z.id, unk1, to_bytes(name, 16), unk2)
-
-                ygn2Used = name == "Yougan_2"
+                if not ygn2Used:
+                    ygn2Used = name == "Yougan_2"
 
             if ygn2Used:
                 QtWidgets.QMessageBox.information(None, globals.trans.string('BGDlg', 22),
                                                   globals.trans.string('BGDlg', 23))
+
+        self.levelOverview.update()
 
     def HandleScreenshot(self):
         """
@@ -5230,8 +5488,14 @@ class MiyamotoWindow(QtWidgets.QMainWindow):
                 LoadTileset(0, globals.Area.tileset0)
                 SetDirty()
                 self.objPicker.LoadFromTilesets()
-                self.objAllTab.setCurrentIndex(0)
-                self.objAllTab.setTabEnabled(0, (globals.Area.tileset0 != ''))
+
+                if globals.Area.tileset0 != '':
+                    self.objAllTab.setCurrentIndex(0)
+                    self.objAllTab.setTabEnabled(0, True)
+
+                else:
+                    self.objAllTab.setCurrentIndex(2)
+                    self.objAllTab.setTabEnabled(0, False)
 
                 for layer in globals.Area.layers:
                     for obj in layer:
@@ -5315,16 +5579,28 @@ def main():
     # create an application
     globals.app = QtWidgets.QApplication(sys.argv)
 
-    # load the settings
-    globals.settings = QtCore.QSettings('Miyamoto', globals.MiyamotoVersion)
-
-    # load the translation (needs to happen first)
-    LoadTranslation()
-
     # go to the script path
     path = globals.miyamoto_path
     if path is not None:
-        os.chdir(globals.miyamoto_path)
+        os.chdir(path)
+
+    # load the settings
+    globals.settings = QtCore.QSettings('settings.ini', QtCore.QSettings.IniFormat)
+
+    # Check the version and set the UI style to Fusion by default
+    if setting("MiyamotoVersion") is None:
+        setSetting("isDX", False)
+        setSetting("MiyamotoVersion", globals.MiyamotoVersionFloat)
+        setSetting('uiStyle', "Fusion")
+
+    # 27.0 -> oldest version with settings.ini compatible with the current version
+    if setting("MiyamotoVersion") < 27.0 or setting("MiyamotoVersion") > globals.MiyamotoVersionFloat or setting("isDX"):
+        warningBox = QtWidgets.QMessageBox(QtWidgets.QMessageBox.NoIcon, 'Unsupported settings file', 'Your settings.ini file is unsupported. Please remove it and run Miyamoto again.')
+        warningBox.exec_()
+        sys.exit(1)
+
+    # load the translation (needs to happen first)
+    LoadTranslation()
 
     # set the default theme, plus some other stuff too
     globals.theme = MiyamotoTheme()
@@ -5332,10 +5608,6 @@ def main():
     # check if required files are missing
     if FilesAreMissing():
         sys.exit(1)
-
-    # Set the UI style to Fusion by default
-    if setting("FirstRun") is None:
-        setSetting('uiStyle', "Fusion")
 
     # load required stuff
     globals.Sprites = None
@@ -5353,7 +5625,7 @@ def main():
     SLib.main()
 
     # Set the default window icon (used for random popups and stuff)
-    globals.app.setWindowIcon(GetIcon('miyamoto'))
+    globals.app.setWindowIcon(QtGui.QIcon('miyamotodata/icon.png'))
     globals.app.setApplicationDisplayName('Miyamoto! v%s' % globals.MiyamotoVersion)
 
     gt = setting('GridType')
@@ -5375,12 +5647,14 @@ def main():
     globals.CommentsFrozen = setting('FreezeComments', False)
     globals.OverwriteSprite = setting('OverwriteSprite', False)
     globals.OverrideTilesetSaving = setting('OverrideTilesetSaving', False)
+    globals.UseRGBA8 = setting('UseRGBA8', False)
     globals.RealViewEnabled = setting('RealViewEnabled', True)
     globals.SpritesShown = setting('ShowSprites', True)
     globals.SpriteImagesShown = setting('ShowSpriteImages', True)
     globals.LocationsShown = setting('ShowLocations', True)
     globals.CommentsShown = setting('ShowComments', True)
     globals.PathsShown = setting('ShowPaths', True)
+    globals.isEmbeddedSeparate = setting('isEmbeddedSeparate', False)
 
     if globals.libyaz0_available:
         globals.CompLevel = setting('CompLevel', 1)
@@ -5422,14 +5696,6 @@ def main():
 
     LoadTheme()
     SetAppStyle()
-
-    # check if this is the first time this version of Miyamoto is ran
-    if setting("FirstRun") is None:
-        globals.FirstRun = True
-        setSetting("FirstRun", "False")
-
-    else:
-        globals.FirstRun = False
 
     # create and show the main window
     globals.mainWindow = MiyamotoWindow()

@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -106,7 +107,7 @@ class MiyamotoTranslation:
                 18: 'Custom filename... [name]',
                 19: '[name] ([file])',
                 20: 'Enter a Filename',
-                21: 'Enter the name of a custom tileset file to use. It must be placed in the game\'s Stage\\Texture or Unit folder in order for Miyamoto to recognize it. Do not add the \'.arc\' or \'.sarc\' extension at the end of the filename.',
+                21: 'Enter the name of a custom tileset file to use. It must already be inside the level archive in order for Miyamoto to recognize it.',
                 22: 'Unknown Value 1:',
                 23: 'Unknown Value 2:',
                 24: 'Unknown Value 3:', # Currently unused
@@ -196,10 +197,10 @@ class MiyamotoTranslation:
                 23: '"Lava 2" BG requires sprites: 473, 477, 487, 497.[br]Of course, you have to set up those sprites correctly in order for the game to not crash.[br]Go take a look at 8-43 Area 3.',
                 },
             'ChangeGamePath': {
-                0: 'Choose the Course folder from [game]',
+                0: 'Choose the "course_res_pack" folder from [game]',
                 1: 'Error',
-                2: 'This folder doesn\'t have all of the files from the extracted NSMBU course_res_pack folder.',
-                3: 'This folder doesn\'t seem to have the required files. In order to use Miyamoto, you need the Stage folder from the game, including the Texture folder and the level files contained within it.',
+                2: 'This folder doesn\'t have all of the files from the extracted NSMBU "course_res_pack" folder.',
+                3: 'This folder doesn\'t seem to have the required files. In order to use Miyamoto, you need the "course_res_pack" folder from the game and the level files contained within it.',
                 },
             'Comments': {
                 0: '[x], [y]: [text]',
@@ -273,7 +274,7 @@ class MiyamotoTranslation:
                 },
             'Err_CorruptedTilesetData': {
                 0: 'Error',
-                1: 'Cannot find the required texture within the tileset file [file].szs, so it will not be loaded. Keep in mind that the tileset file cannot be renamed without changing the names of the texture/object files within the archive as well!',
+                1: 'Cannot find the required texture within the tileset file [file], so it will not be loaded. Keep in mind that the tileset file cannot be renamed without changing the names of the texture/object files within the archive as well!',
                 },
             'Err_InvalidLevel': {
                 0: 'This file doesn\'t seem to be a valid level.',
@@ -285,11 +286,11 @@ class MiyamotoTranslation:
                 },
             'Err_MissingLevel': {
                 0: 'Error',
-                1: 'Cannot find the required level file [file].arc. Check your Stage folder and make sure it exists.',
+                1: 'Cannot find the required level file [file].szs. Check your "course_res_pack" folder and make sure it exists.',
                 },
             'Err_MissingTileset': {
                 0: 'Error',
-                1: 'Cannot find the required tileset file [file].arc. Check your Stage folder and make sure it exists.',
+                1: 'Cannot find the required tileset file [file]. Check the level archive and make sure it exists.',
                 },
             'Err_Save': {
                 0: 'Error',
@@ -311,9 +312,9 @@ class MiyamotoTranslation:
                 0: 'This game has custom sprite images',
                 1: 'Loading patch...',
                 2: 'New Game Patch',
-                3: 'It appears that this is your first time using the game patch for [game]. Please select its Stage folder so custom tilesets and levels can be loaded.',
+                3: 'It appears that this is your first time using the game patch for [game]. Please select its "course_res_pack" folder so custom levels can be loaded.',
                 4: 'Aborted Game Path Selection',
-                5: 'Since you did not select the stage folder for [game], stages and tilesets will not load correctly. You can try again by choosing Change Game Path while the [game] patch is loaded.',
+                5: 'Since you did not select the "course_res_pack" folder for [game], stages will not load correctly. You can try again by choosing Change Game Path while the [game] patch is loaded.',
                 6: 'New Game Patch',
                 7: 'You can change the game path for [game] at any time by choosing Change Game Path while the [game] patch is loaded.',
                 8: 'Loading sprite data...',
@@ -523,6 +524,12 @@ class MiyamotoTranslation:
                 141: 'Always resave the tilesets when saving the level, except for when deleting an area',
                 142: 'Edit Slot [slot] Tileset',
                 143: 'Edit Slot [slot] Tileset',
+                144: 'Use RGBA8',
+                145: 'Use RGBA8 instead of BC3 when encoding tilesets',
+                146: 'Raise to Top',
+                147: 'Raise selected objects to the front of all other objects in the scene.',
+                148: 'Lower to Bottom',
+                149: 'Lower selected objects behind all other objects in the scene.',
                 },
             'Objects': {
                 0: '[b]Tileset [tileset], object [obj]:[/b][br][width]x[height] on layer [layer]',
@@ -593,6 +600,10 @@ class MiyamotoTranslation:
                 14: '[b]Nabbit Path Node [id][/b]',
                 15: 'Action:',
                 16: '[b]Action:[/b][br]The action Nabbit will do when he is on this node',
+                17: 'Unknown value 1:',
+                18: 'Unknown value 2:',
+                19: 'Unknown value 3:',
+                20: 'Unknown value 4:',
                 },
             'Paths': {
                 0: '[b]Path [path][/b][br]Node [node]',
@@ -645,6 +656,7 @@ class MiyamotoTranslation:
                 40: '7',
                 41: '8',
                 42: '9: Best',
+                43: 'Split Embedded tab:',
                 },
             'QuickPaint': {
                 1: "WOAH! Watch out!",
@@ -720,6 +732,11 @@ class MiyamotoTranslation:
                 6: '[b]Sprite [id]:[br][name][/b]',
                 7: 'Object Files',
                 8: '[b]This sprite uses:[/b][br][list]',
+                9: 'Layer:',
+                10: ('Layer 1', 'Layer 2', 'Layer 0'),
+                11: '[b]Layer:[/b][br]Allows you to change the layer which this sprite is active on. This field is not read in-game by some sprites - for almost all normal cases, you will want to use layer 1.',
+                12: 'Initial State:',
+                13: '[b]Initial State:[/b][br]Used by some sprites to initiate in a different state depending on the value of this field.',
                 },
             'Sprites': {
                 0: '[b]Sprite [type]:[/b][br][name]',
@@ -872,18 +889,19 @@ class MiyamotoTranslation:
                 36: 'Bias:',
                 37: '[b]Bias:[/b][br]Sets the screen bias to the left edge on load, preventing initial scrollback.[br]Useful for pathed levels.[br]Note: Not all zoom/mode combinations support bias',
                 38: (
-                    'Left to Right',
-                    'Right to Left',
-                    'Top to Bottom',
-                    'Bottom to Top',
+                    'Right and Down',
+                    'Right and Up',
+                    'Left and Down',
+                    'Left and Up',
+                    'Right and Down 2',
+                    'Right and Up 2',
+                    'Right and Down 3',
+                    'Right and Up 3',
                     ),
                 39: 'Camera Tracking:',
-                40: '[b]Camera Tracking:[/b][br]This setting makes changes to camera tracking during multiplayer mode.[br]If the camera doesn\'t move, choose Left to Right.[br]If you\'re unsure, choose Left to Right.',
-                41: (
-                    'Hidden',
-                    'On Top',
-                    ),
-                42: '[b]Visibility:[/b][br]Hidden - Mario is hidden when moving behind objects on Layer 0[br]On Top - Mario is displayed above Layer 0 at all times.[br][br]Note: Entities behind layer 0 other than Mario are never visible',
+                40: '[b]Camera Tracking:[/b][br]This setting makes changes to camera tracking during multiplayer mode.[br]It prioritizes these directions when players goes in the wrong direction.[br]For example if you are making a tower level where the primary objective is going up[br]and you don\'t want the screen going back down if just one player falls,[br]then set the tracking to any value containing \'Up\' and that will prevent that from happening.',
+                41: 'Hidden',
+                42: '[b]Visibility:[/b][br]Hidden - Mario is hidden when moving behind objects on Layer 0.[br][br]Note: Entities behind layer 0 other than Mario are never visible.',
                 43: (
                     'Small',
                     'Large',
@@ -943,10 +961,21 @@ class MiyamotoTranslation:
                 73: '[b]Lower Bounds 2:[/b][br]Unknown differences from the main lower bounds.',
                 74: 'Enable Scrolling vertically?',
                 75: '[b]Enable Scrolling vertically?:[/b][br]The level can\'t scroll vertically if this is not checked Seems to be always checked.',
-                76: 'Type:',
-                77: '[b]Type:[/b][br]Sets the type for this Zone',
+                76: 'Flags',
+                77: (
+                    'Start Zoomed Out:',
+                    'Center Camera X-pos On Load:',
+                    'Camera Follows on Y-axis:',
+                    'Camera Stops At Zone End:',
+                    'Unused 1:',
+                    'Toad House Related 1:',
+                    'Unused 2:',
+                    'Toad House Related 2:',
+                    ),
                 78: 'Snap to 8x8 Grid',
                 79: 'Snap to 16x16 Grid',
+                80: 'Small / Small Focus Light',
+                81: '[b]Visibility:[/b][br]Small - A small, centered spotlight affords visibility through layer 0.[br]Small Focuslight - A small spotlight which changes size based on player movement.',
                 },
             'Zones': {
                 0: 'Zone [num]',

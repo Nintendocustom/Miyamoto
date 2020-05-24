@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -24,19 +25,18 @@
 # Builds Miyamoto! to a binary
 # Use the values below to configure the release:
 
-from globals import MiyamotoVersion
+from globals import MiyamotoVersionFloat
 
-PackageName = 'miyamoto_v%s' % MiyamotoVersion
-Version = MiyamotoVersion
+Version = str(MiyamotoVersionFloat)
+PackageName = 'miyamoto_v%s' % Version
 
 
 ################################################################
 ################################################################
 
 # Imports
-import os, os.path, platform, shutil, sys, zipfile
+import os, os.path, platform, shutil, sys
 from cx_Freeze import setup, Executable
-from shutil import copyfile
 
 # Pick a build directory
 dir_ = 'distrib/' + PackageName
@@ -53,11 +53,11 @@ if 'build' not in sys.argv:
 if os.path.isdir(dir_): shutil.rmtree(dir_)
 os.makedirs(dir_)
 
-# exclude QtWebKit to save space, plus Python stuff we don't use
+# exclude QtWebChannel, QtWebSockets and QtNetwork to save space, plus Python stuff we don't use
 excludes = ['doctest', 'pdb', 'unittest', 'difflib', 'inspect',
     'os2emxpath', 'posixpath', 'optpath', 'locale', 'calendar',
     'select', 'multiprocessing', 'ssl',
-    'PyQt5.QtWebKit', 'PyQt5.QtNetwork']
+    'PyQt5.QtWebChannel', 'PyQt5.QtWebSockets', 'PyQt5.QtNetwork']
 
 # Set it up
 base = 'Win32GUI' if sys.platform == 'win32' else None
@@ -70,12 +70,14 @@ setup(
             'excludes': excludes,
             'packages': ['sip', 'encodings', 'encodings.hex_codec', 'encodings.utf_8'],
             'build_exe': dir_,
-            'icon': 'miyamotodata/win_icon.ico',
+            'optimize': 2,
+            'silent': True,
             },
         },
     executables = [
         Executable(
             'miyamoto.py',
+            icon = 'miyamotodata/win_icon.ico',
             base = base,
             ),
         ],
@@ -101,8 +103,6 @@ shutil.copytree('miyamotoextras', dir_ + '/miyamotoextras')
 if platform.system() == 'Windows':
     if os.path.isdir(dir_ + '/Tools'): shutil.rmtree(dir_ + '/Tools') 
     shutil.copytree('Tools', dir_ + '/Tools')
-    if not os.path.isfile(dir_ + '/libEGL.dll'):
-        shutil.copy('libEGL.dll', dir_)
 elif platform.system() == 'Linux':
     if os.path.isdir(dir_ + '/linuxTools'): shutil.rmtree(dir_ + '/linuxTools') 
     shutil.copytree('linuxTools', dir_ + '/linuxTools')
@@ -110,16 +110,7 @@ else:
     if os.path.isdir(dir_ + '/macTools'): shutil.rmtree(dir_ + '/macTools') 
     shutil.copytree('macTools', dir_ + '/macTools')
 shutil.copy('license.txt', dir_)
+shutil.copy('README.md', dir_)
 print('>> Files copied!')
 
 print('>> Miyamoto! has been frozen to %s !' % dir_)
-
-zf = zipfile.ZipFile(PackageName + ".zip", "w", zipfile.ZIP_DEFLATED)
-for dirname, subdirs, files in os.walk(dir_):
-    zf.write(dirname)
-    for filename in files:
-        os.path.abspath(os.path.join(dirname, filename))
-        zf.write(os.path.join(dirname, filename))
-zf.close()
-print('Miyamoto! has been packed as zip')
-shutil.copy(PackageName + ".zip", "distrib")
