@@ -7,9 +7,11 @@ before_install:
 
 env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
 
-install: 
-
-
+addons:
+  apt:
+    packages:
+      - python3-pyqt5
+      
 virtualenv:
   system_site_packages: true
 
