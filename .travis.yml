@@ -1,35 +1,45 @@
-os: windows
-language: sh
+name: Build
 
-py35-steps: &py34-steps
-  env: PATH=/c/Python34:/c/Python34/Scripts:$PATH
-  before_install:
-    - choco install python --version 3.4.4 
+on: [push]
 
-matrix:
-  allow_failures:
-    - python: 3.4
-  include:
-    - name: "Python 3.4: Run tests"
-      <<: *py34-steps
+jobs:
+  build:
 
-deploy:
-  provider: releases
-  api_key: ${api_key}
-  file_glob: true
-  file: distrib/*
-  skip_cleanup: true
-  draft: true
-  on:
-    all_branches: true
-    tags: false
+    strategy:
+      matrix:
+        python-version: [3.7]
+        platform: [windows-latest]
+    runs-on: ${{ matrix.platform }}
 
-install:
- - pip install cx_freeze==4.3.3
- - pip install libyaz0
- - pip install sarclib
- - pip install pyqt5
- - pip install sip
-
-script:
-  - py build.py
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install wheel
+        pip install PyQt5 PyInstaller nsmblib
+    - name: Build
+      run: |
+        python -OO build_release.py
+    - name: Tar (Linux/Mac)
+      run: |
+        cd distrib
+        tar -czvf ../build-${{ matrix.platform }}.tar.gz ./*
+        cd ..
+      if: ${{ matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-latest' }}
+    - name: Upload artifacts (Linux/Mac)
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-${{ matrix.platform }}
+        path: build-${{ matrix.platform }}.tar.gz
+      if: ${{ matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-latest' }}
+    - name: Upload artifacts (Win)
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-${{ matrix.platform }}
+        path: distrib/*
+      if: ${{ matrix.platform == 'windows-latest' }}
