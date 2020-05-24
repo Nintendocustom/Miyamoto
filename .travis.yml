@@ -23,7 +23,7 @@ jobs:
         pip install PyQt5 Cython libyaz0 SarcLib
     - name: Build
       run: |
-        python -OO build.py
+        python build.py
     - name: Tar (Linux/Mac)
       run: |
         cd distrib
