@@ -1,44 +1,37 @@
-name: Build
+os: windows
+language: sh
 
-on: [push]
+py37-steps: &py37-steps
+  env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
+  before_install:
+    - choco install python --version 3.7
+    - python -m pip install --upgrade pip
 
-jobs:
-  build:
+matrix:
+  allow_failures:
+    - python: 3.7  # f-strings are available on Python >= 3.6
+  include:
+    - name: "Python 3.5: Run tests"
+      <<: *py35-steps
 
-    strategy:
-      matrix:
-        python-version: [3.7]
-        platform: [windows-latest]
-    runs-on: ${{ matrix.platform }}
+deploy:
+  provider: releases
+  api_key: ${api_key}
+  file_glob: true
+  file: distrib/*
+  skip_cleanup: true
+  draft: true
+  on:
+    all_branches: true
+    tags: false
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install PyQt5 Cython libyaz0 SarcLib
-    - name: Build
-      run: |
-        python build.py
-    - name: Tar (Linux/Mac)
-      run: |
-        cd distrib
-        tar -czvf ../build-${{ matrix.platform }}.tar.gz ./*
-        cd ..
-      if: ${{ matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-latest' }}
-    - name: Upload artifacts (Linux/Mac)
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-${{ matrix.platform }}
-        path: build-${{ matrix.platform }}.tar.gz
-      if: ${{ matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-latest' }}
-    - name: Upload artifacts (Win)
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-${{ matrix.platform }}
-        path: distrib/*
-      if: ${{ matrix.platform == 'windows-latest' }}
+install:
+ - pip install cx_freeze
+ - pip install libyaz0
+ - pip install sarclib
+ - pip install pyqt5
+ - pip install sip
+ - pip install Cython
+
+script:
+  - py build.py
