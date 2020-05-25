@@ -13,8 +13,8 @@ matrix:
   include:
     - name: "Python 3.5: Run tests"
       <<: *py35-steps
-
-deploy:
+      
+ deploy:
   provider: releases
   api_key: ${api_key}
   file_glob: true
@@ -23,14 +23,13 @@ deploy:
   draft: true
   on:
     all_branches: true
-    tags: false
+tags: false
 
 install:
- - pip install cx_freeze==4.3.3
+ - pip install cx_freeze==5.0
  - pip install libyaz0
  - pip install sarclib
  - pip install pyqt5
  - pip install sip
-
 script:
   - py build.py
