@@ -14,7 +14,7 @@ matrix:
     - name: "Python 3.5: Run tests"
       <<: *py35-steps
       
- deploy:
+deploy:
   provider: releases
   api_key: ${api_key}
   file_glob: true
