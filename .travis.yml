@@ -1,43 +1,36 @@
-on: [push]
+os: windows
+language: sh
 
-jobs:
-  build:
+py35-steps: &py35-steps
+  env: PATH=/c/Python35:/c/Python35/Scripts:$PATH
+  before_install:
+    - choco install python --version 3.5.4
+    - python -m pip install --upgrade pip
 
-    strategy:
-      matrix:
-        python-version: [3.8]
-        platform: [macos-latest, windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.platform }}
+matrix:
+  allow_failures:
+    - python: 3.5  # f-strings are available on Python >= 3.6
+  include:
+    - name: "Python 3.5: Run tests"
+      <<: *py35-steps
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install wheel
-        pip install PyQt5 PyInstaller libyaz0 sarclib cx_freeze
-    - name: Build 
-      run: |
-        python -OO build.py
-    - name: Tar (Linux/Mac)
-      run: |
-        cd distrib
-        tar -czvf ../build-${{ matrix.platform }}.tar.gz ./*
-        cd ..
-      if: ${{ matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-latest' }}
-    - name: Upload artifacts (Linux/Mac)
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-${{ matrix.platform }}
-        path: build-${{ matrix.platform }}.tar.gz
-      if: ${{ matrix.platform == 'macos-latest' || matrix.platform == 'ubuntu-latest' }}
-    - name: Upload artifacts (Win)
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-${{ matrix.platform }}
-        path: distrib/*
-      if: ${{ matrix.platform == 'windows-latest' }}
+deploy:
+  provider: releases
+  api_key: ${api_key}
+  file_glob: true
+  file: distrib/*
+  skip_cleanup: true
+  draft: true
+  on:
+    all_branches: true
+    tags: false
+
+install:
+ - pip install cx_freeze==4.3.3
+ - pip install libyaz0
+ - pip install sarclib
+ - pip install pyqt5
+ - pip install sip
+
+script:
+  - py build.py
