@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! DX Level Editor - New Super Mario Bros. U Deluxe Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto! DX.
 
@@ -32,7 +33,7 @@ from xml.etree import ElementTree as etree
 import globals
 import SarcLib
 import spritelib as SLib
-from tileset import CreateTilesets
+from tileset import CreateTilesets, SaveTileset, generateTilesetNames
 
 #################################
 
@@ -196,6 +197,27 @@ class Level_NSMBU(AbstractLevel):
                 courseFolder.addFile(SarcLib.File('course%d_bgdatL1.bin' % (areanum + 1), L1))
             if L2 is not None:
                 courseFolder.addFile(SarcLib.File('course%d_bgdatL2.bin' % (areanum + 1), L2))
+
+        # Save all the tilesets
+        if globals.TilesetEdited or globals.OverrideTilesetSaving:
+            tilesetNames = generateTilesetNames()
+            if globals.Area.tileset1:
+                if globals.Area.tileset1 == "Pa1_untitled_%d" % globals.CurrentArea or globals.OverrideTilesetSaving:
+                    globals.Area.tileset1 = tilesetNames[0]
+
+                tilesetData = SaveTileset(1)
+
+            if globals.Area.tileset2:
+                if globals.Area.tileset2 == "Pa2_untitled_%d" % globals.CurrentArea or globals.OverrideTilesetSaving:
+                    globals.Area.tileset2 = tilesetNames[1]
+
+                tilesetData = SaveTileset(2)
+
+            if globals.Area.tileset3:
+                if globals.Area.tileset3 == "Pa3_untitled_%d" % globals.CurrentArea or globals.OverrideTilesetSaving:
+                    globals.Area.tileset3 = tilesetNames[2]
+
+                tilesetData = SaveTileset(3)
 
         return newArchive.save()[0]
 

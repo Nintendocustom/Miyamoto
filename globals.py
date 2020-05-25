@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! DX Level Editor - New Super Mario Bros. U Deluxe Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto! DX.
 
@@ -27,7 +28,8 @@
 import os, sys
 
 MiyamotoID = 'Miyamoto! Level Editor by AboodXD, Gota7, John10v10, Based on Reggie! NSMBU by RoadrunnerWMC, MrRean, Grop, and Reggie! by Treeki and Tempus'
-MiyamotoVersion = '26.0 Beta (DX)'
+MiyamotoVersion = '28.0 (DX)'
+MiyamotoVersionFloat = 28.0
 
 generateStringsXML = False
 app = None
@@ -48,6 +50,10 @@ TilesetAnimTimer = None
 Overrides = None  # 320 tiles, this is put into Tiles usually
 TileBehaviours = None
 ObjectDefinitions = None  # 4 tilesets
+ObjectAllDefinitions = None
+ObjectAllCollisions = None
+ObjectAllImages = None
+ObjectAddedtoEmbedded = None
 TilesetsAnimating = False
 Area = None
 Dirty = False
@@ -86,12 +92,12 @@ AutoOpenScriptEnabled = False
 ExceptionRaised = False
 CurrentLevelNameForAutoOpenScript = 'AAAAAAAAAAAAAAAAAAAAAAAAAA'
 TileWidth = 60
+NumSprites = 0
 miyamoto_path = os.path.dirname(os.path.realpath(sys.argv[0])).replace("\\", "/")
 cython_available = False
 libyaz0_available = False
 err_msg = ''
 names_bg = []
-names_bgTrans = []
 
 # Game enums
 FileExtentions = ('.sarc',)

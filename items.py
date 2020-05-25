@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! DX Level Editor - New Super Mario Bros. U Deluxe Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto! DX.
 
@@ -53,6 +54,7 @@ class LevelEditorItem(QtWidgets.QGraphicsItem):
     autoPosChange = False
     dragoffsetx = 0
     dragoffsety = 0
+    objx, objy = 0, 0
 
     def __init__(self):
         """
@@ -62,7 +64,9 @@ class LevelEditorItem(QtWidgets.QGraphicsItem):
         self.setFlag(self.ItemSendsGeometryChanges, True)
 
     def __lt__(self, other):
-        return (self.objx * 100000 + self.objy) < (other.objx * 100000 + other.objy)
+        if self.objx != other.objx:
+            return self.objx < other.objx
+        return self.objy < other.objy
 
     def itemChange(self, change, value):
         """
@@ -76,12 +80,19 @@ class LevelEditorItem(QtWidgets.QGraphicsItem):
 
             # snap even further if Alt isn't held
             # but -only- if globals.OverrideSnapping is off
+            doSnap = False
             if (not globals.OverrideSnapping) and (not self.autoPosChange):
+                doSnap = True
+
+            if hasattr(self, 'dragging') and self.dragging:
+                doSnap = False
+
+            if doSnap:
                 if self.scene() is None:
                     objectsSelected = False
                 else:
                     objectsSelected = any([isinstance(thing, ObjectItem) for thing in globals.mainWindow.CurrentSelection])
-                if QtWidgets.QApplication.keyboardModifiers() == Qt.AltModifier:
+                if QtWidgets.QApplication.keyboardModifiers() == Qt.AltModifier and not isinstance(self, LocationItem):
                     # Alt is held; don't snap
                     newpos.setX(int(int((newpos.x() + 0.75) / tileWidthMult) * tileWidthMult))
                     newpos.setY(int(int((newpos.y() + 0.75) / tileWidthMult) * tileWidthMult))
@@ -528,15 +539,25 @@ class ObjectItem(LevelEditorItem):
         self.BoundingRect = QtCore.QRectF(0, 0, globals.TileWidth * self.width, globals.TileWidth * self.height)
         self.SelectionRect = QtCore.QRectF(0, 0, (globals.TileWidth * self.width) - 1, (globals.TileWidth * self.height) - 1)
 
-        GrabberSide = 4 * (globals.TileWidth / 20)
+        GrabberSide = 4 * (globals.TileWidth / 15)
         self.GrabberRectTL = QtCore.QRectF(0, 0, GrabberSide, GrabberSide)
         self.GrabberRectTR = QtCore.QRectF((globals.TileWidth * self.width) - GrabberSide, 0, GrabberSide, GrabberSide)
         self.GrabberRectBL = QtCore.QRectF(0, (globals.TileWidth * self.height) - GrabberSide, GrabberSide, GrabberSide)
         self.GrabberRectBR = QtCore.QRectF((globals.TileWidth * self.width) - GrabberSide, (globals.TileWidth * self.height) - GrabberSide, GrabberSide, GrabberSide)
-        self.GrabberRectMT = QtCore.QRectF(((globals.TileWidth * self.width) - GrabberSide) / 2, 0, GrabberSide, GrabberSide)
-        self.GrabberRectML = QtCore.QRectF(0, ((globals.TileWidth * self.height) - GrabberSide) / 2, GrabberSide, GrabberSide)
-        self.GrabberRectMB = QtCore.QRectF(((globals.TileWidth * self.width) - GrabberSide) / 2, (globals.TileWidth * self.height) - GrabberSide, GrabberSide, GrabberSide)
-        self.GrabberRectMR = QtCore.QRectF((globals.TileWidth * self.width) - GrabberSide, ((globals.TileWidth * self.height) - GrabberSide) / 2, GrabberSide, GrabberSide)
+        self.GrabberRectMT = QtCore.QRectF(GrabberSide, 0, (globals.TileWidth * self.width) - GrabberSide * 2, GrabberSide)
+        self.GrabberRectML = QtCore.QRectF(0, GrabberSide, GrabberSide, (globals.TileWidth * self.height) - GrabberSide * 2)
+        self.GrabberRectMB = QtCore.QRectF(GrabberSide, (globals.TileWidth * self.height) - GrabberSide, (globals.TileWidth * self.width) - GrabberSide * 2, GrabberSide)
+        self.GrabberRectMR = QtCore.QRectF((globals.TileWidth * self.width) - GrabberSide, GrabberSide, GrabberSide, (globals.TileWidth * self.height) - GrabberSide * 2)
+
+        DrawGrabberSide = 4 * (globals.TileWidth / 20)
+        self.DrawGrabberRectTL = QtCore.QRectF(0, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectTR = QtCore.QRectF((globals.TileWidth * self.width) - DrawGrabberSide, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectBL = QtCore.QRectF(0, (globals.TileWidth * self.height) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectBR = QtCore.QRectF((globals.TileWidth * self.width) - DrawGrabberSide, (globals.TileWidth * self.height) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMT = QtCore.QRectF(((globals.TileWidth * self.width) - DrawGrabberSide) / 2, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectML = QtCore.QRectF(0, ((globals.TileWidth * self.height) - DrawGrabberSide) / 2, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMB = QtCore.QRectF(((globals.TileWidth * self.width) - DrawGrabberSide) / 2, (globals.TileWidth * self.height) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMR = QtCore.QRectF((globals.TileWidth * self.width) - DrawGrabberSide, ((globals.TileWidth * self.height) - DrawGrabberSide) / 2, DrawGrabberSide, DrawGrabberSide)
 
         self.LevelRect = QtCore.QRectF(self.objx, self.objy, self.width, self.height)
 
@@ -598,14 +619,14 @@ class ObjectItem(LevelEditorItem):
             painter.drawRect(self.SelectionRect)
             painter.fillRect(self.SelectionRect, globals.theme.color('object_fill_s'))
 
-            painter.fillRect(self.GrabberRectTL, globals.theme.color('object_lines_s'))
-            painter.fillRect(self.GrabberRectTR, globals.theme.color('object_lines_s'))
-            painter.fillRect(self.GrabberRectBL, globals.theme.color('object_lines_s'))
-            painter.fillRect(self.GrabberRectBR, globals.theme.color('object_lines_s'))
-            painter.fillRect(self.GrabberRectMT, globals.theme.color('object_lines_s'))
-            painter.fillRect(self.GrabberRectML, globals.theme.color('object_lines_s'))
-            painter.fillRect(self.GrabberRectMB, globals.theme.color('object_lines_s'))
-            painter.fillRect(self.GrabberRectMR, globals.theme.color('object_lines_s'))
+            painter.fillRect(self.DrawGrabberRectTL, globals.theme.color('object_lines_s'))
+            painter.fillRect(self.DrawGrabberRectTR, globals.theme.color('object_lines_s'))
+            painter.fillRect(self.DrawGrabberRectBL, globals.theme.color('object_lines_s'))
+            painter.fillRect(self.DrawGrabberRectBR, globals.theme.color('object_lines_s'))
+            painter.fillRect(self.DrawGrabberRectMT, globals.theme.color('object_lines_s'))
+            painter.fillRect(self.DrawGrabberRectML, globals.theme.color('object_lines_s'))
+            painter.fillRect(self.DrawGrabberRectMB, globals.theme.color('object_lines_s'))
+            painter.fillRect(self.DrawGrabberRectMR, globals.theme.color('object_lines_s'))
 
     def mousePressEvent(self, event):
         """
@@ -702,6 +723,8 @@ class ObjectItem(LevelEditorItem):
         self.UpdateRects()
         self.scene().update(updaterect)
 
+        globals.mainWindow.levelOverview.update()
+
     def mouseMoveEvent(self, event):
         """
         Overrides mouse movement events if needed for resizing
@@ -762,7 +785,7 @@ class ObjectItem(LevelEditorItem):
                     clickedx = 0
 
                 if clickedx != dsx or clickedy != dsy:
-                    self.dragstartx= clickedx
+                    self.dragstartx = clickedx
 
                     for obj in self.objsDragging:
                         oldHeight = self.objsDragging[obj][1] + 0
@@ -956,6 +979,13 @@ class ObjectItem(LevelEditorItem):
 
         self.UpdateTooltip()
 
+    def mouseReleaseEvent(self, event):
+        """
+        Disables "dragging" when the mouse is released
+        """
+        self.dragging = False
+        LevelEditorItem.mouseReleaseEvent(self, event)
+
     def delete(self):
         """
         Delete the object from the level
@@ -1019,7 +1049,11 @@ class ZoneItem(LevelEditorItem):
             self.entryid = 0
             self.unknownbnf = 0
 
-        self.background = bg
+        if bg is not None:
+            self.background = bg
+
+        else:
+            self.background = (0, 0, 0, 0, to_bytes('Black', 16), 0)
 
         self.dragging = False
         self.dragstartx = -1
@@ -1040,23 +1074,32 @@ class ZoneItem(LevelEditorItem):
         """
         Updates the zone's bounding rectangle
         """
-        if hasattr(globals.mainWindow, 'ZoomLevel'):
-            grabberWidth = 400 / globals.mainWindow.ZoomLevel
-            if grabberWidth < 4: grabberWidth = 4
-        else:
-            grabberWidth = 4
-        grabberWidth *= globals.TileWidth / 20
-
         self.prepareGeometryChange()
         mult = globals.TileWidth / 16
         self.BoundingRect = QtCore.QRectF(0, 0, self.width * mult, self.height * mult)
+        self.ScalingRect = QtCore.QRectF(self.objx * mult, self.objy * mult, self.width * mult, self.height * mult)
         self.ZoneRect = QtCore.QRectF(self.objx, self.objy, self.width, self.height)
         self.DrawRect = QtCore.QRectF(3, 3, int(self.width * mult) - 6, int(self.height * mult) - 6)
-        self.GrabberRectTL = QtCore.QRectF(0, 0, grabberWidth, grabberWidth)
-        self.GrabberRectTR = QtCore.QRectF(int(self.width * mult) - grabberWidth, 0, grabberWidth, grabberWidth)
-        self.GrabberRectBL = QtCore.QRectF(0, int(self.height * mult) - grabberWidth, grabberWidth, grabberWidth)
-        self.GrabberRectBR = QtCore.QRectF(int(self.width * mult) - grabberWidth,
-                                           int(self.height * mult) - grabberWidth, grabberWidth, grabberWidth)
+
+        GrabberSide = 4 * (globals.TileWidth / 15)
+        self.GrabberRectTL = QtCore.QRectF(0, 0, GrabberSide, GrabberSide)
+        self.GrabberRectTR = QtCore.QRectF(int(self.width * mult) - GrabberSide, 0, GrabberSide, GrabberSide)
+        self.GrabberRectBL = QtCore.QRectF(0, int(self.height * mult) - GrabberSide, GrabberSide, GrabberSide)
+        self.GrabberRectBR = QtCore.QRectF(int(self.width * mult) - GrabberSide, int(self.height * mult) - GrabberSide, GrabberSide, GrabberSide)
+        self.GrabberRectMT = QtCore.QRectF(GrabberSide, 0, int(self.width * mult) - GrabberSide * 2, GrabberSide)
+        self.GrabberRectML = QtCore.QRectF(0, GrabberSide, GrabberSide, int(self.height * mult) - GrabberSide * 2)
+        self.GrabberRectMB = QtCore.QRectF(GrabberSide, int(self.height * mult) - GrabberSide, int(self.width * mult) - GrabberSide * 2, GrabberSide)
+        self.GrabberRectMR = QtCore.QRectF(int(self.width * mult) - GrabberSide, GrabberSide, GrabberSide, int(self.height * mult) - GrabberSide * 2)
+
+        DrawGrabberSide = 4 * (globals.TileWidth / 20)
+        self.DrawGrabberRectTL = QtCore.QRectF(0, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectTR = QtCore.QRectF(int(self.width * mult) - DrawGrabberSide, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectBL = QtCore.QRectF(0, int(self.height * mult) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectBR = QtCore.QRectF(int(self.width * mult) - DrawGrabberSide, int(self.height * mult) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMT = QtCore.QRectF((int(self.width * mult) - DrawGrabberSide) / 2, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectML = QtCore.QRectF(0, (int(self.height * mult) - DrawGrabberSide) / 2, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMB = QtCore.QRectF((int(self.width * mult) - DrawGrabberSide) / 2, int(self.height * mult) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMR = QtCore.QRectF(int(self.width * mult) - DrawGrabberSide, (int(self.height * mult) - DrawGrabberSide) / 2, DrawGrabberSide, DrawGrabberSide)
 
     def paint(self, painter, option, widget):
         """
@@ -1090,10 +1133,14 @@ class ZoneItem(LevelEditorItem):
 
         # And corners ("grabbers")
         GrabberColor = globals.theme.color('zone_corner')
-        painter.fillRect(self.GrabberRectTL, GrabberColor)
-        painter.fillRect(self.GrabberRectTR, GrabberColor)
-        painter.fillRect(self.GrabberRectBL, GrabberColor)
-        painter.fillRect(self.GrabberRectBR, GrabberColor)
+        painter.fillRect(self.DrawGrabberRectTL, GrabberColor)
+        painter.fillRect(self.DrawGrabberRectTR, GrabberColor)
+        painter.fillRect(self.DrawGrabberRectBL, GrabberColor)
+        painter.fillRect(self.DrawGrabberRectBR, GrabberColor)
+        painter.fillRect(self.DrawGrabberRectMT, GrabberColor)
+        painter.fillRect(self.DrawGrabberRectML, GrabberColor)
+        painter.fillRect(self.DrawGrabberRectMB, GrabberColor)
+        painter.fillRect(self.DrawGrabberRectMR, GrabberColor)
 
     def mousePressEvent(self, event):
         """
@@ -1117,12 +1164,28 @@ class ZoneItem(LevelEditorItem):
             self.dragging = True
             self.dragcorner = 4
 
+        elif self.GrabberRectMT.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 5
+
+        elif self.GrabberRectML.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 6
+
+        elif self.GrabberRectMB.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 7
+
+        elif self.GrabberRectMR.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 8
+
         else:
             self.dragging = False
 
         if self.dragging:
-            self.dragstartx = int(event.pos().x() / globals.TileWidth * 16)
-            self.dragstarty = int(event.pos().y() / globals.TileWidth * 16)
+            self.dragstartx = int(event.scenePos().x() / globals.TileWidth * 16)
+            self.dragstarty = int(event.scenePos().y() / globals.TileWidth * 16)
             self.draginitialx1 = self.objx
             self.draginitialy1 = self.objy
             self.draginitialx2 = self.objx + self.width
@@ -1139,8 +1202,8 @@ class ZoneItem(LevelEditorItem):
 
         if event.buttons() != Qt.NoButton and self.dragging:
             # resize it
-            clickedx = int(event.pos().x() / globals.TileWidth * 16)
-            clickedy = int(event.pos().y() / globals.TileWidth * 16)
+            clickedx = int(event.scenePos().x() / globals.TileWidth * 16)
+            clickedy = int(event.scenePos().y() / globals.TileWidth * 16)
 
             x1 = self.draginitialx1
             y1 = self.draginitialy1
@@ -1157,8 +1220,8 @@ class ZoneItem(LevelEditorItem):
 
             MIN_X = 16
             MIN_Y = 16
-            MIN_W = 192
-            MIN_H = 144
+            MIN_W = 80
+            MIN_H = 16
 
             if self.dragcorner == 1: # TL
                 x1 += deltax
@@ -1187,6 +1250,49 @@ class ZoneItem(LevelEditorItem):
                 y2 += deltay
                 if x2 - x1 < MIN_W: x2 = x1 + MIN_W
                 if y2 - y1 < MIN_H: y2 = y1 + MIN_H
+
+            elif self.dragcorner == 5: # MT
+                y1 += deltay
+                if y1 < MIN_Y: y1 = MIN_Y
+                if y2 - y1 < MIN_H: y2 = y1 + MIN_H
+
+            elif self.dragcorner == 6: # ML
+                x1 += deltax
+                if x1 < MIN_X: x1 = MIN_X
+                if x2 - x1 < MIN_W: x2 = x1 + MIN_W
+
+            elif self.dragcorner == 7: # MB
+                y2 += deltay
+                if y2 - y1 < MIN_H: y2 = y1 + MIN_H
+
+            elif self.dragcorner == 8: # MR
+                x2 += deltax
+                if x2 - x1 < MIN_W: x2 = x1 + MIN_W
+
+            if QtWidgets.QApplication.keyboardModifiers() != Qt.AltModifier:
+                # Snap to 8x8 grid
+
+                if self.dragcorner in [1, 3, 6]:
+                    if x1 % 8 < 4:
+                        x1 -= (x1 % 8)
+                    else:
+                        x1 += 8 - (x1 % 8)
+                elif self.dragcorner not in [5, 7]:
+                    if x2 % 8 < 4:
+                        x2 -= (x2 % 8)
+                    else:
+                        x2 += 8 - (x2 % 8)
+
+                if self.dragcorner in [1, 2, 5]:
+                    if y1 % 8 < 4:
+                        y1 -= (y1 % 8)
+                    else:
+                        y1 += 8 - (y1 % 8)
+                elif self.dragcorner not in [6, 8]:
+                    if y2 % 8 < 4:
+                        y2 -= (y2 % 8)
+                    else:
+                        y2 += 8 - (y2 % 8)
 
             self.objx = x1
             self.objy = y1
@@ -1217,6 +1323,13 @@ class ZoneItem(LevelEditorItem):
             event.accept()
         else:
             LevelEditorItem.mouseMoveEvent(self, event)
+
+    def mouseReleaseEvent(self, event):
+        """
+        Disables "dragging" when the mouse is released
+        """
+        self.dragging = False
+        LevelEditorItem.mouseReleaseEvent(self, event)
 
     def itemChange(self, change, value):
         """
@@ -1280,16 +1393,35 @@ class LocationItem(LevelEditorItem):
         Updates the location's bounding rectangle
         """
         self.prepareGeometryChange()
-        if self.width == 0: self.width == 1
-        if self.height == 0: self.height == 1
-        GrabberSide = 4 * (globals.TileWidth / 20)
-        self.BoundingRect = QtCore.QRectF(0, 0, self.width * globals.TileWidth / 16, self.height * globals.TileWidth / 16)
-        self.SelectionRect = QtCore.QRectF(self.objx * globals.TileWidth / 16, self.objy * globals.TileWidth / 16,
-                                           self.width * globals.TileWidth / 16, self.height * globals.TileWidth / 16)
+        if self.width == 0: self.width == 8
+        if self.height == 0: self.height == 8
+        mult = globals.TileWidth / 16
+
+        self.BoundingRect = QtCore.QRectF(0, 0, self.width * mult, self.height * mult)
+        self.SelectionRect = QtCore.QRectF(self.objx * mult, self.objy * mult, self.width * mult, self.height * mult)
         self.ZoneRect = QtCore.QRectF(self.objx, self.objy, self.width, self.height)
-        self.DrawRect = QtCore.QRectF(1, 1, (self.width * globals.TileWidth / 16) - 2, (self.height * globals.TileWidth / 16) - 2)
-        self.GrabberRect = QtCore.QRectF(((globals.TileWidth / 16) * self.width) - GrabberSide,
-                                         ((globals.TileWidth / 16) * self.height) - GrabberSide, GrabberSide, GrabberSide)
+        self.DrawRect = QtCore.QRectF(1, 1, (self.width * mult) - 2, (self.height * mult) - 2)
+
+        GrabberSide = 4 * (globals.TileWidth / 15)
+        self.GrabberRectTL = QtCore.QRectF(0, 0, GrabberSide, GrabberSide)
+        self.GrabberRectTR = QtCore.QRectF(int(self.width * mult) - GrabberSide, 0, GrabberSide, GrabberSide)
+        self.GrabberRectBL = QtCore.QRectF(0, int(self.height * mult) - GrabberSide, GrabberSide, GrabberSide)
+        self.GrabberRectBR = QtCore.QRectF(int(self.width * mult) - GrabberSide, int(self.height * mult) - GrabberSide, GrabberSide, GrabberSide)
+        self.GrabberRectMT = QtCore.QRectF(GrabberSide, 0, int(self.width * mult) - GrabberSide * 2, GrabberSide)
+        self.GrabberRectML = QtCore.QRectF(0, GrabberSide, GrabberSide, int(self.height * mult) - GrabberSide * 2)
+        self.GrabberRectMB = QtCore.QRectF(GrabberSide, int(self.height * mult) - GrabberSide, int(self.width * mult) - GrabberSide * 2, GrabberSide)
+        self.GrabberRectMR = QtCore.QRectF(int(self.width * mult) - GrabberSide, GrabberSide, GrabberSide, int(self.height * mult) - GrabberSide * 2)
+
+        DrawGrabberSide = 4 * (globals.TileWidth / 20)
+        self.DrawGrabberRectTL = QtCore.QRectF(0, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectTR = QtCore.QRectF(int(self.width * mult) - DrawGrabberSide, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectBL = QtCore.QRectF(0, int(self.height * mult) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectBR = QtCore.QRectF(int(self.width * mult) - DrawGrabberSide, int(self.height * mult) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMT = QtCore.QRectF((int(self.width * mult) - DrawGrabberSide) / 2, 0, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectML = QtCore.QRectF(0, (int(self.height * mult) - DrawGrabberSide) / 2, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMB = QtCore.QRectF((int(self.width * mult) - DrawGrabberSide) / 2, int(self.height * mult) - DrawGrabberSide, DrawGrabberSide, DrawGrabberSide)
+        self.DrawGrabberRectMR = QtCore.QRectF(int(self.width * mult) - DrawGrabberSide, (int(self.height * mult) - DrawGrabberSide) / 2, DrawGrabberSide, DrawGrabberSide)
+
         self.UpdateListItem()
 
     def paint(self, painter, option, widget):
@@ -1312,62 +1444,203 @@ class LocationItem(LevelEditorItem):
         painter.setFont(self.font)
         painter.drawText(QtCore.QRectF(0, 0, globals.TileWidth / 2, globals.TileWidth / 2), Qt.AlignCenter, self.title)
 
-        # Draw the resizer rectangle, if selected
-        if self.isSelected(): painter.fillRect(self.GrabberRect, globals.theme.color('location_lines_s'))
+        # Draw the resizer rectangles, if selected
+        if self.isSelected():
+            GrabberColor = globals.theme.color('location_lines_s')
+            painter.fillRect(self.DrawGrabberRectTL, GrabberColor)
+            painter.fillRect(self.DrawGrabberRectTR, GrabberColor)
+            painter.fillRect(self.DrawGrabberRectBL, GrabberColor)
+            painter.fillRect(self.DrawGrabberRectBR, GrabberColor)
+            painter.fillRect(self.DrawGrabberRectMT, GrabberColor)
+            painter.fillRect(self.DrawGrabberRectML, GrabberColor)
+            painter.fillRect(self.DrawGrabberRectMB, GrabberColor)
+            painter.fillRect(self.DrawGrabberRectMR, GrabberColor)
 
     def mousePressEvent(self, event):
         """
         Overrides mouse pressing events if needed for resizing
         """
-        if self.isSelected() and self.GrabberRect.contains(event.pos()):
+
+        if self.isSelected() and self.GrabberRectTL.contains(event.pos()):
             # start dragging
             self.dragging = True
-            self.dragstartx = int(event.pos().x() / globals.TileWidth * 16)
-            self.dragstarty = int(event.pos().y() / globals.TileWidth * 16)
+            self.dragcorner = 1
+
+        elif self.isSelected() and self.GrabberRectTR.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 2
+
+        elif self.isSelected() and self.GrabberRectBL.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 3
+
+        elif self.isSelected() and self.GrabberRectBR.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 4
+
+        elif self.isSelected() and self.GrabberRectMT.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 5
+
+        elif self.isSelected() and self.GrabberRectML.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 6
+
+        elif self.isSelected() and self.GrabberRectMB.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 7
+
+        elif self.isSelected() and self.GrabberRectMR.contains(event.pos()):
+            self.dragging = True
+            self.dragcorner = 8
+
+        else:
+            self.dragging = False
+
+        if self.dragging:
+            self.dragstartx = int(event.scenePos().x() / globals.TileWidth * 16)
+            self.dragstarty = int(event.scenePos().y() / globals.TileWidth * 16)
+            self.draginitialx1 = self.objx
+            self.draginitialy1 = self.objy
+            self.draginitialx2 = self.objx + self.width
+            self.draginitialy2 = self.objy + self.height
             event.accept()
+            
         else:
             LevelEditorItem.mousePressEvent(self, event)
-            self.dragging = False
 
     def mouseMoveEvent(self, event):
         """
         Overrides mouse movement events if needed for resizing
         """
+
         if event.buttons() != Qt.NoButton and self.dragging:
             # resize it
-            dsx = self.dragstartx
-            dsy = self.dragstarty
-            clickedx = event.pos().x() / globals.TileWidth * 16
-            clickedy = event.pos().y() / globals.TileWidth * 16
+            clickedx = int(event.scenePos().x() / globals.TileWidth * 16)
+            clickedy = int(event.scenePos().y() / globals.TileWidth * 16)
 
-            cx = self.objx
-            cy = self.objy
+            x1 = self.draginitialx1
+            y1 = self.draginitialy1
+            x2 = self.draginitialx2
+            y2 = self.draginitialy2
 
-            if clickedx < 0: clickedx = 0
-            if clickedy < 0: clickedy = 0
+            oldx = self.x()
+            oldy = self.y()
+            oldw = self.width * globals.TileWidth / 16
+            oldh = self.height * globals.TileWidth / 16
 
-            if clickedx != dsx or clickedy != dsy:
-                self.dragstartx = clickedx
-                self.dragstarty = clickedy
+            deltax = clickedx - self.dragstartx
+            deltay = clickedy - self.dragstarty
 
-                self.width += clickedx - dsx
-                self.height += clickedy - dsy
+            MIN_X = 0
+            MIN_Y = 0
+            MIN_W = 8
+            MIN_H = 8
 
-                oldrect = self.BoundingRect
-                oldrect.translate(cx * globals.TileWidth / 16, cy * globals.TileWidth / 16)
-                newrect = QtCore.QRectF(self.x(), self.y(), self.width * globals.TileWidth / 16, self.height * globals.TileWidth / 16)
-                updaterect = oldrect.united(newrect)
+            if self.dragcorner == 1: # TL
+                x1 += deltax
+                y1 += deltay
+                if x1 < MIN_X: x1 = MIN_X
+                if y1 < MIN_Y: y1 = MIN_Y
+                if x2 - x1 < MIN_W: x1 = x2 - MIN_W
+                if y2 - y1 < MIN_H: y1 = y2 - MIN_H
 
-                self.UpdateRects()
-                self.scene().update(updaterect)
-                SetDirty()
+            elif self.dragcorner == 2: # TR
+                x2 += deltax
+                y1 += deltay
+                if y1 < MIN_Y: y1 = MIN_Y
+                if x2 - x1 < MIN_W: x2 = x1 + MIN_W
+                if y2 - y1 < MIN_H: y1 = y2 - MIN_H
 
-                if self.sizeChanged is not None:
-                    self.sizeChanged(self, self.width, self.height)
+            elif self.dragcorner == 3: # BL
+                x1 += deltax
+                y2 += deltay
+                if x1 < MIN_X: x1 = MIN_X
+                if x2 - x1 < MIN_W: x1 = x2 - MIN_W
+                if y2 - y1 < MIN_H: y2 = y1 + MIN_H
+
+            elif self.dragcorner == 4: # BR
+                x2 += deltax
+                y2 += deltay
+                if x2 - x1 < MIN_W: x2 = x1 + MIN_W
+                if y2 - y1 < MIN_H: y2 = y1 + MIN_H
+
+            elif self.dragcorner == 5: # MT
+                y1 += deltay
+                if y1 < MIN_Y: y1 = MIN_Y
+                if y2 - y1 < MIN_H: y2 = y1 + MIN_H
+
+            elif self.dragcorner == 6: # ML
+                x1 += deltax
+                if x1 < MIN_X: x1 = MIN_X
+                if x2 - x1 < MIN_W: x2 = x1 + MIN_W
+
+            elif self.dragcorner == 7: # MB
+                y2 += deltay
+                if y2 - y1 < MIN_H: y2 = y1 + MIN_H
+
+            elif self.dragcorner == 8: # MR
+                x2 += deltax
+                if x2 - x1 < MIN_W: x2 = x1 + MIN_W
+
+            if QtWidgets.QApplication.keyboardModifiers() != Qt.AltModifier:
+                # Snap to 8x8 grid
+
+                if self.dragcorner in [1, 3, 6]:
+                    if x1 % 8 < 4:
+                        x1 -= (x1 % 8)
+                    else:
+                        x1 += 8 - (x1 % 8)
+                elif self.dragcorner not in [5, 7]:
+                    if x2 % 8 < 4:
+                        x2 -= (x2 % 8)
+                    else:
+                        x2 += 8 - (x2 % 8)
+
+                if self.dragcorner in [1, 2, 5]:
+                    if y1 % 8 < 4:
+                        y1 -= (y1 % 8)
+                    else:
+                        y1 += 8 - (y1 % 8)
+                elif self.dragcorner not in [6, 8]:
+                    if y2 % 8 < 4:
+                        y2 -= (y2 % 8)
+                    else:
+                        y2 += 8 - (y2 % 8)
+
+            self.objx = x1
+            self.objy = y1
+            self.width = x2 - x1
+            self.height = y2 - y1
+
+            oldrect = QtCore.QRectF(oldx, oldy, oldw, oldh)
+            newrect = QtCore.QRectF(self.x(), self.y(), self.width * globals.TileWidth / 16, self.height * globals.TileWidth / 16)
+            updaterect = oldrect.united(newrect)
+            updaterect.setTop(updaterect.top() - 3)
+            updaterect.setLeft(updaterect.left() - 3)
+            updaterect.setRight(updaterect.right() + 3)
+            updaterect.setBottom(updaterect.bottom() + 3)
+
+            self.UpdateRects()
+            self.setPos(int(self.objx * globals.TileWidth / 16), int(self.objy * globals.TileWidth / 16))
+            self.scene().update(updaterect)
+
+            globals.mainWindow.levelOverview.update()
+            SetDirty()
+
+            if self.sizeChanged is not None:
+                self.sizeChanged(self, self.width, self.height)
 
             event.accept()
         else:
             LevelEditorItem.mouseMoveEvent(self, event)
+
+    def mouseReleaseEvent(self, event):
+        """
+        Disables "dragging" when the mouse is released
+        """
+        self.dragging = False
+        LevelEditorItem.mouseReleaseEvent(self, event)
 
     def delete(self):
         """
@@ -1389,7 +1662,7 @@ class SpriteItem(LevelEditorItem):
     BoundingRect = QtCore.QRectF(0, 0, globals.TileWidth, globals.TileWidth)
     SelectionRect = QtCore.QRectF(0, 0, globals.TileWidth - 1, globals.TileWidth - 1)
 
-    def __init__(self, type, x, y, data):
+    def __init__(self, type, x, y, data, layer=0, initialState=0):
         """
         Creates a sprite with specific data
         """
@@ -1401,6 +1674,8 @@ class SpriteItem(LevelEditorItem):
         self.objx = x
         self.objy = y
         self.spritedata = data
+        self.layer = layer
+        self.initialState = initialState
         self.listitem = None
         self.LevelRect = QtCore.QRectF(self.objx / 16, self.objy / 16, globals.TileWidth / 16, globals.TileWidth / 16)
         self.ChangingPos = False
@@ -1422,13 +1697,13 @@ class SpriteItem(LevelEditorItem):
         globals.DirtyOverride += 1
         if globals.SpriteImagesShown:
             self.setPos(
-                int((self.objx + self.ImageObj.xOffset) * globals.TileWidth / 16),
-                int((self.objy + self.ImageObj.yOffset) * globals.TileWidth / 16),
+                int((self.objx + self.ImageObj.xOffset) * (globals.TileWidth / 16)),
+                int((self.objy + self.ImageObj.yOffset) * (globals.TileWidth / 16)),
             )
         else:
             self.setPos(
-                int(self.objx * globals.TileWidth / 16),
-                int(self.objy * globals.TileWidth / 16),
+                int(self.objx * (globals.TileWidth / 16)),
+                int(self.objy * (globals.TileWidth / 16)),
             )
         globals.DirtyOverride -= 1
 
@@ -1587,6 +1862,11 @@ class SpriteItem(LevelEditorItem):
             SLib.SpriteImagesLoaded.add(self.type)
 
         self.ImageObj = obj(self)
+
+        # show auxiliary objects properly
+        for aux in self.ImageObj.aux:
+            aux.setVisible(globals.SpriteImagesShown)
+
         self.UpdateDynamicSizing()
 
     def UpdateDynamicSizing(self):
@@ -1609,8 +1889,8 @@ class SpriteItem(LevelEditorItem):
             self.UpdateRects()
             self.ChangingPos = True
             self.setPos(
-                int((self.objx + self.ImageObj.xOffset) * globals.TileWidth / 16),
-                int((self.objy + self.ImageObj.yOffset) * globals.TileWidth / 16),
+                int((self.objx + self.ImageObj.xOffset) * (globals.TileWidth / 16)),
+                int((self.objy + self.ImageObj.yOffset) * (globals.TileWidth / 16)),
             )
             self.ChangingPos = False
 
@@ -1629,8 +1909,8 @@ class SpriteItem(LevelEditorItem):
         # Get rects
         imgRect = QtCore.QRectF(
             0, 0,
-            self.ImageObj.width * globals.TileWidth / 16,
-            self.ImageObj.height * globals.TileWidth / 16,
+            self.ImageObj.width * (globals.TileWidth / 16),
+            self.ImageObj.height * (globals.TileWidth / 16),
         )
         spriteboxRect = QtCore.QRectF(
             0, 0,
@@ -1834,9 +2114,9 @@ class SpriteItem(LevelEditorItem):
         """
         self.objx, self.objy = newobjx, newobjy
         if globals.SpriteImagesShown:
-            self.setPos((newobjx + self.ImageObj.xOffset) * globals.TileWidth / 16, (newobjy + self.ImageObj.yOffset) * globals.TileWidth / 16)
+            self.setPos((newobjx + self.ImageObj.xOffset) * (globals.TileWidth / 16), (newobjy + self.ImageObj.yOffset) * (globals.TileWidth / 16))
         else:
-            self.setPos(newobjx * globals.TileWidth / 16, newobjy * globals.TileWidth / 16)
+            self.setPos(newobjx * (globals.TileWidth / 16), newobjy * (globals.TileWidth / 16))
 
     def mousePressEvent(self, event):
         """
@@ -1966,8 +2246,7 @@ class EntranceItem(LevelEditorItem):
     Level editor item that represents an entrance
     """
     BoundingRect = QtCore.QRectF(0, 0, globals.TileWidth, globals.TileWidth)
-    RoundedRect = QtCore.QRectF(1 / 24 * globals.TileWidth, 1 / 24 * globals.TileWidth, globals.TileWidth - 1 / 24 * globals.TileWidth,
-                                globals.TileWidth - 1 / 24 * globals.TileWidth)
+    RoundedRect = QtCore.QRectF(1, 1, globals.TileWidth - 2, globals.TileWidth - 2)
     EntranceImages = None
 
     class AuxEntranceItem(QtWidgets.QGraphicsItem):
@@ -2158,7 +2437,7 @@ class EntranceItem(LevelEditorItem):
             h = 2
 
         # Now make the rects
-        self.RoundedRect = QtCore.QRectF(x * globals.TileWidth, y * globals.TileWidth, w * globals.TileWidth, h * globals.TileWidth)
+        self.RoundedRect = QtCore.QRectF(x * globals.TileWidth + 1, y * globals.TileWidth + 1, w * globals.TileWidth - 2, h * globals.TileWidth - 2)
         self.BoundingRect = QtCore.QRectF(x * globals.TileWidth, y * globals.TileWidth, w * globals.TileWidth, h * globals.TileWidth)
 
         # Update the aux thing
@@ -2264,7 +2543,7 @@ class PathItem(LevelEditorItem):
     """
     BoundingRect = QtCore.QRectF(0, 0, globals.TileWidth, globals.TileWidth)
     SelectionRect = QtCore.QRectF(0, 0, globals.TileWidth, globals.TileWidth)
-    RoundedRect = QtCore.QRectF(0, 0, globals.TileWidth, globals.TileWidth)
+    RoundedRect = QtCore.QRectF(1, 1, globals.TileWidth - 2, globals.TileWidth - 2)
 
     def __init__(self, objx, objy, pathinfo, nodeinfo, unk1, unk2, unk3,
                  unk4):  # no idea what the unknowns are, so...placeholders!
@@ -2400,7 +2679,7 @@ class NabbitPathItem(LevelEditorItem):
 
         self.font = globals.NumberFont
         self.objx = objx - 8
-        self.objy = objy
+        self.objy = objy - 8
         self.unk1 = unk1
         self.unk2 = unk2
         self.unk3 = unk3
@@ -2445,7 +2724,7 @@ class NabbitPathItem(LevelEditorItem):
         Our x/y was changed, update pathinfo
         """
         self.pathinfo['nodes'][self.nodeid]['x'] = self.objx + 8
-        self.pathinfo['nodes'][self.nodeid]['y'] = self.objy
+        self.pathinfo['nodes'][self.nodeid]['y'] = self.objy + 8
 
     def updateId(self):
         """
@@ -2546,8 +2825,8 @@ class PathEditorLineItem(LevelEditorItem):
         xcoords = []
         ycoords = []
         for node in self.nodelist:
-            xcoords.append(int(node['x']))
-            ycoords.append(int(node['y']))
+            xcoords.append(int(node['x']) + 8)
+            ycoords.append(int(node['y']) + 8)
         self.objx = (min(xcoords) - 4)
         self.objy = (min(ycoords) - 4)
 
@@ -2576,12 +2855,12 @@ class PathEditorLineItem(LevelEditorItem):
         mult = globals.TileWidth / 16
         for j, node in enumerate(snl):
             if ((j + 1) < len(snl)):
-                a = QtCore.QPointF(float(snl[j]['x'] * mult) - self.x(), float(snl[j]['y'] * mult) - self.y())
-                b = QtCore.QPointF(float(snl[j + 1]['x'] * mult) - self.x(), float(snl[j + 1]['y'] * mult) - self.y())
+                a = QtCore.QPointF(float((snl[j]['x'] + 8) * mult) - self.x(), float((snl[j]['y'] + 8) * mult) - self.y())
+                b = QtCore.QPointF(float((snl[j + 1]['x'] + 8) * mult) - self.x(), float((snl[j + 1]['y'] + 8) * mult) - self.y())
                 lines.append(QtCore.QLineF(a, b))
             elif self.loops and (j + 1) == len(snl):
-                a = QtCore.QPointF(float(snl[j]['x'] * mult) - self.x(), float(snl[j]['y'] * mult) - self.y())
-                b = QtCore.QPointF(float(snl[0]['x'] * mult) - self.x(), float(snl[0]['y'] * mult) - self.y())
+                a = QtCore.QPointF(float((snl[j]['x'] + 8) * mult) - self.x(), float((snl[j]['y'] + 8) * mult) - self.y())
+                b = QtCore.QPointF(float((snl[0]['x'] + 8) * mult) - self.x(), float((snl[0]['y'] + 8) * mult) - self.y())
                 lines.append(QtCore.QLineF(a, b))
 
         painter.drawLines(lines)
@@ -2597,6 +2876,23 @@ class NabbitPathEditorLineItem(PathEditorLineItem):
     """
     Level editor item to draw a line between two nabbit path nodes
     """
+    def computeBoundRectAndPos(self):
+        xcoords = []
+        ycoords = []
+        for node in self.nodelist:
+            xcoords.append(int(node['x']))
+            ycoords.append(int(node['y']))
+        self.objx = (min(xcoords) - 4)
+        self.objy = (min(ycoords) - 4)
+
+        mywidth = (8 + (max(xcoords) - self.objx)) * (globals.TileWidth / 16)
+        myheight = (8 + (max(ycoords) - self.objy)) * (globals.TileWidth / 16)
+        globals.DirtyOverride += 1
+        self.setPos(self.objx * (globals.TileWidth / 16), self.objy * (globals.TileWidth / 16))
+        globals.DirtyOverride -= 1
+        self.prepareGeometryChange()
+        self.BoundingRect = QtCore.QRectF(-4, -4, mywidth, myheight)
+
     def paint(self, painter, option, widget):
         """
         Paints the path lines

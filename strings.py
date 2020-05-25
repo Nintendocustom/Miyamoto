@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! DX Level Editor - New Super Mario Bros. U Deluxe Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto! DX.
 
@@ -289,7 +290,7 @@ class MiyamotoTranslation:
                 },
             'Err_MissingTileset': {
                 0: 'Error',
-                1: 'Cannot find the required tileset file [file].sarc. Check your Course folder and make sure it exists.',
+                1: 'Cannot find the required tileset file [file].szs. Check your Unit folder and make sure it exists.',
                 },
             'Err_Save': {
                 0: 'Error',
@@ -313,7 +314,7 @@ class MiyamotoTranslation:
                 2: 'New Game Patch',
                 3: 'It appears that this is your first time using the game patch for [game]. Please select its Course folder so tilesets and levels can be loaded.',
                 4: 'Aborted Game Path Selection',
-                5: 'Since you did not select the stage folder for [game], stages and tilesets will not load correctly. You can try again by choosing Change Game Path while the [game] patch is loaded.',
+                5: 'Since you did not select the "Course" folder for [game], stages will not load correctly. You can try again by choosing Change Game Path while the [game] patch is loaded.',
                 6: 'New Game Patch',
                 7: 'You can change the game path for [game] at any time by choosing Change Game Path while the [game] patch is loaded.',
                 8: 'Loading sprite data...',
@@ -523,6 +524,13 @@ class MiyamotoTranslation:
                 141: 'Always resave the tilesets when saving the level, except for when deleting an area',
                 142: 'Edit Slot [slot] Tileset',
                 143: 'Edit Slot [slot] Tileset',
+                144: 'Save Level to FTP server',
+                145: 'Saves the Level to an FTP server',
+                146: 'FTP Preferences...',
+                147: 'Raise to Top',
+                148: 'Raise selected objects to the front of all other objects in the scene.',
+                149: 'Lower to Bottom',
+                150: 'Lower selected objects behind all other objects in the scene.',
                 },
             'Objects': {
                 0: '[b]Tileset [tileset], object [obj]:[/b][br][width]x[height] on layer [layer]',
@@ -593,6 +601,10 @@ class MiyamotoTranslation:
                 14: '[b]Nabbit Path Node [id][/b]',
                 15: 'Action:',
                 16: '[b]Action:[/b][br]The action Nabbit will do when he is on this node',
+                17: 'Unknown value 1:',
+                18: 'Unknown value 2:',
+                19: 'Unknown value 3:',
+                20: 'Unknown value 4:',
                 },
             'Paths': {
                 0: '[b]Path [path][/b][br]Node [node]',
@@ -645,6 +657,7 @@ class MiyamotoTranslation:
                 40: '7',
                 41: '8',
                 42: '9: Best',
+                43: 'Split Embedded tab:',
                 },
             'QuickPaint': {
                 1: "WOAH! Watch out!",
@@ -720,6 +733,11 @@ class MiyamotoTranslation:
                 6: '[b]Sprite [id]:[br][name][/b]',
                 7: 'Object Files',
                 8: '[b]This sprite uses:[/b][br][list]',
+                9: 'Layer:',
+                10: ('Layer 1', 'Layer 2', 'Layer 0'),
+                11: '[b]Layer:[/b][br]Allows you to change the layer which this sprite is active on. This field is not read in-game by some sprites - for almost all normal cases, you will want to use layer 1.',
+                12: 'Initial State:',
+                13: '[b]Initial State:[/b][br]Used by some sprites to initiate in a different state depending on the value of this field.',
                 },
             'Sprites': {
                 0: '[b]Sprite [type]:[/b][br][name]',
@@ -803,6 +821,11 @@ class MiyamotoTranslation:
             'WindowTitle': {
                 0: 'Untitled',
                 },
+            'FtpDlg' : {
+                0: 'Transfer Failed',
+                1: 'Transfering the level to the FTP server failed.',
+                2: 'Transfering the tileset to the FTP server failed.',
+                },
             'ZonesDlg': {
                 0: 'Zones',
                 1: (
@@ -872,18 +895,19 @@ class MiyamotoTranslation:
                 36: 'Bias:',
                 37: '[b]Bias:[/b][br]Sets the screen bias to the left edge on load, preventing initial scrollback.[br]Useful for pathed levels.[br]Note: Not all zoom/mode combinations support bias',
                 38: (
-                    'Left to Right',
-                    'Right to Left',
-                    'Top to Bottom',
-                    'Bottom to Top',
+                    'Right and Down',
+                    'Right and Up',
+                    'Left and Down',
+                    'Left and Up',
+                    'Right and Down 2',
+                    'Right and Up 2',
+                    'Right and Down 3',
+                    'Right and Up 3',
                     ),
                 39: 'Camera Tracking:',
-                40: '[b]Camera Tracking:[/b][br]This setting makes changes to camera tracking during multiplayer mode.[br]If the camera doesn\'t move, choose Left to Right.[br]If you\'re unsure, choose Left to Right.',
-                41: (
-                    'Hidden',
-                    'On Top',
-                    ),
-                42: '[b]Visibility:[/b][br]Hidden - Mario is hidden when moving behind objects on Layer 0[br]On Top - Mario is displayed above Layer 0 at all times.[br][br]Note: Entities behind layer 0 other than Mario are never visible',
+                40: '[b]Camera Tracking:[/b][br]This setting makes changes to camera tracking during multiplayer mode.[br]It prioritizes these directions when players goes in the wrong direction.[br]For example if you are making a tower level where the primary objective is going up[br]and you don\'t want the screen going back down if just one player falls,[br]then set the tracking to any value containing \'Up\' and that will prevent that from happening.',
+                41: 'Hidden',
+                42: '[b]Visibility:[/b][br]Hidden - Mario is hidden when moving behind objects on Layer 0.[br][br]Note: Entities behind layer 0 other than Mario are never visible.',
                 43: (
                     'Small',
                     'Large',
@@ -943,10 +967,21 @@ class MiyamotoTranslation:
                 73: '[b]Lower Bounds 2:[/b][br]Unknown differences from the main lower bounds.',
                 74: 'Enable Scrolling vertically?',
                 75: '[b]Enable Scrolling vertically?:[/b][br]The level can\'t scroll vertically if this is not checked Seems to be always checked.',
-                76: 'Type:',
-                77: '[b]Type:[/b][br]Sets the type for this Zone',
+                76: 'Flags',
+                77: (
+                    'Start Zoomed Out:',
+                    'Center Camera X-pos On Load:',
+                    'Camera Follows on Y-axis:',
+                    'Camera Stops At Zone End:',
+                    'Unused 1:',
+                    'Toad House Related 1:',
+                    'Unused 2:',
+                    'Toad House Related 2:',
+                    ),
                 78: 'Snap to 8x8 Grid',
                 79: 'Snap to 16x16 Grid',
+                80: 'Small / Small Focus Light',
+                81: '[b]Visibility:[/b][br]Small - A small, centered spotlight affords visibility through layer 0.[br]Small Focuslight - A small spotlight which changes size based on player movement.',
                 },
             'Zones': {
                 0: 'Zone [num]',
