@@ -89,8 +89,6 @@ try:
 except:
     print("Cython ist nicht verfügbar!")
     print("Erwarte, dass Miyamoto sehr langsam ist!\n")
-    print("Cython is not available!")
-    print("Expect Miyamoto to be very slow!\n")
 
 else:
     del cython_available
