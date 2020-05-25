@@ -17,25 +17,25 @@ GitHub: https://github.com/aboood40091/Miyamoto
 ###### Miyamoto
 * AboodXD -- Hauptprogrammierer, Spritedaten, Grafiken
 * Gota7 -- Programmierung, Spritedaten, Grafiken, etc.
-* Gruppe -- Programmierer, Spritedaten
+* Grop -- Programmierer, Spritedaten
 * Gregory Haskins -- Gibberish
-* John10v10 -- Schnellmalwerkzeug
+* John10v10 -- Quick Paint Tool
 * libtxc_dxtn -- Original DXT5 (De)compressor in C
 * Luzifer -- Grafiken
 * Mayro -- Grafiken
-* mrbengtsson -- Grafiken
+* mrbengtsson -- Programmierung, Spritedaten, Grafiken
 * Meorge -- Tests unter macOS
 * NVIDIA -- NVCOMPRESS
 * RicBent -- Grafiken
 * reece stone -- Spritedata, Graphics
 * Shawn Shea -- Grafiken
 * Toms -- Spritedaten, Grafiken
-* Wexos -- Original BC3 Kompressor in C#
+* Wexos -- Originaler BC3 Kompressor in C#
 * Wiimm -- WSZST
   
 #### Reggie NSMBU
-* Gruppe -- Programmierer, Spritedaten, Grafiken
-* Schluckauf -- Spritedaten
+* Grop -- Programmierer, Spritedaten, Grafiken
+* Hiccup -- Spritedaten
 * Kinnay -- Spritedaten
 * MrRean -- Programmierer, Spritedaten, Kategorien, Grafiken, etc.
 * RoadrunnerWMC -- Programmierer, Spritedaten, Grafiken
@@ -43,9 +43,15 @@ GitHub: https://github.com/aboood40091/Miyamoto
 ----------------------------------------------------------------
 
 #### TODO
-- Unbekannte Bereiche herausfinden
+- Unbekannte Gebietsfelder herausfinden
 - Sprite-Bilder / HD-Screenshots (viele davon)
 - Verbessern der Größenänderung von Zonen und Objekten
+
+----------------------------------------------------------------
+
+### Miyamoto bauen
+Bitte beachten Sie, dass du beim Bau von Miyamoto alle Instanzen der Nutzung von Cython sowohl in Miyamoto als auch in libyaz0 entfernen musst. (Pyximport)  
+Alternativ kann man die .pyx-Dateien erstellen und dann alle Instanzen von Pyximport im Code entfernen.
 
 ----------------------------------------------------------------
 

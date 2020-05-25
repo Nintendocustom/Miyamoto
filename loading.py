@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -33,7 +34,7 @@ from xml.etree import ElementTree as etree
 import globals
 import spritelib as SLib
 from gamedefs import MiyamotoGameDefinition, GetPath
-from misc import SpriteDefinition, setting, setSetting
+from misc import SpriteDefinition, BGName, setting, setSetting
 import SarcLib
 from strings import MiyamotoTranslation
 
@@ -63,15 +64,14 @@ def LoadBGNames():
     """
     # Sort BG Names
     globals.names_bg = []
-    globals.names_bgTrans = []
 
-    with open(GetPath('bg'), 'r') as txt:
-        for line in txt.readlines():
-            globals.names_bg.append(line.rstrip())
+    with open(GetPath('bg'), 'r') as txt, open(GetPath('bgTrans'), 'r') as txt2:
+        for line, lineTrans in zip(txt.readlines(), txt2.readlines()):
+            name, trans = line.rstrip(), lineTrans.rstrip()
+            if name and trans:
+                globals.names_bg.append(BGName(name, trans))
 
-    with open(GetPath('bgTrans'), 'r') as txt:
-        for line in txt.readlines():
-            globals.names_bgTrans.append(line.rstrip())
+    globals.names_bg.append(BGName.Custom())
 
 
 def LoadLevelNames():
@@ -192,14 +192,35 @@ def LoadSpriteData():
     """
     Ensures that the sprite data info is loaded
     """
-    globals.Sprites = [None] * 724
     errors = []
     errortext = []
+
+    spriteIds = [-1]
 
     # It works this way so that it can overwrite settings based on order of precedence
     paths = [(globals.trans.files['spritedata'], None)]
     for pathtuple in globals.gamedef.multipleRecursiveFiles('spritedata', 'spritenames'):
         paths.append(pathtuple)
+
+    for sdpath, snpath in paths:
+
+        # Add XML sprite data, if there is any
+        if sdpath not in (None, ''):
+            path = sdpath if isinstance(sdpath, str) else sdpath.path
+            tree = etree.parse(path)
+            root = tree.getroot()
+
+            for sprite in root:
+                if sprite.tag.lower() != 'sprite':
+                    continue
+
+                try:
+                    spriteIds.append(int(sprite.attrib['id']))
+                except ValueError:
+                    continue
+
+    globals.NumSprites = max(spriteIds) + 1
+    globals.Sprites = [None] * globals.NumSprites
 
     for sdpath, snpath in paths:
 
@@ -282,6 +303,11 @@ def LoadSpriteCategories(reload_=False):
         paths = new
 
     globals.SpriteCategories = []
+
+    # Add a Search category
+    globals.SpriteCategories.append((globals.trans.string('Sprites', 19), [(globals.trans.string('Sprites', 16), list(range(globals.NumSprites)))], []))
+    globals.SpriteCategories[-1][1][0][1].append(9999)  # 'no results' special case
+
     for path in paths:
         tree = etree.parse(path)
         root = tree.getroot()
@@ -322,10 +348,6 @@ def LoadSpriteCategories(reload_=False):
                         for i in range(int(x[0]), int(x[1]) + 1):
                             if i not in CurrentCategory:
                                 CurrentCategory.append(i)
-
-    # Add a Search category
-    globals.SpriteCategories.append((globals.trans.string('Sprites', 19), [(globals.trans.string('Sprites', 16), list(range(0, 724)))], []))
-    globals.SpriteCategories[-1][1][0][1].append(9999)  # 'no results' special case
 
 
 def LoadSpriteListData(reload_=False):
@@ -552,10 +574,10 @@ def LoadOverrides():
     Load overrides
     """
     OverrideBitmap = QtGui.QPixmap('miyamotodata/overrides.png')
-    globals.Overrides = [None] * 256
     idx = 0
     xcount = OverrideBitmap.width() // globals.TileWidth
     ycount = OverrideBitmap.height() // globals.TileWidth
+    globals.Overrides = [None] * (xcount * ycount)
     sourcex = 0
     sourcey = 0
 
@@ -565,9 +587,8 @@ def LoadOverrides():
             globals.Overrides[idx] = TilesetTile(bmp)
 
             # Set collisions if it's a brick or question
-            if y in [1, 2]:
-                if x < 11 or x == 14: globals.Overrides[idx].setQuestionCollisions()
-                elif x < 12: globals.Overrides[idx].setBrickCollisions()
+            if (x < 11 or x == 14) and y == 2: globals.Overrides[idx].setQuestionCollisions()
+            elif x < 12 and y == 1: globals.Overrides[idx].setBrickCollisions()
 
             idx += 1
             sourcex += globals.TileWidth
@@ -578,8 +599,8 @@ def LoadOverrides():
             idx += 16
 
     # ? Block for Sprite 59
-    bmp = OverrideBitmap.copy(44 * globals.TileWidth, 2 * globals.TileWidth, globals.TileWidth, globals.TileWidth)
-    globals.Overrides[160] = TilesetTile(bmp)
+    bmp = OverrideBitmap.copy(14 * globals.TileWidth, 2 * globals.TileWidth, globals.TileWidth, globals.TileWidth)
+    globals.Overrides.append(TilesetTile(bmp))
 
 
 def LoadTranslation():
@@ -605,7 +626,7 @@ def LoadGameDef(name=None, dlg=None):
     try:
         # Load the gamedef
         globals.gamedef = MiyamotoGameDefinition(name)
-        if globals.gamedef.custom and (not globals.settings.contains('GamePath_' + globals.gamedef.name)):
+        if globals.gamedef.custom and (not globals.settings.contains('GamePath_' + globals.gamedef.name)) and globals.mainWindow:
             # First-time usage of this gamedef. Have the
             # user pick a stage folder so we can load stages
             # and tilesets from there
@@ -695,6 +716,7 @@ def LoadActionsLists():
         (globals.trans.string('MenuItems', 0), True, 'newlevel'),
         (globals.trans.string('MenuItems', 2), True, 'openfromname'),
         (globals.trans.string('MenuItems', 4), False, 'openfromfile'),
+        (globals.trans.string('MenuItems', 6), False, 'openrecent'),
         (globals.trans.string('MenuItems', 8), True, 'save'),
         (globals.trans.string('MenuItems', 10), False, 'saveas'),
         (globals.trans.string('MenuItems', 12), False, 'metainfo'),
@@ -711,6 +733,8 @@ def LoadActionsLists():
         (globals.trans.string('MenuItems', 26), True, 'cut'),
         (globals.trans.string('MenuItems', 28), True, 'copy'),
         (globals.trans.string('MenuItems', 30), True, 'paste'),
+        (globals.trans.string('MenuItems', 146), True, 'raise'),
+        (globals.trans.string('MenuItems', 148), True, 'lower'),
         (globals.trans.string('MenuItems', 32), False, 'shiftitems'),
         (globals.trans.string('MenuItems', 34), False, 'mergelocations'),
         (globals.trans.string('MenuItems', 38), False, 'freezeobjects'),
@@ -737,10 +761,9 @@ def LoadActionsLists():
     globals.SettingsActions = (
         (globals.trans.string('MenuItems', 72), True, 'areaoptions'),
         (globals.trans.string('MenuItems', 74), True, 'zones'),
-        (globals.trans.string('MenuItems', 76), True, 'backgrounds'),
-        (globals.trans.string('MenuItems', 78), False, 'addarea'),
+        (globals.trans.string('MenuItems', 78), True, 'addarea'),
         (globals.trans.string('MenuItems', 80), False, 'importarea'),
-        (globals.trans.string('MenuItems', 82), False, 'deletearea'),
+        (globals.trans.string('MenuItems', 82), True, 'deletearea'),
         (globals.trans.string('MenuItems', 128), False, 'reloaddata'),
     )
     globals.HelpActions = (

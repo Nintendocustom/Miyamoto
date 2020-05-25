@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -27,7 +28,8 @@
 import os, sys
 
 MiyamotoID = 'Miyamoto! Level Editor by AboodXD, Gota7, John10v10, Based on Reggie! NSMBU by RoadrunnerWMC, MrRean, Grop, and Reggie! by Treeki and Tempus'
-MiyamotoVersion = '26.0'
+MiyamotoVersion = '28.0'
+MiyamotoVersionFloat = 28.0
 
 generateStringsXML = False
 app = None
@@ -92,12 +94,13 @@ CurrentLevelNameForAutoOpenScript = 'AAAAAAAAAAAAAAAAAAAAAAAAAA'
 TileWidth = 60
 szsData = {}
 levelNameCache = ''
+UseRGBA8 = False
+NumSprites = 0
 miyamoto_path = os.path.dirname(os.path.realpath(sys.argv[0])).replace("\\", "/")
 cython_available = False
 libyaz0_available = False
 err_msg = ''
 names_bg = []
-names_bgTrans = []
 
 # Game enums
 FileExtentions = ('.szs', '.sarc')

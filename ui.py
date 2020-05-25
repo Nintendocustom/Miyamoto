@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -454,7 +455,7 @@ def SetAppStyle(styleKey=''):
         color = globals.theme.color('ui').getRgb()
         bgColor = "#%02x%02x%02x" % tuple(map(lambda x: x // 2, color[:3]))
         globals.app.setStyleSheet("""
-            QListView, QTreeWidget, QTextEdit, QPlainTextEdit{
+            QListView, QTreeWidget, QLineEdit, QDoubleSpinBox, QSpinBox, QTextEdit, QPlainTextEdit{
                 background-color: %s;
             }""" % bgColor)
 
