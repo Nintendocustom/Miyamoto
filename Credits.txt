@@ -1,11 +1,11 @@
 Strings.py				- Hannes#4110
-spritecategories.xml	- Kirito0506#9390
-ts1_descriptions.txt	- Hannes#4110
-category.xml			- Kirito0506#9390
+spritecategories.xml			- Kirito0506#9390
+ts1_descriptions.txt			- Hannes#4110
+category.xml				- Kirito0506#9390
 music.txt				- Hannes#4110
 bgTrans.txt				- Hannes#4110
-entrancetypes.txt		- Hannes#4110
+entrancetypes.txt			- Hannes#4110
 puzzle.py				- Hannes#4110
-firstRunWizard.py		- Hannes#4110
-levelnames.xml			- Kirito0506#9390
+firstRunWizard.py			- Hannes#4110
+levelnames.xml				- Kirito0506#9390
 strings.py				- Hannes#4110
