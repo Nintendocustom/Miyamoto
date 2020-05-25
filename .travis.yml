@@ -26,7 +26,7 @@ deploy:
 tags: false
 
 install:
- - pip install cx_freeze==5.0
+ - pip install cx_freeze
  - pip install libyaz0
  - pip install sarclib
  - pip install pyqt5
