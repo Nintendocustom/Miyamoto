@@ -69,7 +69,7 @@ setup(
     options={
         'build_exe': {
             'excludes': excludes,
-            'packages': ['encodings', 'encodings.hex_codec', 'encodings.utf_8'],
+            'packages': ["PyQt5-sip", 'encodings', 'encodings.hex_codec', 'encodings.utf_8'],
             'build_exe': dir_,
             'optimize': 2,
             'silent': True,
