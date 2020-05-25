@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -574,6 +575,39 @@ class Metadata:
                 for d in typeData: data.append(d)
 
         return data
+
+
+class BGName:
+    def __init__(self, name, trans):
+        self.name = name
+        self.trans = trans
+
+    def __eq__(self, other):
+        return other in (self.name, self.trans)
+
+    @staticmethod
+    def index(name):
+        try:
+            return globals.names_bg.index(name)
+
+        except ValueError:
+            return len(globals.names_bg) - 1
+
+    @staticmethod
+    def getNameForTrans(trans):
+        return globals.names_bg[BGName.index(trans)].name
+
+    @staticmethod
+    def getTransAll():
+        return [bg.trans for bg in globals.names_bg]
+
+    class Custom:
+        def __init__(self):
+            self.name = ''
+            self.trans = 'Custom filename...'
+
+        def __eq__(self, other):
+            return False
 
 
 def clipStr(text, idealWidth, font=None):

@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -24,10 +25,10 @@
 # Builds Miyamoto! to a binary
 # Use the values below to configure the release:
 
-from globals import MiyamotoVersion
+from globals import MiyamotoVersionFloat
 
-PackageName = 'miyamoto_v%s' % MiyamotoVersion
-Version = MiyamotoVersion
+Version = str(MiyamotoVersionFloat)
+PackageName = 'miyamoto_v%s' % Version
 
 
 ################################################################

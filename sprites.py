@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -1150,6 +1151,27 @@ class SpriteImage_MidwayFlag(SLib.SpriteImage_Static):  # 25
         SLib.loadIfNotInImageCache('MidwayFlag', 'midway_flag.png')
 
 
+class SpriteImage_ZoomArea(SLib.SpriteImage):  # 26
+    def __init__(self, parent):
+        super().__init__(parent, 3.75)
+        self.aux.append(SLib.AuxiliaryRectOutline(parent, 0, 0))
+
+    def dataChanged(self):
+        super().dataChanged()
+
+        h = self.parent.spritedata[4]
+        w = self.parent.spritedata[5]
+        if w == 0:
+            w = 1
+        if h == 0:
+            h = 1
+        
+        if w == 1 and h == 1:  # no point drawing a 1x1 outline behind the self.parent
+            self.aux[0].setSize(0, 0, 0, 0)
+            return
+        self.aux[0].setSize(w * 60, h * 60, 0, -h * 60 + 60)
+
+
 class SpriteImage_LimitU(SLib.SpriteImage_StaticMultiple):  # 29
     def __init__(self, parent):
         super().__init__(
@@ -1208,65 +1230,48 @@ class SpriteImage_Flagpole(SLib.SpriteImage_StaticMultiple):  # 31
             parent,
             3.75,
         )
-
-        self.xOffset = -48
-        self.yOffset = -160
+        self.xOffset = -36
+        self.yOffset = -144
 
         self.parent.setZValue(24999)
+        self.aux.append(SLib.AuxiliaryImage(parent, 390, 375))
+        self.aux[0].setPos(135 + 13*60, 4*60 - 15)
+        self.aux[0].alpha = 0.5
+        self.dataChanged()
 
     @staticmethod
     def loadImages():
-        SLib.loadIfNotInImageCache('FlagReg', 'flag_reg.png')
-        SLib.loadIfNotInImageCache('FlagSnow', 'flag_snow.png')
-        SLib.loadIfNotInImageCache('FlagNo', 'flag_no.png')
-        SLib.loadIfNotInImageCache('FlagSecReg', 'flag_sec_reg.png')
-        SLib.loadIfNotInImageCache('FlagSecSnow', 'flag_sec_snow.png')
-        SLib.loadIfNotInImageCache('FlagSecNo', 'flag_sec_no.png')
+        SLib.loadIfNotInImageCache('FlagPole', 'flag_pole.png')
+        SLib.loadIfNotInImageCache('FlagPoleSecret', 'flag_pole_secret.png')
+        SLib.loadIfNotInImageCache('Castle', 'castle.png')
+        SLib.loadIfNotInImageCache('CastleSnow', 'castle_snow.png')
+        SLib.loadIfNotInImageCache('CastleSecret', 'castle_secret.png')
+        SLib.loadIfNotInImageCache('CastleSecretSnow', 'castle_secret_snow.png')
 
     def dataChanged(self):
-
-        secret = self.parent.spritedata[2]
-        snowno = self.parent.spritedata[5]
-
-        secretb = False
-        nob = False
-        snowb = False
-
-        if snowno == 16:
-            nob = True
-        else:
-            nob = False
-        if snowno == 1:
-            snowb = True
-        else:
-            snowb = False
-        if secret == 16:
-            secretb = True
-        else:
-            secretb = False
-        if snowno == 17:
-            nob = True
-            snowb = True
-
-        # print("Snow: "+str(snowb) + "   Secret: "+str(secretb) + "   No: "+str(nob) + "     SecretN:" + str(secret)+ "     SnowNo:"+str(snowno))
-        # That was a coding challenge
-
-        if nob and not secretb:
-            self.image = ImageCache['FlagNo']
-        elif nob and secretb:
-            self.image = ImageCache['FlagSecNo']
-        elif not nob and not secretb and snowb:
-            self.image = ImageCache['FlagSnow']
-        elif not nob and secretb and not snowb:
-            self.image = ImageCache['FlagSecReg']
-        elif not nob and secretb and snowb:
-            self.image = ImageCache['FlagSecSnow']
-        elif not nob and not secretb and not snowb:
-            self.image = ImageCache['FlagReg']
-        else:
-            self.image = ImageCache['FlagReg']
-
         super().dataChanged()
+
+        secret = (self.parent.spritedata[2] & 0x10) != 0
+        castle = (self.parent.spritedata[5] & 0x10) == 0
+        snow =   (self.parent.spritedata[5] & 1)    != 0
+
+        if secret:
+            self.image = ImageCache['FlagPoleSecret']
+            
+            if snow:
+                self.aux[0].image = ImageCache['CastleSecretSnow']
+            else:
+                self.aux[0].image = ImageCache['CastleSecret']
+        else:
+            self.image = ImageCache['FlagPole']
+            
+            if snow:
+                self.aux[0].image = ImageCache['CastleSnow']
+            else:
+                self.aux[0].image = ImageCache['Castle']
+
+        if not castle:
+            self.aux[0].image = None
 
 
 class SpriteImage_ArrowSignboard(SLib.SpriteImage_StaticMultiple):  # 32
@@ -1836,7 +1841,7 @@ class SpriteImage_Swooper(SLib.SpriteImage_Static):  # 67
         SLib.loadIfNotInImageCache('Swooper', 'swooper.png')
 
 
-class SpriteImage_ControllerSwaying(SLib.SpriteImage_Static):  # 68
+class SpriteImage_ControllerSwaying(SLib.SpriteImage_MovementController):  # 68
     def __init__(self, parent):
         super().__init__(
             parent,
@@ -1844,33 +1849,28 @@ class SpriteImage_ControllerSwaying(SLib.SpriteImage_Static):  # 68
             ImageCache['ControllerSwaying'],
         )
         self.parent.setZValue(500000)
+        self.aux.append(SLib.AuxiliaryRotationAreaOutline(parent, 60))
+        self.aux.append(SLib.AuxiliaryRotationAreaOutline(parent, 120))
+        self.aux[0].setPos(-12, 0)
+        self.aux[1].setPos(-58, -44)
 
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('ControllerSwaying', 'controller_swaying.png')
 
     def dataChanged(self):
-        #        rotation = self.parent.spritedata[4]
+        startOffset = (self.parent.spritedata[2] & 0xF) * 22.5
+        reversedDir = (self.parent.spritedata[4] >> 4) & 1
+        rotation = (self.parent.spritedata[4] & 0xF) * 22.5
+        arc = (self.parent.spritedata[7] >> 4) * 22.5
 
-        """
-        if rotation == 1: Rotations[rotid] = 22.5
-        elif rotation == 2: Rotations[rotid] = 45
-        elif rotation == 3: Rotations[rotid] = 67.5
-        elif rotation == 4: Rotations[rotid] = 90
-        elif rotation == 5: Rotations[rotid] = 112.5
-        elif rotation == 6: Rotations[rotid] = 135
-        elif rotation == 7: Rotations[rotid] = 157.5
-        elif rotation == 8: Rotations[rotid] = 180
-        elif rotation == 9: Rotations[rotid] = 22.5 + 180
-        elif rotation == 10: Rotations[rotid] = 45 + 180
-        elif rotation == 11: Rotations[rotid] = 67.5 + 180
-        elif rotation == 12: Rotations[rotid] = 90 + 180
-        elif rotation == 13: Rotations[rotid] = 112.5 + 180
-        elif rotation == 14: Rotations[rotid] = 135 + 180
-        elif rotation == 15: Rotations[rotid] = 157.5 + 180
-        else: Rotations[rotid] = 0
-        """
-
+        if reversedDir == 1:
+            startOffset += 180
+        
+        startOffset = math.cos(math.radians(startOffset + 90))
+            
+        self.aux[0].SetAngle(90 + rotation - arc * 0.5, arc)
+        self.aux[1].SetAngle(90 + rotation - startOffset * arc * 0.5, 0)
         super().dataChanged()
 
 
@@ -1879,7 +1879,7 @@ class SpriteImage_ControllerSwaying(SLib.SpriteImage_Static):  # 68
 
 
 
-class SpriteImage_ControllerSpinning(SLib.SpriteImage_Static):  # 69, 484
+class SpriteImage_ControllerSpinning(SLib.SpriteImage_MovementController):  # 69, 484
     def __init__(self, parent):
         super().__init__(
             parent,
@@ -2881,6 +2881,7 @@ class SpriteImage_SandPillar(SLib.SpriteImage_StaticMultiple):  # 123, 124
             ImageCache['SandPillar0'],
         )
 
+        self.alpha = 0.65
         self.xOffset = -40
 
     @staticmethod
@@ -3753,82 +3754,39 @@ class SpriteImage_WaterGeyser(SpriteImage_StackedSprite):  # 156
 
     @staticmethod
     def loadImages():
-        ImageCache['WaterGeyserTop'] = SLib.GetImg('water_geyser_top.png')
-        ImageCache['WaterGeyserMiddle'] = SLib.GetImg('water_geyser_middle.png')
+        SLib.loadIfNotInImageCache('WaterGeyserTop', 'water_geyser_top.png')
+        SLib.loadIfNotInImageCache('WaterGeyserMiddle', 'water_geyser_middle.png')
 
     def dataChanged(self):
         super().dataChanged()
-        rawlengthones = self.parent.spritedata[5]
-        rawlengthtwos = self.parent.spritedata[4] & 0xF
 
-        if rawlengthones == 0:
-            rawlengthones = 0
-        elif rawlengthones == 16:
-            rawlengthones = 1
-        elif rawlengthones == 32:
-            rawlengthones = 2
-        elif rawlengthones == 48:
-            rawlengthones = 3
-        elif rawlengthones == 64:
-            rawlengthones = 4
-        elif rawlengthones == 80:
-            rawlengthones = 5
-        elif rawlengthones == 96:
-            rawlengthones = 6
-        elif rawlengthones == 112:
-            rawlengthones = 7
-        elif rawlengthones == 128:
-            rawlengthones = 8
-        elif rawlengthones == 144:
-            rawlengthones = 9
-        elif rawlengthones == 160:
-            rawlengthones = 10
-        elif rawlengthones == 176:
-            rawlengthones = 11
-        elif rawlengthones == 192:
-            rawlengthones = 12
-        elif rawlengthones == 208:
-            rawlengthones = 13
-        elif rawlengthones == 224:
-            rawlengthones = 14
-        elif rawlengthones == 240:
-            rawlengthones = 15
-        elif rawlengthones == 256:
-            rawlengthones = 16
+        if self.parent.spritedata[8] & 1:
+            width = 2
 
-        rawlengthtwos = rawlengthtwos * 16
+        else:
+            raw_width = self.parent.spritedata[3] >> 4
+            width = 1.625 * raw_width + 1.625
+            if width == 1.625:
+                width = 6.5
 
-        #        if rawlengthtwos > 255: rawlengthtwos = rawlengthtwos - 256
-
-        rawlength = rawlengthones + rawlengthtwos
-
-        pipeLength = rawlength
-
-        #        print(rawlengthones, rawlengthtwos, pipeLength)
-
-        self.hasTop = True
-        self.hasBottom = False
-
-        self.pipeHeight = (pipeLength + 1) * 60
-        self.height = (self.pipeHeight / 3.75)
-        self.pipeHeight = (pipeLength) * 60
+        length = (self.parent.spritedata[4] & 0xF) << 4 | self.parent.spritedata[5] >> 4
+        length = 33/64 * length + 6
 
         self.middle = ImageCache['WaterGeyserMiddle']
         self.top = ImageCache['WaterGeyserTop']
 
-        self.pipeWidth = 360
-        self.width = 96
+        self.width = width * 16
+        self.height = length * 16
 
-        self.yOffset = 8 + (-6 * 16) + (-1 * ((rawlength - 2) * 8))
-        #        self.yOffset = -12 * 16
-        self.xOffset = -40
+        self.xOffset = -(self.width / 2) + 8
+        self.yOffset = -(length - 1) * 16
 
     def paint(self, painter):
         super().paint(painter)
 
-        painter.drawTiledPixmap(self.x, self.y + 15, self.pipeWidth, self.pipeHeight - 15, self.middle)
+        painter.drawTiledPixmap(self.x, self.y + 15, self.width * (60/16), self.height * (60/16) - 15, self.middle.scaledToWidth(self.width * (60/16), Qt.SmoothTransformation))
         if self.hasTop:
-            painter.drawPixmap(self.topX, self.topY, self.top)
+            painter.drawPixmap(self.topX, self.topY, self.width * (60/16), 180, self.top)
 
 
 class SpriteImage_BarCenter(SLib.SpriteImage_Static):  # 157
@@ -3849,19 +3807,13 @@ class SpriteImage_CoinOutline(SLib.SpriteImage_StaticMultiple):  # 158
     def __init__(self, parent):
         super().__init__(
             parent,
-            3.75,  # native res (3.75*16=60)
-            ImageCache['CoinOutlineMultiplayer'],
+            3.75,
         )
         self.parent.setZValue(20000)
 
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('CoinOutline', 'coin_outline.png')
-        SLib.loadIfNotInImageCache('CoinOutlineMultiplayer', 'coin_outline_multiplayer.png')
-
     def dataChanged(self):
         multi = (self.parent.spritedata[2] >> 4) & 1
-        self.image = ImageCache['CoinOutline' + ('Multiplayer' if multi else '')]
+        self.image = SLib.Tiles[28 if multi else 31].main
         super().dataChanged()
 
 
@@ -4083,82 +4035,39 @@ class SpriteImage_WaterGeyserLocation(SpriteImage_StackedSprite):  # 163
 
     @staticmethod
     def loadImages():
-        ImageCache['WaterGeyserTop'] = SLib.GetImg('water_geyser_top.png')
-        ImageCache['WaterGeyserMiddle'] = SLib.GetImg('water_geyser_middle.png')
+        SLib.loadIfNotInImageCache('WaterGeyserTop', 'water_geyser_top.png')
+        SLib.loadIfNotInImageCache('WaterGeyserMiddle', 'water_geyser_middle.png')
 
     def dataChanged(self):
         super().dataChanged()
-        rawlengthones = self.parent.spritedata[5]
-        rawlengthtwos = self.parent.spritedata[4] & 0xF
 
-        if rawlengthones == 0:
-            rawlengthones = 0
-        elif rawlengthones == 16:
-            rawlengthones = 1
-        elif rawlengthones == 32:
-            rawlengthones = 2
-        elif rawlengthones == 48:
-            rawlengthones = 3
-        elif rawlengthones == 64:
-            rawlengthones = 4
-        elif rawlengthones == 80:
-            rawlengthones = 5
-        elif rawlengthones == 96:
-            rawlengthones = 6
-        elif rawlengthones == 112:
-            rawlengthones = 7
-        elif rawlengthones == 128:
-            rawlengthones = 8
-        elif rawlengthones == 144:
-            rawlengthones = 9
-        elif rawlengthones == 160:
-            rawlengthones = 10
-        elif rawlengthones == 176:
-            rawlengthones = 11
-        elif rawlengthones == 192:
-            rawlengthones = 12
-        elif rawlengthones == 208:
-            rawlengthones = 13
-        elif rawlengthones == 224:
-            rawlengthones = 14
-        elif rawlengthones == 240:
-            rawlengthones = 15
-        elif rawlengthones == 256:
-            rawlengthones = 16
+        if self.parent.spritedata[8] & 1:
+            width = 2
 
-        rawlengthtwos = rawlengthtwos * 16
+        else:
+            raw_width = self.parent.spritedata[3] >> 4
+            width = 1.625 * raw_width + 1.625
+            if width == 1.625:
+                width = 6.5
 
-        #        if rawlengthtwos > 255: rawlengthtwos = rawlengthtwos - 256
-
-        rawlength = rawlengthones
-
-        pipeLength = rawlength
-
-        #        print(rawlengthones, rawlengthtwos, pipeLength)
-
-        self.hasTop = True
-        self.hasBottom = False
-
-        self.pipeHeight = (pipeLength + 1) * 60
-        self.height = (self.pipeHeight / 3.75)
-        self.pipeHeight = (pipeLength) * 60
+        length = self.parent.spritedata[5] >> 4
+        length = 31/60 * length + 6
 
         self.middle = ImageCache['WaterGeyserMiddle']
         self.top = ImageCache['WaterGeyserTop']
 
-        self.pipeWidth = 360
-        self.width = 96
+        self.width = width * 16
+        self.height = length * 16
 
-        self.yOffset = 8 + (-6 * 16) + (-1 * ((rawlength - 2) * 8))
-        #        self.yOffset = -12 * 16
-        self.xOffset = -40
+        self.xOffset = -(self.width / 2) + 8
+        self.yOffset = -(length - 1) * 16
 
     def paint(self, painter):
         super().paint(painter)
 
-        painter.drawTiledPixmap(self.x, self.y, self.pipeWidth, self.pipeHeight, self.middle)
+        painter.drawTiledPixmap(self.x, self.y + 15, self.width * (60/16), self.height * (60/16) - 15, self.middle.scaledToWidth(self.width * (60/16), Qt.SmoothTransformation))
         if self.hasTop:
-            painter.drawPixmap(self.topX, self.topY, self.top)
+            painter.drawPixmap(self.topX, self.topY, self.width * (60/16), 180, self.top)
 
 
 class SpriteImage_BobOmb(SLib.SpriteImage_Static):  # 164
@@ -4173,6 +4082,75 @@ class SpriteImage_BobOmb(SLib.SpriteImage_Static):  # 164
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('BobOmb', 'bob_omb.png')
+
+
+class SpriteImage_CoinCircle(SLib.SpriteImage):  # 165
+    def __init__(self, parent):
+        super().__init__(parent, 3.75)
+
+        self.tileIdx = 30
+        auxImage = QtGui.QPixmap(60, 60)
+        auxImage.fill(Qt.transparent)
+        self.aux.append(SLib.AuxiliaryImage(parent, 60, 60))
+        self.aux[0].image = auxImage
+        self.aux[0].hover = False
+
+    def dataChanged(self):
+        tilt = ((self.parent.spritedata[2] >> 2) & 1) | ((self.parent.spritedata[3] >> 4) & 1) | (self.parent.spritedata[3] & 1)
+        arc = (self.parent.spritedata[6] >> 4) * 22.5 + 22.5
+        offset = (self.parent.spritedata[6] & 0xF) * 22.5
+        coinAmount = 1 + self.parent.spritedata[8]
+        diameter = self.parent.spritedata[9]
+        movementID = self.parent.spritedata[10]
+
+        tiltX = self.parent.objx
+        tiltY = self.parent.objy
+
+        # Uncomment to enable tilt towards movement controllers
+        
+        #if tilt == 1:
+        #    for sprite in globals.Area.sprites:
+        #        if isinstance(sprite.ImageObj, SLib.SpriteImage_MovementController):
+        #            if sprite.ImageObj.getMovementID() == movementID:
+        #                tiltX = sprite.objx + 8
+        #                tiltY = sprite.objy + 8
+        #                break
+
+        pix = QtGui.QPixmap(60 * (diameter + 2), 60 * (diameter + 2))
+        pix.fill(Qt.transparent)
+        paint = QtGui.QPainter(pix)
+        paint.setOpacity(0.5)
+        angle = offset
+
+        for i in range(coinAmount):
+            if arc == 360:
+                angle = math.radians(-arc * i / coinAmount - offset)
+            elif coinAmount > 1:
+                angle = math.radians(arc * 0.5 - arc * i / (coinAmount - 1) - offset)
+
+            x = math.sin(angle) * ((diameter * 30) + 30) - 30
+            y = -(math.cos(angle) * ((diameter * 30) + 30)) - 30
+
+            if tilt == 1:
+                imageAngle = math.degrees(math.atan2(tiltY - (self.parent.objy + (y / 60) * 16 + 8), tiltX - (self.parent.objx + (x / 60) * 16 + 8))) - 90
+                img = SLib.Tiles[self.tileIdx].main.transformed(QTransform().rotate(imageAngle))
+                paint.drawPixmap(x + pix.width() / 2 + 30 - img.width() / 2, y + pix.height() / 2 + 30 - img.height() / 2, img);
+            else:
+                paint.drawPixmap(x + pix.width() / 2, y + pix.height() / 2, SLib.Tiles[self.tileIdx].main)
+
+        paint = None
+        self.aux[0].image = pix
+        self.aux[0].setSize(pix.width(), pix.height(), -pix.width() / 2 + 30, -pix.height() / 2 + 30)
+
+
+class SpriteImage_CoinOutlineCircle(SpriteImage_CoinCircle):  # 166
+    def __init__(self, parent):
+        super().__init__(parent)
+
+    def dataChanged(self):
+        multi = (self.parent.spritedata[2] >> 4) & 1
+        self.tileIdx = 28 if multi else 31
+        super().dataChanged()
 
 
 class SpriteImage_CoinBlue(SLib.SpriteImage_Static):  # 167
@@ -4860,12 +4838,16 @@ class SpriteImage_LavaGeyser(SLib.SpriteImage_StaticMultiple):  # 207
 
     @staticmethod
     def loadImages():
-        for i in [0, 1, 2, 3, 4, 5, 6]:
+        for i in range(7):
             SLib.loadIfNotInImageCache('LavaGeyser%d' % i, 'lava_geyser_%d.png' % i)
 
     def dataChanged(self):
         size = self.parent.spritedata[4] >> 4; size = 0 if size > 6 else size
         self.image = ImageCache['LavaGeyser%d' % size]
+
+        startsOn = self.parent.spritedata[5] & 1
+        self.alpha = 0.75 if startsOn else 0.5
+
         self.yOffset = -160
         
         if size == 1:
@@ -4942,7 +4924,7 @@ class SpriteImage_SwingingVine(SLib.SpriteImage_Static):  # 213
         SLib.loadIfNotInImageCache('SwingingVine', 'swinging_vine.png')
 
 
-class SpriteImage_ControllerSpinOne(SLib.SpriteImage_Static):  # 214
+class SpriteImage_ControllerSpinOne(SLib.SpriteImage_MovementController):  # 214
     def __init__(self, parent):
         super().__init__(
             parent,
@@ -5023,7 +5005,7 @@ class SpriteImage_BooCircle(SLib.SpriteImage):  # 221, 703
         # Constants (change these to fine-tune the boo positions)
         radiusMultiplier = 60  # pixels between boos per distance value
         radiusConstant = 60  # add to all radius values
-        opacity = 0.5
+        alpha = 0.5
 
         # Read the data
         outrad = self.parent.spritedata[2] & 15
@@ -5042,7 +5024,7 @@ class SpriteImage_BooCircle(SLib.SpriteImage):  # 221, 703
         pix = QtGui.QPixmap(2560, 2560)
         pix.fill(Qt.transparent)
         paint = QtGui.QPainter(pix)
-        paint.setOpacity(opacity)
+        paint.setOpacity(alpha)
 
         # Paint each boo
         for i in range(ghostnum):
@@ -5203,13 +5185,14 @@ class SpriteImage_Larry(SLib.SpriteImage_Static):  # 230
         SLib.loadIfNotInImageCache('Larry', 'larry.png')
 
 
-class SpriteImage_IceFloe(SLib.SpriteImage_StaticMultiple):  # 231
+class SpriteImage_IceFloe(SLib.SpriteImage_StaticMultiple):  # 226, 227, 231
     def __init__(self, parent):
         super().__init__(
             parent,
             3.75,
         )
 
+        self.alpha = 0.65
         self.xOffset = -16
         self.yOffset = -16
 
@@ -5775,6 +5758,36 @@ class SpriteImage_HeavyParabeetle(SLib.SpriteImage_StaticMultiple):  # 262
         super().dataChanged()
 
 
+class SpriteImage_PipeBubbles(SLib.SpriteImage_StaticMultiple):  # 263
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('PipeBubbles0', 'pipe_bubbles.png')
+        ImageCache['PipeBubbles1'] = ImageCache['PipeBubbles0'].transformed(QTransform().scale(1, -1))
+        ImageCache['PipeBubbles2'] = ImageCache['PipeBubbles0'].transformed(QTransform().rotate(90))
+        ImageCache['PipeBubbles3'] = ImageCache['PipeBubbles2'].transformed(QTransform().scale(-1, 1))
+
+    def dataChanged(self):
+        direction = self.parent.spritedata[5] & 3
+        self.image = ImageCache['PipeBubbles%d' % direction]
+
+        if direction == 1:
+            self.offset = (0, 16)
+        elif direction == 2:
+            self.offset = (16, -16)
+        elif direction == 3:
+            self.offset = (-96, -16)
+        else:
+            self.offset = (0, -96)
+        
+        super().dataChanged()
+
+
 class SpriteImage_WaterGeyserBoss(SLib.SpriteImage_Static):  # 264
     def __init__(self, parent):
         super().__init__(
@@ -5895,6 +5908,58 @@ class SpriteImage_Amp(SLib.SpriteImage_StaticMultiple):  # 270
         super().dataChanged()
 
 
+class SpriteImage_MetalBridgePlatform(SLib.SpriteImage_StaticMultiple):  # 271
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('MetalBridgePlatform0', 'metal_bridge_platform0.png')
+        SLib.loadIfNotInImageCache('MetalBridgePlatform1', 'metal_bridge_platform1.png')
+        SLib.loadIfNotInImageCache('MetalBridgePlatform2', 'metal_bridge_platform2.png')
+
+    def dataChanged(self):
+        model = self.parent.spritedata[4] & 3
+
+        if model == 1:
+            self.xOffset = 0
+            self.image = ImageCache['MetalBridgePlatform1']
+        elif model == 2:
+            self.xOffset = -4
+            self.image = ImageCache['MetalBridgePlatform2']
+        else:
+            self.xOffset = 0
+            self.image = ImageCache['MetalBridgePlatform0']
+            
+        super().dataChanged()
+
+
+class SpriteImage_MetalBridgeStem(SLib.SpriteImage_StaticMultiple):  # 272
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('MetalBridgeStem', 'metal_bridge_stem.png')
+        SLib.loadIfNotInImageCache('MetalBridgeStemUnused', 'metal_bridge_stem_unused.png')
+
+    def dataChanged(self):
+        if (self.parent.spritedata[5] & 1) == 0:
+            self.xOffset = -16
+            self.image = ImageCache['MetalBridgeStemUnused']
+        else:
+            self.xOffset = -24
+            self.image = ImageCache['MetalBridgeStem']
+            
+        super().dataChanged()
+
+
 class SpriteImage_MetalBridgeBase(SLib.SpriteImage_Static):  # 273
     def __init__(self, parent):
         super().__init__(
@@ -5907,6 +5972,51 @@ class SpriteImage_MetalBridgeBase(SLib.SpriteImage_Static):  # 273
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('MetalBridgeBase', 'metal_bridge_base.png')
+
+
+class SpriteImage_CastlePlatform(SLib.SpriteImage_StaticMultiple):  # 275
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+        self.yOffset = -12
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('CastlePlatform0', 'castle_platform_0.png')
+        SLib.loadIfNotInImageCache('CastlePlatform1', 'castle_platform_1.png')
+        SLib.loadIfNotInImageCache('CastlePlatform2', 'castle_platform_2.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+
+        size = self.parent.spritedata[4] & 0xF
+
+        if size == 1:
+            self.image = ImageCache['CastlePlatform1']
+        elif size == 2:
+            self.image = ImageCache['CastlePlatform2']
+        else:
+            self.image = ImageCache['CastlePlatform0']
+            
+        self.width = (self.image.width() / 60) * 16
+        self.height = (self.image.height() / 60) * 16
+        self.xOffset = -(self.image.width() / 120) * 16 + 8
+
+
+class SpriteImage_Jellybeam(SLib.SpriteImage_Static):  # 276
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['Jellybeam'],
+            (-8, -12),
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('Jellybeam', 'jellybeam.png')
 
 
 class SpriteImage_CoinBubble(SLib.SpriteImage_Static):  # 281
@@ -6111,8 +6221,7 @@ class SpriteImage_ContinuousBurner(SLib.SpriteImage_StaticMultiple):  # 289
             parent,
             3.75,
         )
-        
-        self.spritebox.shown = False
+        self.imgName = 'ContinuousBurner'
 
     @staticmethod
     def loadImages():
@@ -6122,34 +6231,60 @@ class SpriteImage_ContinuousBurner(SLib.SpriteImage_StaticMultiple):  # 289
         super().dataChanged()
         
         self.direction = self.parent.spritedata[5] & 3
+        self.xOffset = 0
+        self.yOffset = 0
 
         if self.direction == 1:
-            self.xOffset = -48
-            self.yOffset = 0
-            self.width = 64
-            self.height = 16
-            self.image = ImageCache['ContinuousBurner'].transformed(QTransform().scale(-1, 1))
-
+            self.image = ImageCache[self.imgName].transformed(QTransform().scale(-1, 1))
+            self.xOffset = -(self.image.width() / 60) * 16 + 16
+            
         elif self.direction == 2:
-            self.xOffset = 0
-            self.yOffset = -48
-            self.width = 16
-            self.height = 64
-            self.image = ImageCache['ContinuousBurner'].transformed(QTransform().rotate(-90))
-
+            self.image = ImageCache[self.imgName].transformed(QTransform().rotate(-90))
+            self.yOffset = -(self.image.height() / 60) * 16 + 16
+            
         elif self.direction == 3:
-            self.xOffset = 0
-            self.yOffset = 0
-            self.width = 16
-            self.height = 64
-            self.image = ImageCache['ContinuousBurner'].transformed(QTransform().rotate(-90).scale(-1, 1))
+            self.image = ImageCache[self.imgName].transformed(QTransform().rotate(-90).scale(-1, 1))
 
         else:
-            self.xOffset = 0
-            self.yOffset = 0
-            self.width = 64
-            self.height = 16
-            self.image = ImageCache['ContinuousBurner']
+            self.image = ImageCache[self.imgName]
+
+        self.width = (self.image.width() / 60) * 16
+        self.height = (self.image.height() / 60) * 16
+
+
+class SpriteImage_ContinuousBurnerLong(SpriteImage_ContinuousBurner):  # 290
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.imgName = 'ContinuousBurnerLong'
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ContinuousBurnerLong', 'continuous_burner_long.png')
+
+
+class SpriteImage_PurplePole(SLib.SpriteImage):  # 309
+    def __init__(self, parent):
+        super().__init__(parent, 3.75)
+        self.spritebox.shown = False
+        self.yOffset = -8
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('PurplePoleT', 'purple_pole_t.png')
+        SLib.loadIfNotInImageCache('PurplePoleM', 'purple_pole_m.png')
+        SLib.loadIfNotInImageCache('PurplePoleB', 'purple_pole_b.png')
+
+
+    def dataChanged(self):
+        super().dataChanged()
+        self.height = ((self.parent.spritedata[5] + 1) << 4) + 48
+
+    def paint(self, painter):
+        super().paint(painter)
+
+        painter.drawPixmap(0, 0, ImageCache['PurplePoleT'])
+        painter.drawTiledPixmap(0, 90, 60, self.height * 3.75 - 180, ImageCache['PurplePoleM'])
+        painter.drawPixmap(0, self.height * 3.75 - 90, ImageCache['PurplePoleB'])
 
 
 class SpriteImage_NoteBlock(SLib.SpriteImage_Static):  # 295
@@ -6287,6 +6422,78 @@ class SpriteImage_Poltergeist(SLib.SpriteImage_Static):  # 305
         SLib.loadIfNotInImageCache('Poltergeist', 'poltergeist.png')
 
 
+class SpriteImage_ScalePlatform(SLib.SpriteImage):  # 309
+    def __init__(self, parent):
+        super().__init__(parent, 3.75)
+        self.spritebox.shown = False
+        self.yOffset = -12
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ScaleRopeV', 'scale_rope_v.png')
+        SLib.loadIfNotInImageCache('ScaleRopeH', 'scale_rope_h.png')
+        SLib.loadIfNotInImageCache('ScaleWheel', 'scale_wheel.png')
+        SLib.loadIfNotInImageCache('MovPlatNL', 'wood_platform_left.png')
+        SLib.loadIfNotInImageCache('MovPlatNM', 'wood_platform_middle.png')
+        SLib.loadIfNotInImageCache('MovPlatNR', 'wood_platform_right.png')
+        SLib.loadIfNotInImageCache('MovPlatSL', 'wood_platform_snow_left.png')
+        SLib.loadIfNotInImageCache('MovPlatSM', 'wood_platform_snow_middle.png')
+        SLib.loadIfNotInImageCache('MovPlatSR', 'wood_platform_snow_right.png')
+
+
+    def dataChanged(self):
+        super().dataChanged()
+        self.leftRopeLength = self.parent.spritedata[4] & 0xF
+        self.leftRopeLength = 0.5 if self.leftRopeLength < 1 else self.leftRopeLength
+        self.rightRopeLength = self.parent.spritedata[5] >> 4
+        self.rightRopeLength = 0.5 if self.rightRopeLength < 1 else self.rightRopeLength
+        self.snowy = self.parent.spritedata[4] & 0x10 != 0
+        self.middleRopeLength = (self.parent.spritedata[5] & 0xF) + ((self.parent.spritedata[3] & 0xF) << 4)
+        self.leftPlatfromWidth = (self.parent.spritedata[8] & 0xF) + 3
+        self.rightPlatfromWidth = (self.parent.spritedata[9] >> 4) + 3
+
+        self.leftPlatformOffset = (self.leftPlatfromWidth + 0.5) / 2
+        self.rightPlatformOffset = (self.rightPlatfromWidth + 0.5) / 2
+
+        if self.middleRopeLength + self.leftPlatformOffset < self.rightPlatformOffset:
+            self.width = self.rightPlatformOffset * 2 * 16
+            self.xOffset = -(self.rightPlatformOffset - self.middleRopeLength) * 16
+        elif self.middleRopeLength + self.rightPlatformOffset < self.leftPlatformOffset:
+            self.width = self.leftPlatformOffset * 2 * 16
+            self.xOffset = -self.leftPlatformOffset * 16
+        else:
+            self.width = (self.leftPlatformOffset + self.middleRopeLength + self.rightPlatformOffset) * 16
+            self.xOffset = -self.leftPlatformOffset * 16
+
+        self.height = (self.leftRopeLength if self.leftRopeLength > self.rightRopeLength else self.rightRopeLength) * 16 + 20
+
+    def paint(self, painter):
+        super().paint(painter)
+
+        leftSideOffset = self.leftPlatformOffset * 60 - 15
+        if self.middleRopeLength + self.leftPlatformOffset < self.rightPlatformOffset:
+            leftSideOffset = (self.rightPlatformOffset - self.middleRopeLength) * 60 - 15
+
+        #Draw ropes and wheels
+        painter.drawTiledPixmap(leftSideOffset, 30, 30, self.leftRopeLength * 60 - 15, ImageCache['ScaleRopeV'])
+        painter.drawTiledPixmap(leftSideOffset + self.middleRopeLength * 60, 30, 30, self.rightRopeLength * 60 - 15, ImageCache['ScaleRopeV'])
+        painter.drawTiledPixmap(leftSideOffset + 30, 0, self.middleRopeLength * 60 - 30, 30, ImageCache['ScaleRopeH'])
+        painter.drawPixmap(leftSideOffset, 0, ImageCache['ScaleWheel'])
+        painter.drawPixmap(leftSideOffset + self.middleRopeLength * 60 - 30, 0, ImageCache['ScaleWheel'])
+
+        imgType = 'MovPlat%s' % ('S' if self.snowy else 'N')
+        
+        # Draw left platform
+        painter.drawPixmap(leftSideOffset + 15 - self.leftPlatformOffset * 60 + 75 - ImageCache[imgType + 'L'].width(), self.leftRopeLength * 60 + 15, ImageCache[imgType + 'L'])
+        painter.drawTiledPixmap(leftSideOffset + 15 - self.leftPlatformOffset * 60 + 75, self.leftRopeLength * 60 + 15, (self.leftPlatfromWidth - 2) * 60, 60, ImageCache[imgType + 'M'])
+        painter.drawPixmap(leftSideOffset + 15 - self.leftPlatformOffset * 60 + 75 + (self.leftPlatfromWidth - 2) * 60, self.leftRopeLength * 60 + 15, ImageCache[imgType + 'R'])
+
+        # Draw right platform
+        painter.drawPixmap(10 + leftSideOffset + 15 + (self.middleRopeLength - self.rightPlatformOffset) * 60 + 75 - ImageCache[imgType + 'L'].width(), self.rightRopeLength * 60 + 15, ImageCache[imgType + 'L'])
+        painter.drawTiledPixmap(9 + leftSideOffset + 15 + (self.middleRopeLength - self.rightPlatformOffset) * 60 + 75, self.rightRopeLength * 60 + 15, (self.rightPlatfromWidth - 2) * 60, 60, ImageCache[imgType + 'M'])
+        painter.drawPixmap(7 + leftSideOffset + 15 + (self.middleRopeLength - self.rightPlatformOffset) * 60 + 75 + (self.rightPlatfromWidth - 2) * 60, self.rightRopeLength * 60 + 15, ImageCache[imgType + 'R'])
+
+
 class SpriteImage_Blooper(SLib.SpriteImage_Static):  # 313
     def __init__(self, parent):
         super().__init__(
@@ -6348,6 +6555,20 @@ class SpriteImage_Broozer(SLib.SpriteImage_Static):  # 320
         SLib.loadIfNotInImageCache('Broozer', 'broozer.png')
 
 
+class SpriteImage_Bulber(SLib.SpriteImage_Static):  # 321
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['Bulber'],
+            (-16, -12),
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('Bulber', 'bulber.png')
+
+
 class SpriteImage_BlooperBabies(SLib.SpriteImage_Static):  # 322
     def __init__(self, parent):
         super().__init__(
@@ -6374,6 +6595,158 @@ class SpriteImage_Barrel(SLib.SpriteImage_Static):  # 323
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('Barrel', 'barrel.png')
+
+
+class SpriteImage_GhostHouseBlock(SLib.SpriteImage):  # 324
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+        self.spritebox.shown = False
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('GhostHouseBlockT', 'ghost_house_block_t.png')
+        SLib.loadIfNotInImageCache('GhostHouseBlockTL', 'ghost_house_block_tl.png')
+        SLib.loadIfNotInImageCache('GhostHouseBlockTR', 'ghost_house_block_tr.png')
+        SLib.loadIfNotInImageCache('GhostHouseBlockL', 'ghost_house_block_l.png')
+        SLib.loadIfNotInImageCache('GhostHouseBlockM', 'ghost_house_block_m.png')
+        SLib.loadIfNotInImageCache('GhostHouseBlockR', 'ghost_house_block_r.png')
+        SLib.loadIfNotInImageCache('GhostHouseBlockB', 'ghost_house_block_b.png')
+        SLib.loadIfNotInImageCache('GhostHouseBlockBL', 'ghost_house_block_bl.png')
+        SLib.loadIfNotInImageCache('GhostHouseBlockBR', 'ghost_house_block_br.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+
+        self.w = (self.parent.spritedata[8] & 0xF) + 2
+        self.h = (self.parent.spritedata[4] >> 4) + 2
+        self.width = self.w << 4
+        self.height = self.h << 4
+
+    def paint(self, painter):
+        super().paint(painter)
+
+        # Draw middle
+        painter.drawTiledPixmap(60, 60, (self.w - 2) * 60, (self.h - 2) * 60, ImageCache['GhostHouseBlockM'], 15, ImageCache['GhostHouseBlockM'].height() - (((self.h - 2) * 60) % ImageCache['GhostHouseBlockM'].height()))
+
+        # Draw top row
+        painter.drawPixmap(0, 0, ImageCache['GhostHouseBlockTL'])
+        painter.drawTiledPixmap(60, 0, (self.w - 2) * 60, 60, ImageCache['GhostHouseBlockT'])
+        painter.drawPixmap((self.w - 1) * 60, 0, ImageCache['GhostHouseBlockTR'])
+
+        # Draw left and right side
+        painter.drawTiledPixmap(0, 60, 60, (self.h - 2) * 60, ImageCache['GhostHouseBlockL'])
+        painter.drawTiledPixmap((self.w - 1) * 60, 60, 60, (self.h - 2) * 60, ImageCache['GhostHouseBlockR'])
+
+        # Draw bottom row
+        painter.drawPixmap(0, (self.h - 1) * 60, ImageCache['GhostHouseBlockBL'])
+        painter.drawTiledPixmap(60, (self.h - 1) * 60, (self.w - 2) * 60, 60, ImageCache['GhostHouseBlockB'])
+        painter.drawPixmap((self.w - 1) * 60, (self.h - 1) * 60, ImageCache['GhostHouseBlockBR'])
+
+
+SpikePillar_MoveDistance = [16*60, 7*60, 14*60, 10*60]
+
+
+class SpriteImage_SpikePillarDown(SLib.SpriteImage_Static):  # 329
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['SpikePillarDown'],
+            (0, -432),
+        )
+
+        self.aux.append(SLib.AuxiliaryImage(parent, 240, 1680))
+        self.aux[0].image = ImageCache['SpikePillarDown']
+        self.aux[0].hover = False
+        self.aux[0].alpha = 0.2
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('SpikePillarDown', 'spike_pillar_down.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+        
+        move = (self.parent.spritedata[3] >> 4) & 3
+        self.aux[0].setPos(0, SpikePillar_MoveDistance[move])
+
+
+class SpriteImage_SpikePillarUp(SLib.SpriteImage_Static):  # 331
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['SpikePillarUp'],
+            (0, 0),
+        )
+
+        self.aux.append(SLib.AuxiliaryImage(parent, 240, 1680))
+        self.aux[0].image = ImageCache['SpikePillarUp']
+        self.aux[0].hover = False
+        self.aux[0].alpha = 0.2
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('SpikePillarUp', 'spike_pillar_up.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+        
+        move = (self.parent.spritedata[3] >> 4) & 3
+        self.aux[0].setPos(0, -SpikePillar_MoveDistance[move])
+
+
+class SpriteImage_SpikePillarRight(SLib.SpriteImage_Static):  # 332
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['SpikePillarRight'],
+            (-432, 0),
+        )
+
+        self.aux.append(SLib.AuxiliaryImage(parent, 1680, 240))
+        self.aux[0].image = ImageCache['SpikePillarRight']
+        self.aux[0].hover = False
+        self.aux[0].alpha = 0.2
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('SpikePillarRight', 'spike_pillar_right.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+        
+        move = (self.parent.spritedata[3] >> 4) & 3
+        self.aux[0].setPos(SpikePillar_MoveDistance[move], 0)
+
+
+class SpriteImage_SpikePillarLeft(SLib.SpriteImage_Static):  # 333
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['SpikePillarLeft'],
+            (0, 0),
+        )
+
+        self.aux.append(SLib.AuxiliaryImage(parent, 1680, 240))
+        self.aux[0].image = ImageCache['SpikePillarLeft']
+        self.aux[0].hover = False
+        self.aux[0].alpha = 0.2
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('SpikePillarLeft', 'spike_pillar_left.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+        
+        move = (self.parent.spritedata[3] >> 4) & 3
+        self.aux[0].setPos(-SpikePillar_MoveDistance[move], 0)
 
 
 class SpriteImage_Cooligan(SLib.SpriteImage_StaticMultiple):  # 334
@@ -6475,6 +6848,69 @@ class SpriteImage_WoodenBox(SLib.SpriteImage_StaticMultiple):  # 338
         super().dataChanged()
 
 
+class SpriteImage_AirshipNutPlatform(SLib.SpriteImage_Static):  # 341
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['AirshipNutPlatform'],
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('AirshipNutPlatform', 'airship_nut_platform.png')
+
+
+class SpriteImage_SpikePillarLongRight(SLib.SpriteImage_Static):  # 342
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['SpikePillarLongRight'],
+            (-1332, -4),
+        )
+
+        self.aux.append(SLib.AuxiliaryImage(parent, 5055, 270))
+        self.aux[0].image = ImageCache['SpikePillarLongRight']
+        self.aux[0].hover = False
+        self.aux[0].alpha = 0.2
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('SpikePillarLongRight', 'spike_pillar_long_right.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+        
+        moveShort = self.parent.spritedata[3] & 0x10
+        self.aux[0].setPos(24*60 if moveShort != 0 else 80*60, 0)
+
+
+class SpriteImage_SpikePillarLongLeft(SLib.SpriteImage_Static):  # 343
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['SpikePillarLongLeft'],
+            (0, -4),
+        )
+
+        self.aux.append(SLib.AuxiliaryImage(parent, 5055, 270))
+        self.aux[0].image = ImageCache['SpikePillarLongLeft']
+        self.aux[0].hover = False
+        self.aux[0].alpha = 0.2
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('SpikePillarLongLeft', 'spike_pillar_long_left.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+        
+        moveShort = self.parent.spritedata[3] & 0x10
+        self.aux[0].setPos(-(24*60 if moveShort != 0 else 80*60), 0)
+
+
 class SpriteImage_StoneBlock(SLib.SpriteImage_Static):  # 347
     def __init__(self, parent):
         super().__init__(
@@ -6570,21 +7006,49 @@ class SpriteImage_Pokey(SLib.SpriteImage):  # 351
             painter.drawPixmap(0, 0, 100, 60, ImageCache['PokeyBottomD'])
 
 
-class SpriteImage_SpikeTop(SLib.SpriteImage_Static):  # 352
+class SpriteImage_SpikeTop(SLib.SpriteImage_StaticMultiple):  # 352, 447
     def __init__(self, parent):
         super().__init__(
             parent,
             3.75,
-            ImageCache['SpikeTop'],
         )
-        self.yOffset = -8
 
     @staticmethod
     def loadImages():
-        SLib.loadIfNotInImageCache('SpikeTop', 'spike_top.png')
+        SLib.loadIfNotInImageCache('SpikeTop0', 'spike_top.png')
+        SLib.loadIfNotInImageCache('SpikeTop1', 'spike_top_left.png')
+        SLib.loadIfNotInImageCache('SpikeTop2', 'spike_top_down.png')
+        SLib.loadIfNotInImageCache('SpikeTop3', 'spike_top_right.png')
 
     def dataChanged(self):
-        self.xOffset = -0.5 * (self.image.width() / 60 - 1) * 16
+        orientation = (self.parent.spritedata[5] >> 4) & 3
+        direction = self.parent.spritedata[5] & 1
+        
+        if orientation & 1 == 1: #Wall
+            self.yOffset = 0
+                                                                                
+            if orientation & 2 == 2: #Right Wall
+                self.xOffset = 0
+            else: #Left Wall
+                self.xOffset = -8
+                                                                                
+        else: #Floor/Ceiling
+            self.xOffset = 0
+            
+            if orientation & 2 == 2: #Ceiling
+                self.yOffset = 0
+            else: #Ground
+                self.yOffset = -8
+                
+        t = QTransform()
+        
+        if direction == 1:
+            if orientation & 1 == 1: #Wall
+                t.scale(1, -1)
+            else:
+                t.scale(-1, 1)
+        
+        self.image = ImageCache['SpikeTop%d' % orientation].transformed(t)
         super().dataChanged()
 
 
@@ -6613,6 +7077,20 @@ class SpriteImage_Morton(SLib.SpriteImage_Static):  # 368
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('Morton', 'morton.png')
+
+
+class SpriteImage_ChainHolder(SLib.SpriteImage_Static):  # 374
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['ChainHolder'],
+            (0, -16)
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('ChainHolder', 'chain_holder.png')
 
 
 class SpriteImage_TorpedoLauncher(SLib.SpriteImage_Static):  # 378
@@ -6685,6 +7163,20 @@ class SpriteImage_Ludwig(SLib.SpriteImage_Static):  # 385
         SLib.loadIfNotInImageCache('Ludwig', 'ludwig.png')
 
 
+class SpriteImage_MeltableIceChunk(SLib.SpriteImage_Static):  # 386
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['MeltableIceChunk'],
+            (-8, 0)
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('MeltableIceChunk', 'meltable_ice_chunk.png')
+
+
 class SpriteImage_Roy(SLib.SpriteImage_Static):  # 389
     def __init__(self, parent):
         super().__init__(
@@ -6748,21 +7240,79 @@ class SpriteImage_Starman(SLib.SpriteImage_StaticMultiple):  # 395
         if direction == 0:
             self.image = ImageCache['StarmanS']
             self.xOffset = -44
-            self.yOffset = -32
+            self.yOffset = -36
         elif direction == 16:
             self.image = ImageCache['StarmanB']
             self.xOffset = -64
-            self.yOffset = -52
+            self.yOffset = -60
         elif direction == 32:
             self.image = ImageCache['StarmanG']
-            self.xOffset = -100
-            self.yOffset = -100
+            self.xOffset = -96
+            self.yOffset = -92
         else:
             self.image = ImageCache['StarmanS']
             self.xOffset = -44
-            self.yOffset = -32
+            self.yOffset = -36
 
         super().dataChanged()
+
+
+class SpriteImage_LanternPlatform(SLib.SpriteImage):  # 400
+    def __init__(self, parent):
+        super().__init__(parent, 3.75)
+        self.spritebox.shown = False
+        self.height = 24
+        self.xOffset = -4
+        self.yOffset = -4
+
+    @staticmethod
+    def loadImages():
+        ImageCache['LanternPlatformLeft'] = SLib.GetImg('lantern_platform_l.png')
+        ImageCache['LanternPlatformMiddle'] = SLib.GetImg('lantern_platform_m.png')
+        ImageCache['LanternPlatformRight'] = SLib.GetImg('lantern_platform_r.png')
+        ImageCache['LanternPlatformLeftLamp'] = SLib.GetImg('lantern_platform_l_lamp.png')
+        ImageCache['LanternPlatformMiddleScrew'] = SLib.GetImg('lantern_platform_m_screw.png')
+        ImageCache['LanternPlatformRightLamp'] = SLib.GetImg('lantern_platform_r_lamp.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+
+        self.screwPlacement = ((self.parent.spritedata[4] & 0x1) << 4) + ((self.parent.spritedata[5] & 0xF0) >> 4) # <- max length is 31
+        self.platformLength = self.parent.spritedata[8] & 0b00011111 # <- max length is 31
+        self.lanternPlacement = self.parent.spritedata[5] & 0x3 # values repeat after 3
+
+        if self.lanternPlacement == 0:
+            self.width = ((self.platformLength + 2) << 4) + 8
+        elif self.lanternPlacement == 1 or self.lanternPlacement == 2:
+            self.width = ((self.platformLength + 3) << 4) + 8
+        else:
+            self.width = ((self.platformLength + 4) << 4) + 8
+
+    def paint(self, painter):
+        super().paint(painter)
+
+        if self.lanternPlacement < 2:
+            painter.drawPixmap(0, 0, ImageCache['LanternPlatformLeft'])
+            painter.drawTiledPixmap(75, 15, self.platformLength * 60, 60, ImageCache['LanternPlatformMiddle'])
+
+            if self.screwPlacement > 0 and self.screwPlacement <= self.platformLength:
+                painter.drawPixmap(self.screwPlacement * 60 + 15, 15, ImageCache['LanternPlatformMiddleScrew'])
+
+            if self.lanternPlacement == 0:
+                painter.drawPixmap(75 + self.platformLength * 60, 0, ImageCache['LanternPlatformRight'])
+            else:
+                painter.drawPixmap(75 + self.platformLength * 60, 0, ImageCache['LanternPlatformRightLamp'])
+        else:
+            painter.drawPixmap(0, 0, ImageCache['LanternPlatformLeftLamp'])
+            painter.drawTiledPixmap(135, 15, self.platformLength * 60, 60, ImageCache['LanternPlatformMiddle'])
+            
+            if self.screwPlacement > 1 and self.screwPlacement <= self.platformLength + 1:
+                painter.drawPixmap(self.screwPlacement * 60 + 15, 15, ImageCache['LanternPlatformMiddleScrew'])
+
+            if self.lanternPlacement == 2:
+                painter.drawPixmap(135 + self.platformLength * 60, 0, ImageCache['LanternPlatformRight'])
+            else:
+                painter.drawPixmap(135 + self.platformLength * 60, 0, ImageCache['LanternPlatformRightLamp'])
 
 
 class SpriteImage_GreenRing(SLib.SpriteImage_Static):  # 402
@@ -6957,6 +7507,61 @@ class SpriteImage_SnowyBoxes(SLib.SpriteImage_StaticMultiple):  # 427
             self.image = ImageCache['SnowyBoxes1']
 
         super().dataChanged()
+
+
+class SpriteImage_MortonStoneBlock(SLib.SpriteImage):  # 431
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+        self.spritebox.shown = False
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('MortonStoneBlockT', 'morton_stone_block_t.png')
+        SLib.loadIfNotInImageCache('MortonStoneBlockTL', 'morton_stone_block_tl.png')
+        SLib.loadIfNotInImageCache('MortonStoneBlockTR', 'morton_stone_block_tr.png')
+        SLib.loadIfNotInImageCache('MortonStoneBlockL', 'morton_stone_block_l.png')
+        SLib.loadIfNotInImageCache('MortonStoneBlockM', 'morton_stone_block_m.png')
+        SLib.loadIfNotInImageCache('MortonStoneBlockR', 'morton_stone_block_r.png')
+        SLib.loadIfNotInImageCache('MortonStoneBlockB', 'morton_stone_block_b.png')
+        SLib.loadIfNotInImageCache('MortonStoneBlockBL', 'morton_stone_block_bl.png')
+        SLib.loadIfNotInImageCache('MortonStoneBlockBR', 'morton_stone_block_br.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+
+        self.w = self.parent.spritedata[8] + 1
+        self.h = self.parent.spritedata[9] + 1
+
+        if self.w < 2:
+            self.w = 2
+        if self.h < 2:
+            self.h = 2
+
+        self.width = self.w << 4
+        self.height = self.h << 4
+
+    def paint(self, painter):
+        super().paint(painter)
+
+        # Draw middle
+        painter.drawTiledPixmap(30, 30, (self.w - 1) * 60, (self.h - 1) * 60, ImageCache['MortonStoneBlockM'], ImageCache['MortonStoneBlockM'].width() / 2 - ((self.w - 1) / 2) * 60, ImageCache['MortonStoneBlockM'].height() / 2 - ((self.h - 1) / 2) * 60)
+
+        # Draw top row
+        painter.drawPixmap(0, 0, ImageCache['MortonStoneBlockTL'])
+        painter.drawTiledPixmap(60, 0, (self.w - 2) * 60, 60, ImageCache['MortonStoneBlockT'])
+        painter.drawPixmap((self.w - 1) * 60, 0, ImageCache['MortonStoneBlockTR'])
+
+        # Draw left and right side
+        painter.drawTiledPixmap(0, 60, 60, (self.h - 2) * 60, ImageCache['MortonStoneBlockL'])
+        painter.drawTiledPixmap((self.w - 1) * 60, 60, 60, (self.h - 2) * 60, ImageCache['MortonStoneBlockR'])
+
+        # Draw bottom row
+        painter.drawPixmap(0, (self.h - 1) * 60, ImageCache['MortonStoneBlockBL'])
+        painter.drawTiledPixmap(60, (self.h - 1) * 60, (self.w - 2) * 60, 60, ImageCache['MortonStoneBlockB'])
+        painter.drawPixmap((self.w - 1) * 60, (self.h - 1) * 60, ImageCache['MortonStoneBlockBR'])
 
 
 class SpriteImage_Fliprus(SLib.SpriteImage_StaticMultiple):  # 441
@@ -7302,6 +7907,20 @@ class SpriteImage_WaddleWing(SLib.SpriteImage_StaticMultiple):  # 481
         super().dataChanged()
 
 
+class SpriteImage_MechaCheep(SLib.SpriteImage_Static):  # 482
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['MechaCheep'],
+            (0, -16),
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('MechaCheep', 'cheep_mecha.png')
+
+
 class SpriteImage_MultiSpinningFirebar(SLib.SpriteImage):  # 483
     def __init__(self, parent):
         super().__init__(
@@ -7462,6 +8081,55 @@ class SpriteImage_CloudPlatform(SLib.SpriteImage_Static):  # 508
         SLib.loadIfNotInImageCache('CloudPlatform', 'cloud_platform.png')
 
 
+class SpriteImage_GhostShipBlock(SLib.SpriteImage):  # 512
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+        self.spritebox.shown = False
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('GhostShipBlockT', 'ghost_ship_block_t.png')
+        SLib.loadIfNotInImageCache('GhostShipBlockTL', 'ghost_ship_block_tl.png')
+        SLib.loadIfNotInImageCache('GhostShipBlockTR', 'ghost_ship_block_tr.png')
+        SLib.loadIfNotInImageCache('GhostShipBlockL', 'ghost_ship_block_l.png')
+        SLib.loadIfNotInImageCache('GhostShipBlockM', 'ghost_ship_block_m.png')
+        SLib.loadIfNotInImageCache('GhostShipBlockR', 'ghost_ship_block_r.png')
+        SLib.loadIfNotInImageCache('GhostShipBlockB', 'ghost_ship_block_b.png')
+        SLib.loadIfNotInImageCache('GhostShipBlockBL', 'ghost_ship_block_bl.png')
+        SLib.loadIfNotInImageCache('GhostShipBlockBR', 'ghost_ship_block_br.png')
+
+    def dataChanged(self):
+        super().dataChanged()
+
+        self.w = self.parent.spritedata[8] + 3
+        self.h = self.parent.spritedata[9] + 3
+        self.width = self.w << 4
+        self.height = self.h << 4
+
+    def paint(self, painter):
+        super().paint(painter)
+
+        # Draw middle
+        painter.drawTiledPixmap(60, 60, (self.w - 2) * 60, (self.h - 2) * 60, ImageCache['GhostShipBlockM'], 15, ImageCache['GhostShipBlockM'].height() - (((self.h - 2) * 60) % ImageCache['GhostShipBlockM'].height()))
+
+        # Draw top row
+        painter.drawPixmap(0, 0, ImageCache['GhostShipBlockTL'])
+        painter.drawTiledPixmap(60, 0, (self.w - 2) * 60, 60, ImageCache['GhostShipBlockT'])
+        painter.drawPixmap((self.w - 1) * 60, 0, ImageCache['GhostShipBlockTR'])
+
+        # Draw left and right side
+        painter.drawTiledPixmap(0, 60, 60, (self.h - 2) * 60, ImageCache['GhostShipBlockL'])
+        painter.drawTiledPixmap((self.w - 1) * 60, 60, 60, (self.h - 2) * 60, ImageCache['GhostShipBlockR'])
+
+        # Draw bottom row
+        painter.drawPixmap(0, (self.h - 1) * 60, ImageCache['GhostShipBlockBL'])
+        painter.drawTiledPixmap(60, (self.h - 1) * 60, (self.w - 2) * 60, 60, ImageCache['GhostShipBlockB'])
+        painter.drawPixmap((self.w - 1) * 60, (self.h - 1) * 60, ImageCache['GhostShipBlockBR'])
+
+
 class SpriteImage_PipeJoint(SLib.SpriteImage_Static):  # 513
     def __init__(self, parent, scale=3.75):
         super().__init__(
@@ -7557,6 +8225,24 @@ class SpriteImage_MovementControlledTowerBlock(SLib.SpriteImage_Static):  # 524
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('TowerBlock', 'tower_block.png')
+
+
+class SpriteImage_BoltStoneBlock(SLib.SpriteImage_StaticMultiple):  # 530, 625
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+
+    @staticmethod
+    def loadImages():
+        for i in range(0, 7):
+            SLib.loadIfNotInImageCache('BoltStoneBlock%d' % i, 'bolt_stone_block_%d.png' % i)
+
+    def dataChanged(self):
+        size = self.parent.spritedata[5] & 0xF; size = 0 if size > 6 else size
+        self.image = ImageCache['BoltStoneBlock%d' % size]
+        super().dataChanged()
 
 
 class SpriteImage_RockyWrench(SLib.SpriteImage_Static):  # 536
@@ -7739,6 +8425,61 @@ class SpriteImage_Flowers(SLib.SpriteImage):  # 546
             painter.drawPixmap(240, 0, SLib.Tiles[182].main)
 
 
+class SpriteImage_GiantPipePiranha(SLib.SpriteImage_StaticMultiple):  # 550
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('GiantPipePiranhaUp', 'pipe_piranha_big.png')
+        SLib.loadIfNotInImageCache('GiantPipePiranhaDown', 'pipe_piranha_big_down.png')
+        SLib.loadIfNotInImageCache('GiantPipePiranhaRight', 'pipe_piranha_big_right.png')
+        SLib.loadIfNotInImageCache('GiantPipePiranhaLeft', 'pipe_piranha_big_left.png')
+
+    def dataChanged(self):
+
+        direction = (self.parent.spritedata[2] >> 4) & 3
+
+        if direction == 0:
+            self.image = ImageCache['GiantPipePiranhaUp']
+            self.offset = (-24, -128)
+        elif direction == 1:
+            self.image = ImageCache['GiantPipePiranhaDown']
+            self.offset = (-24, 64)
+        elif direction == 2:
+            self.image = ImageCache['GiantPipePiranhaRight']
+            self.offset = (64, -24)
+        else:
+            self.image = ImageCache['GiantPipePiranhaLeft']
+            self.offset = (-128, -24)
+
+        super().dataChanged()
+
+
+class SpriteImage_NabbitRefugeLocation(SLib.SpriteImage):  # 559
+    def __init__(self, parent):
+        super().__init__(parent, 3.75)
+        self.aux.append(SLib.AuxiliaryRectOutline(parent, 0, 0))
+
+    def dataChanged(self):
+        super().dataChanged()
+
+        h = self.parent.spritedata[5] >> 4
+        w = self.parent.spritedata[5] & 0xF
+        if w == 0:
+            w = 1
+        if h == 0:
+            h = 1
+        
+        if w == 1 and h == 1:  # no point drawing a 1x1 outline behind the self.parent
+            self.aux[0].setSize(0, 0)
+            return
+        self.aux[0].setSize(w * 60, h * 60)
+
+
 class SpriteImage_RecordSignboard(SLib.SpriteImage):  # 561
     def __init__(self, parent):
         super().__init__(parent, 3.75)
@@ -7792,17 +8533,30 @@ class SpriteImage_StoneSpike(SLib.SpriteImage_Static):  # 579
         SLib.loadIfNotInImageCache('StoneSpike', 'stone_spike.png')
 
 
-class SpriteImage_CheepGreen(SLib.SpriteImage_Static):  # 588
+class SpriteImage_DeepCheep(SLib.SpriteImage_Static):  # 588
     def __init__(self, parent):
         super().__init__(
             parent,
             3.75,
-            ImageCache['CheepGreen'],
+            ImageCache['DeepCheep'],
         )
 
     @staticmethod
     def loadImages():
-        SLib.loadIfNotInImageCache('CheepGreen', 'cheep_green.png')
+        SLib.loadIfNotInImageCache('DeepCheep', 'cheep_deep.png')
+
+
+class SpriteImage_EepCheep(SLib.SpriteImage_Static):  # 589
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['EepCheep'],
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('EepCheep', 'cheep_eep.png')
 
 
 class SpriteImage_SumoBro(SLib.SpriteImage_Static):  # 593
@@ -7954,6 +8708,7 @@ ImageClasses = {
     23: SpriteImage_Spiny,
     24: SpriteImage_SpinyU,
     25: SpriteImage_MidwayFlag,
+    26: SpriteImage_ZoomArea,
     29: SpriteImage_LimitU,
     30: SpriteImage_LimitD,
     31: SpriteImage_Flagpole,
@@ -8030,6 +8785,7 @@ ImageClasses = {
     113: SpriteImage_MediumCheepCheep,
     114: SpriteImage_CheepCheep,
     115: SpriteImage_SpecialExit,
+    116: SpriteImage_ControllerSwaying,
     117: SpriteImage_Spinner,
     119: SpriteImage_Lakitu,
     120: SpriteImage_SpinyCheep,
@@ -8070,7 +8826,8 @@ ImageClasses = {
     162: SpriteImage_ExpandingPipeDown,
     163: SpriteImage_WaterGeyserLocation,
     164: SpriteImage_BobOmb,
-    166: SpriteImage_CoinOutline,
+    165: SpriteImage_CoinCircle,
+    166: SpriteImage_CoinOutlineCircle,
     167: SpriteImage_CoinBlue,
     168: SpriteImage_ClapCoin,
     169: SpriteImage_ClapCoin,
@@ -8153,11 +8910,17 @@ ImageClasses = {
     260: SpriteImage_BigCannon,
     261: SpriteImage_Parabeetle,
     262: SpriteImage_HeavyParabeetle,
+    263: SpriteImage_PipeBubbles,
     264: SpriteImage_WaterGeyserBoss,
     265: SpriteImage_RollingHill,
     269: SpriteImage_TowerCog,
     270: SpriteImage_Amp,
+    271: SpriteImage_MetalBridgePlatform,
+    272: SpriteImage_MetalBridgeStem,
     273: SpriteImage_MetalBridgeBase,
+    275: SpriteImage_CastlePlatform,
+    276: SpriteImage_Jellybeam,
+    279: SpriteImage_Coin,
     281: SpriteImage_CoinBubble,
     282: SpriteImage_KingBill,
     284: SpriteImage_StretchBlock,
@@ -8165,6 +8928,8 @@ ImageClasses = {
     286: SpriteImage_LavaBubble,
     288: SpriteImage_Bush,
     289: SpriteImage_ContinuousBurner,
+    290: SpriteImage_ContinuousBurnerLong,
+    294: SpriteImage_PurplePole,
     295: SpriteImage_NoteBlock,
     298: SpriteImage_Clampy,
     296: SpriteImage_Lemmy,
@@ -8173,6 +8938,8 @@ ImageClasses = {
     303: SpriteImage_Thwimp,
     305: SpriteImage_Poltergeist,
     306: SpriteImage_Crash,
+    308: SpriteImage_ScalePlatform,
+    309: SpriteImage_ScalePlatform,
     310: SpriteImage_Crash,
     312: SpriteImage_Crash,
     313: SpriteImage_Blooper,
@@ -8182,16 +8949,26 @@ ImageClasses = {
     318: SpriteImage_LavaBubble,
     319: SpriteImage_Crash,
     320: SpriteImage_Broozer,
+    321: SpriteImage_Bulber,
     322: SpriteImage_BlooperBabies,
     323: SpriteImage_Barrel,
+    324: SpriteImage_GhostHouseBlock,
     325: SpriteImage_Coin,
     326: SpriteImage_MovingCoin,
     328: SpriteImage_Coin,
+    329: SpriteImage_SpikePillarDown,
+    331: SpriteImage_SpikePillarUp,
+    332: SpriteImage_SpikePillarRight,
+    333: SpriteImage_SpikePillarLeft,
     334: SpriteImage_Cooligan,
     335: SpriteImage_PipeCooliganGenerator,
     336: SpriteImage_Bramball,
     338: SpriteImage_WoodenBox,
+    341: SpriteImage_AirshipNutPlatform,
+    342: SpriteImage_SpikePillarLongRight,
+    343: SpriteImage_SpikePillarLongLeft,
     345: SpriteImage_Crash,
+    346: SpriteImage_Thwimp,
     347: SpriteImage_StoneBlock,
     348: SpriteImage_SuperGuide,
     350: SpriteImage_MovingStoneBlock,
@@ -8203,17 +8980,20 @@ ImageClasses = {
     360: SpriteImage_Crash,
     365: SpriteImage_GoldenYoshi,
     368: SpriteImage_Morton,
+    374: SpriteImage_ChainHolder,
     376: SpriteImage_Crash,
     377: SpriteImage_Crash,
     378: SpriteImage_TorpedoLauncher,
     380: SpriteImage_QBlockBYoshi,
     383: SpriteImage_Wendy,
     385: SpriteImage_Ludwig,
+    386: SpriteImage_MeltableIceChunk,
     389: SpriteImage_Roy,
     393: SpriteImage_3x3IceBlock,
     395: SpriteImage_Starman,
     397: SpriteImage_QBlock,
     398: SpriteImage_BrickBlock,
+    400: SpriteImage_LanternPlatform,
     402: SpriteImage_GreenRing,
     403: SpriteImage_Iggy,
     404: SpriteImage_PipeUpEnterable,
@@ -8222,11 +9002,13 @@ ImageClasses = {
     422: SpriteImage_BigBrickBlock,
     424: SpriteImage_ToAirshipCannon,
     427: SpriteImage_SnowyBoxes,
+    431: SpriteImage_MortonStoneBlock,
     436: SpriteImage_Crash,
     439: SpriteImage_Crash,
     441: SpriteImage_Fliprus,
     443: SpriteImage_BonyBeetle,
     446: SpriteImage_FliprusSnowball,
+    447: SpriteImage_SpikeTop,
     449: SpriteImage_Useless,
     451: SpriteImage_NabbitPlacement,
     452: SpriteImage_Crash,
@@ -8245,6 +9027,7 @@ ImageClasses = {
     479: SpriteImage_Crash,
     480: SpriteImage_MvmtRotControlledStarCoin,
     481: SpriteImage_WaddleWing,
+    482: SpriteImage_MechaCheep,
     483: SpriteImage_MultiSpinningFirebar,
     484: SpriteImage_ControllerSpinning,
     486: SpriteImage_FrameSetting,
@@ -8256,6 +9039,7 @@ ImageClasses = {
     507: SpriteImage_ShootingStar,
     508: SpriteImage_CloudPlatform,
     511: SpriteImage_PipeDown,
+    512: SpriteImage_GhostShipBlock,
     513: SpriteImage_PipeJoint,
     514: SpriteImage_PipeJointSmall,
     516: SpriteImage_MiniPipeRight,
@@ -8270,14 +9054,18 @@ ImageClasses = {
     525: SpriteImage_QBlock,
     526: SpriteImage_BrickBlock,
     529: SpriteImage_Crash,
+    530: SpriteImage_BoltStoneBlock,
     536: SpriteImage_RockyWrench,
     538: SpriteImage_Crash,
     542: SpriteImage_MushroomPlatform,
     544: SpriteImage_MushroomMovingPlatform,
     546: SpriteImage_Flowers,
+    550: SpriteImage_GiantPipePiranha,
     551: SpriteImage_Useless,
+    552: SpriteImage_Muncher,
     555: SpriteImage_Crash,
     556: SpriteImage_Crash,
+    559: SpriteImage_NabbitRefugeLocation,
     561: SpriteImage_RecordSignboard,
     566: SpriteImage_NabbitMetal,
     569: SpriteImage_NabbitPrize,
@@ -8288,7 +9076,9 @@ ImageClasses = {
     577: SpriteImage_PipeUp,
     578: SpriteImage_PipeDown,
     579: SpriteImage_StoneSpike,
-    588: SpriteImage_CheepGreen,
+    580: SpriteImage_StoneSpike,
+    588: SpriteImage_DeepCheep,
+    590: SpriteImage_EepCheep,
     593: SpriteImage_SumoBro,
     595: SpriteImage_Goombrat,
     600: SpriteImage_MoonBlock,
@@ -8298,6 +9088,7 @@ ImageClasses = {
     612: SpriteImage_PacornBlock,
     615: SpriteImage_CheepCheep,
     618: SpriteImage_SteelBlock,
+    625: SpriteImage_BoltStoneBlock,
     630: SpriteImage_Flagpole,
     631: SpriteImage_PaintGoal,
     643: SpriteImage_LavaBubble,

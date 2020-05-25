@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -236,7 +237,7 @@ class SpriteImage_Liquid(SpriteImage):
     """
     Modified image function to support liquids
     """
-    def __init__(self, parent, scale=3.75, image=None, offset=None):
+    def __init__(self, parent, scale=None, image=None, offset=None):
         super().__init__(parent, scale)
         self.image = image
         self.spritebox.shown = False
@@ -272,7 +273,7 @@ class SpriteImage_Static(SpriteImage):
     """
     A simple class for drawing a static sprite image
     """
-    def __init__(self, parent, scale=3.75, image=None, offset=None):
+    def __init__(self, parent, scale=None, image=None, offset=None):
         super().__init__(parent, scale)
         self.image = image
         self.spritebox.shown = False
@@ -307,12 +308,23 @@ class SpriteImage_Static(SpriteImage):
         painter.restore()
 
 
+class SpriteImage_MovementController(SpriteImage_Static):
+    """
+    A special class for movement controllers
+    """
+    def __init__(self, parent, scale=None, image=None):
+        super().__init__(parent, scale, image)
+
+    def getMovementID(self):
+        return self.parent.spritedata[10]
+
+
 class SpriteImage_StaticMultiple(SpriteImage_Static):
     """
     A class that acts like a SpriteImage_Static but lets you change
     the image with the dataChanged() function
     """
-    def __init__(self, parent, scale=1.5, image=None, offset=None):
+    def __init__(self, parent, scale=None, image=None, offset=None):
         super().__init__(parent, scale, image, offset)
     # no other changes needed yet
 
@@ -326,13 +338,15 @@ class Spritebox():
     """
     Contains size and other information for a spritebox
     """
-    def __init__(self, scale=1.5):
+    def __init__(self, scale=None):
         super().__init__()
         self.shown = True
         self.xOffset = 0
         self.yOffset = 0
         self.width = 16
         self.height = 16
+
+        if scale is None: scale = TileWidth / 16
         self.scale = scale
 
     # Offset property
@@ -651,6 +665,7 @@ class AuxiliaryImage(AuxiliarySpriteItem):
         self.height = height
         self.image = None
         self.hover = True
+        self.alpha = 1.0
 
     def setSize(self, width, height, xoff=0, yoff=0):
         self.prepareGeometryChange()
@@ -665,7 +680,9 @@ class AuxiliaryImage(AuxiliarySpriteItem):
             painter.setClipRect(option.exposedRect)
 
         if self.image is not None:
+            painter.setOpacity(self.alpha)
             painter.drawPixmap(0, 0, self.image)
+            painter.setOpacity(1)
 
 
 class AuxiliaryImage_FollowsRect(AuxiliaryImage):

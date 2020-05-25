@@ -705,14 +705,18 @@
 	</sprite>
 	<sprite id="49" name="Red Coin">
 		<value nybble="3-4" title="Triggering Event ID"/>
-		<value nybble="6" title="Unknown Value 6"/>
+		<checkbox nybble="6" mask="1" title="Upside Down"/>
+		<checkbox nybble="6" mask="2" title="Gyroscopic Movement"/>
+		<checkbox nybble="6" mask="4" title="Tilted"/>
+		<checkbox nybble="6" mask="8" title="Unknown Value 6 Mask 8"/>
 		<value nybble="7" title="Unknown Value 7"/>
 		<value nybble="8" title="Unknown Value 8"/>
 		<value nybble="9" title="Unknown Value 9"/>
-		<value nybble="10" title="Layer" comment="Possible values are 0, 1, and 2."/>
+		<value nybble="10" title="Z-Order" comment="Possible values are 0, 1, and 2."/>
 		<value nybble="12" title="Unknown Value 12"/>
 		<value nybble="19" title="Coin Set ID" comment="Use this to link this coin to a red coin ring. 0 is a valid ID."/>
-		<value nybble="20-21" title="Movement ID" comment="Can also be linked to rotation movement controllers."/>
+		<value nybble="21-22" title="Movement ID" comment="Can also be linked to rotation movement controllers."/>
+		<value nybble="23-24" title="Coin ID"/>
 	</sprite>
 	<sprite id="50" name="Set of Green Coins" notes="A set of 3 green coins that spins around. Once collected it will spawn in another set.">
 		<value nybble="3-4" title="Triggering Event ID"/>
@@ -958,47 +962,66 @@
 		<value nybble="21-22" title="Movement ID" comment="Use this id to hook the sprite to a movement controller."/>
 	</sprite>
 	<sprite id="68" name="Movement Controller - Swaying" notes="Use this to sway some objects.">
-		<value nybble="4" title="Target Event ID" comment="Use this to activate an event."/>
+		<value nybble="3-4" title="Triggering Event ID" comment="Use this to activate the movement once."/>
 		<checkbox nybble="5" title="Unknown Value 5" comment="No effect at all."/>
-		<value nybble="6" title="Unknown Value 6" comment="This value was literally changed from 15 to 0 and it had no effect at all."/>
+		<list nybble="6" title="Sway Start Offset" comment="Offset [Sway Direction]. Sway direction is inverted when 'Reversed Movement' is used.">
+			<entry value="0">None [Counter-Clockwise]</entry>
+			<entry value="1">(Arc / 2) * cos(22.5&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="2">(Arc / 2) * cos(45&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="3">(Arc / 2) * cos(67.5&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="4">(Arc / 2) * cos(90&#xB0;) : [Clockwise]</entry>
+			<entry value="5">(Arc / 2) * cos(112.5&#xB0;) : [Clockwise]</entry>
+			<entry value="6">(Arc / 2) * cos(135&#xB0;) : [Clockwise]</entry>
+			<entry value="7">(Arc / 2) * cos(157.5&#xB0;) : [Clockwise]</entry>
+			<entry value="8">None [Clockwise]</entry>
+			<entry value="9">(Arc / 2) * cos(202.5&#xB0;) : [Clockwise]</entry>
+			<entry value="10">(Arc / 2) * cos(225&#xB0;) : [Clockwise]</entry>
+			<entry value="11">(Arc / 2) * cos(247.5&#xB0;) : [Clockwise]</entry>
+			<entry value="12">(Arc / 2) * cos(270&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="13">(Arc / 2) * cos(292.5&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="14">(Arc / 2) * cos(315&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="15">(Arc / 2) * cos(337.5&#xB0;) : [Counter-Clockwise]</entry>
+		</list>
 		<checkbox nybble="7" title="Unknown Value 7" comment="No effect at all."/>
 		<value nybble="8" title="Unknown Value 8"/>
-		<list nybble="9-10" title="Starting rotation" comment="The offset the objects will start at.">
-			<entry value="0">0</entry>
-			<entry value="1">22.5</entry>
-			<entry value="2">45</entry>
-			<entry value="3">67.5</entry>
-			<entry value="4">90</entry>
-			<entry value="5">112.5</entry>
-			<entry value="6">135</entry>
-			<entry value="7">157.5</entry>
-			<entry value="8">180</entry>
-			<entry value="9">202.5</entry>
-			<entry value="10">225</entry>
-			<entry value="11">247.5</entry>
-			<entry value="12">270</entry>
-			<entry value="13">292.5</entry>
-			<entry value="14">315</entry>
-			<entry value="15">337.5</entry>
+		<checkbox nybble="9" title="Reversed Movement"/>
+		<checkbox nybble="9" title="Event Activated" mask="4"/>
+		<list nybble="10" title="Arc Middle Rotation">
+			<entry value="0">0&#xB0;</entry>
+			<entry value="1">22.5&#xB0;</entry>
+			<entry value="2">45&#xB0;</entry>
+			<entry value="3">67.5&#xB0;</entry>
+			<entry value="4">90&#xB0;</entry>
+			<entry value="5">112.5&#xB0;</entry>
+			<entry value="6">135&#xB0;</entry>
+			<entry value="7">157.5&#xB0;</entry>
+			<entry value="8">180&#xB0;</entry>
+			<entry value="9">202.5&#xB0;</entry>
+			<entry value="10">225&#xB0;</entry>
+			<entry value="11">247.5&#xB0;</entry>
+			<entry value="12">270&#xB0;</entry>
+			<entry value="13">292.5&#xB0;</entry>
+			<entry value="14">315&#xB0;</entry>
+			<entry value="15">337.5&#xB0;</entry>
 		</list>
-		<value nybble="13" title="Sway Delay" comment="Delays the movement of the sprite."/>
-		<list nybble="15" title="Sway arc" comment="Arc.">
-			<entry value="0">0</entry>
-			<entry value="1">22.5</entry>
-			<entry value="2">45</entry>
-			<entry value="3">67.5</entry>
-			<entry value="4">90</entry>
-			<entry value="5">112.5</entry>
-			<entry value="6">135</entry>
-			<entry value="7">157.5</entry>
-			<entry value="8">180</entry>
-			<entry value="9">202.5</entry>
-			<entry value="10">225</entry>
-			<entry value="11">247.5</entry>
-			<entry value="12">270</entry>
-			<entry value="13">292.5</entry>
-			<entry value="14">315</entry>
-			<entry value="15">337.5</entry>
+		<value nybble="13" title="Sway Delay" comment="Delays the movement of the sprite when switching directions."/>
+		<list nybble="15" title="Sway arc">
+			<entry value="0">0&#xB0;</entry>
+			<entry value="1">22.5&#xB0;</entry>
+			<entry value="2">45&#xB0;</entry>
+			<entry value="3">67.5&#xB0;</entry>
+			<entry value="4">90&#xB0;</entry>
+			<entry value="5">112.5&#xB0;</entry>
+			<entry value="6">135&#xB0;</entry>
+			<entry value="7">157.5&#xB0;</entry>
+			<entry value="8">180&#xB0;</entry>
+			<entry value="9">202.5&#xB0;</entry>
+			<entry value="10">225&#xB0;</entry>
+			<entry value="11">247.5&#xB0;</entry>
+			<entry value="12">270&#xB0;</entry>
+			<entry value="13">292.5&#xB0;</entry>
+			<entry value="14">315&#xB0;</entry>
+			<entry value="15">337.5&#xB0;</entry>
 		</list>
 		<value nybble="16" title="Swaying Speed" comment="The speed it sways."/>
 		<value nybble="18" title="Unknown Value 18"/>
@@ -1200,13 +1223,23 @@
 	</sprite>
 	<sprite id="85" name="Flame Chomp" notes="Spawns a Flame Chomp."/>
 	<sprite id="86" name="Urchin" notes="The normal-sized, spiky fish that lives near the water's surface. It loves the warmth of the water geyser. Once shot with a fireball, the urchin will &quot;die&quot; and fall to the very bottom of the lake/ocean.">
-		<checkbox nybble="9" title="Rises with Geyser" comment="When checked, makes the Urchin rise with a water geyser."/>
-		<value nybble="10" title="Unknown Value 10"/>
-		<value nybble="11" title="Movement distance" comment="The urchin starts centered."/>
-		<list nybble="12" title="Direction of movement" comment="When set to 0, the urchin moves up and down in water. If set to 1, the urchin moves from left to right.">
+		<value nybble="6" title="Z-Order"/>
+		<value nybble="7" title="Chase Movement Distance (Down)" comment="Used with movement type 3. The urchin will move down this far when the player gets close under it and then up again."/>
+		<value nybble="8" title="Chase Movement Distance (Up)" comment="Used with movement type 3. The urchin will move up this far when the player gets close over it and then down again."/>
+		<list nybble="9" title="Rise/Fall Behavior" comment="*Use this with Urchin type 2 to get the chasing behavior.&lt;br&gt;&lt;br&gt;**Gravity doesn't work with Urchin type 0, with type 1 it will work correctly if the urchin is placed under water. Both types will slowly return back to its original move pattern if moved by something. &lt;br&gt;&lt;br&gt;***Value 2 only gives the sinking effect to Urchin type 2.">
+			<entry value="0">None / *Chasing</entry>
+			<entry value="1">Affected by geysers + **Gravity</entry>
+			<entry value="2">Affected by geysers + **Gravity + ***Sinks to bottom</entry>
+		</list>
+		<list nybble="10" title="Start Direction" comment="Used with movement type 1 and 2.">
+			<entry value="0">Up/Left</entry>
+			<entry value="1">Down/Right</entry>
+		</list>
+		<value nybble="11" title="Movement Distance" comment="Used with movement type 1 and 2. The urchin starts centered."/>
+		<list nybble="12" title="Type">
 			<entry value="0">Moves up and down</entry>
-			<entry value="1">Moves left to right</entry>
-			<entry value="2">Falls after being risen</entry>
+			<entry value="1">Moves left and right</entry>
+			<entry value="2">Chasing / Geyser (and Sinking)</entry>
 		</list>
 	</sprite>
 	<sprite id="87" name="Movement-controlled Coin" notes="Confirmed to be usable with: Movement controller - Swaying and the path movement controller.">
@@ -1461,7 +1494,7 @@
 			<entry value="1">Longer and a bit bigger</entry>
 		</list>
 	</sprite>
-	<sprite id="95" name="Defunct &quot;Moving&quot; Bouncy Cloud [UNUSED]"/>
+	<sprite id="95" name="Move-when-on Bouncy Cloud [UNUSED]"/>
 	<sprite id="96" name="Lighting - Lamp" notes="A weak light source that will light up a small area around it.">
 		<list nybble="12" title="Style">
 			<entry value="0">Lamp</entry>
@@ -1491,15 +1524,24 @@
 			<entry value="3">Right</entry>
 		</list>
 	</sprite>
-	<sprite id="99" name="Mega Urchin" notes="Value 6 is only used in NSLU, 3-2 area 2">
-		<value nybble="6" title="Unknown Value 6"/>
-		<value nybble="9" title="Unknown Value 9"/>
-		<value nybble="10" title="Unknown Value 10"/>
-		<value nybble="11" title="Movement distance" comment="The urchin starts centered."/>
-		<list nybble="12" title="Movement direction" comment="When set to 0, the urchin moves up and down in water. If set to 1, the urchin moves from left to right. And finally, if set to 2, it won't move at all, it will just stare at you.">
+	<sprite id="99" name="Mega Urchin">
+		<value nybble="6" title="Z-Order"/>
+		<value nybble="7" title="Chase Movement Distance (Down)" comment="Used with movement type 3. The urchin will move down this far when the player gets close under it and then up again."/>
+		<value nybble="8" title="Chase Movement Distance (Up)" comment="Used with movement type 3. The urchin will move up this far when the player gets close over it and then down again."/>
+		<list nybble="9" title="Rise/Fall Behavior" comment="*Use this with Urchin type 2 to get the chasing behavior.&lt;br&gt;&lt;br&gt;**Gravity doesn't work with Urchin type 0, with type 1 it will work correctly if the urchin is placed under water. Both types will slowly return back to its original move pattern if moved by something. &lt;br&gt;&lt;br&gt;***Value 2 only gives the sinking effect to Urchin type 2.">
+			<entry value="0">None / *Chasing</entry>
+			<entry value="1">Affected by geysers + **Gravity</entry>
+			<entry value="2">Affected by geysers + **Gravity + ***Sinks to bottom</entry>
+		</list>
+		<list nybble="10" title="Start Direction" comment="Used with movement type 1 and 2.">
+			<entry value="0">Up/Left</entry>
+			<entry value="1">Down/Right</entry>
+		</list>
+		<value nybble="11" title="Movement Distance" comment="Used with movement type 1 and 2. The urchin starts centered."/>
+		<list nybble="12" title="Type">
 			<entry value="0">Moves up and down</entry>
-			<entry value="1">Moves left to right</entry>
-			<entry value="2">Doesn't move</entry>
+			<entry value="1">Moves left and right</entry>
+			<entry value="2">Chasing / Geyser (and Sinking)</entry>
 		</list>
 	</sprite>
 	<sprite id="100" name="Movement Controller - Path" notes="Follows the path by default in a &quot;curly&quot;, realistic manner. This means the game takes speed into account and calculates a path that is roughly the same as the path you set. This behaviour can be turned off to make this sprite function more like in previous games.">
@@ -1698,18 +1740,73 @@
 		<checkbox nybble="19" title="Unknown Checkbox 19 [NSLU]" comment="Only used in NSLU 8-4 A1."/>
 		<checkbox nybble="20" title="Reveal Paths On Exit*" comment="*If this is unchecked and exit type is 1 then when the players come back to the worldmap no path reveal animation is played, BUT you can still walk on the unrevealed paths."/>
 	</sprite>
-	<sprite id="116" name="Movement Controller - Two-In-One" notes="Combines two movement IDs to one.">
-		<value nybble="4" title="Unknown Value 4"/>
-		<value nybble="5" title="Unknown Value 5"/>
-		<value nybble="6" title="Unknown Value 6"/>
+	<sprite id="116" name="Movement-controlled Movement Controller - Swaying">
+		<value nybble="3-4" title="Triggering Event ID" comment="Use this to activate the movement once."/>
+		<checkbox nybble="5" title="Unknown Value 5" comment="No effect at all."/>
+		<list nybble="6" title="Sway Start Offset" comment="Offset [Sway Direction]. Sway direction is inverted when 'Reversed Movement' is used.">
+			<entry value="0">None [Counter-Clockwise]</entry>
+			<entry value="1">(Arc / 2) * cos(22.5&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="2">(Arc / 2) * cos(45&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="3">(Arc / 2) * cos(67.5&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="4">(Arc / 2) * cos(90&#xB0;) : [Clockwise]</entry>
+			<entry value="5">(Arc / 2) * cos(112.5&#xB0;) : [Clockwise]</entry>
+			<entry value="6">(Arc / 2) * cos(135&#xB0;) : [Clockwise]</entry>
+			<entry value="7">(Arc / 2) * cos(157.5&#xB0;) : [Clockwise]</entry>
+			<entry value="8">None [Clockwise]</entry>
+			<entry value="9">(Arc / 2) * cos(202.5&#xB0;) : [Clockwise]</entry>
+			<entry value="10">(Arc / 2) * cos(225&#xB0;) : [Clockwise]</entry>
+			<entry value="11">(Arc / 2) * cos(247.5&#xB0;) : [Clockwise]</entry>
+			<entry value="12">(Arc / 2) * cos(270&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="13">(Arc / 2) * cos(292.5&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="14">(Arc / 2) * cos(315&#xB0;) : [Counter-Clockwise]</entry>
+			<entry value="15">(Arc / 2) * cos(337.5&#xB0;) : [Counter-Clockwise]</entry>
+		</list>
+		<checkbox nybble="7" title="Unknown Value 7" comment="No effect at all."/>
 		<value nybble="8" title="Unknown Value 8"/>
-		<value nybble="9" title="Unknown Value 9"/>
-		<value nybble="10" title="Unknown Value 10"/>
-		<value nybble="13" title="Unknown Value 13"/>
-		<value nybble="15" title="Unknown Value 15"/>
-		<value nybble="16" title="Unknown Value 16"/>
-		<value nybble="21-22" title="Movement ID 1" comment="Could also be the output"/>
-		<value nybble="23-24" title="Movement ID 2" comment="Could also be the output"/>
+		<checkbox nybble="9" title="Reversed Movement"/>
+		<checkbox nybble="9" title="Event Activated" mask="4"/>
+		<list nybble="10" title="Arc Middle Rotation">
+			<entry value="0">0&#xB0;</entry>
+			<entry value="1">22.5&#xB0;</entry>
+			<entry value="2">45&#xB0;</entry>
+			<entry value="3">67.5&#xB0;</entry>
+			<entry value="4">90&#xB0;</entry>
+			<entry value="5">112.5&#xB0;</entry>
+			<entry value="6">135&#xB0;</entry>
+			<entry value="7">157.5&#xB0;</entry>
+			<entry value="8">180&#xB0;</entry>
+			<entry value="9">202.5&#xB0;</entry>
+			<entry value="10">225&#xB0;</entry>
+			<entry value="11">247.5&#xB0;</entry>
+			<entry value="12">270&#xB0;</entry>
+			<entry value="13">292.5&#xB0;</entry>
+			<entry value="14">315&#xB0;</entry>
+			<entry value="15">337.5&#xB0;</entry>
+		</list>
+		<value nybble="13" title="Sway Delay" comment="Delays the movement of the sprite when switching direction."/>
+		<list nybble="15" title="Sway arc" comment="Arc.">
+			<entry value="0">0&#xB0;</entry>
+			<entry value="1">22.5&#xB0;</entry>
+			<entry value="2">45&#xB0;</entry>
+			<entry value="3">67.5&#xB0;</entry>
+			<entry value="4">90&#xB0;</entry>
+			<entry value="5">112.5&#xB0;</entry>
+			<entry value="6">135&#xB0;</entry>
+			<entry value="7">157.5&#xB0;</entry>
+			<entry value="8">180&#xB0;</entry>
+			<entry value="9">202.5&#xB0;</entry>
+			<entry value="10">225&#xB0;</entry>
+			<entry value="11">247.5&#xB0;</entry>
+			<entry value="12">270&#xB0;</entry>
+			<entry value="13">292.5&#xB0;</entry>
+			<entry value="14">315&#xB0;</entry>
+			<entry value="15">337.5&#xB0;</entry>
+		</list>
+		<value nybble="16" title="Swaying Speed" comment="The speed it sways."/>
+		<value nybble="18" title="Unknown Value 18"/>
+		<value nybble="20" title="Unknown Value 20"/>
+		<value nybble="21-22" title="Output Movement ID"/>
+		<value nybble="23-24" title="Input Movement ID"/>
 	</sprite>
 	<sprite id="117" name="Big Spinner (Ball 'n' Chain)" notes="A swinging spiked ball on a spiked chain. Does not spawn if not tied to a movement controller.">
 		<value nybble="8" title="Unknown Value 8"/>
@@ -1787,6 +1884,7 @@
 		<checkbox nybble="9" title="Hide Coins" comment="Hides coins when checked. (4 coins)"/>
 		<value nybble="10" title="Unknown Value 10"/>
 		<value nybble="11-12" title="Location ID" comment="The clouds will appear in this location."/>
+		<value nybble="20" title="Unknown Value 20"/>
 	</sprite>
 	<sprite id="123" name="Sand Spout" notes="Also known as &quot;sand pillar&quot; or &quot;sand geyser&quot;">
 		<checkbox nybble="9" title="Unknown Flag 9 (NSLU only)"/>
@@ -1797,9 +1895,9 @@
 			<entry value="3">1.25</entry>
 		</list>
 	</sprite>
-	<sprite id="124" name="Continuous Sand Spout" notes="Name translates to &quot;Resident geyser (sand)&quot;. ">
-		<value nybble="5-6" title="Unknown Value 5-6"/>
-		<value nybble="10" title="Unknown Value 10"/>
+	<sprite id="124" name="Location-triggered Sand Spout">
+		<value nybble="5-6" title="Location ID"/>
+		<value nybble="10" title="Delay"/>
 		<list nybble="11" title="Size">
 			<entry value="0">0.95</entry>
 			<entry value="1">1.44</entry>
@@ -2230,28 +2328,37 @@
 		</list>
 	</sprite>
 	<sprite id="156" name="Water Geyser" notes="A geyser of water. It's height, rise time, delay, and all can be edited.&#13;&#10;Do &lt;b&gt;not&lt;/b&gt; place this sprite visible for the player ; it leaves a very bad looking texture when it's not active. Place it inside the water.">
-		<list nybble="7" title="Width" comment="The width of the geyser.">
-			<entry value="0">6 blocks</entry>
-			<entry value="1">3 blocks</entry>
-			<entry value="2">4 blocks</entry>
-			<entry value="3">6 blocks</entry>
-			<entry value="4">7 blocks</entry>
-			<entry value="5">8 blocks</entry>
-			<entry value="6">10 blocks</entry>
-			<entry value="7">12 blocks</entry>
-			<entry value="8">12 blocks</entry>
-			<entry value="9">14 blocks</entry>
-			<entry value="10">15 blocks</entry>
-			<entry value="11">16 blocks</entry>
-			<entry value="12">17 blocks</entry>
-			<entry value="13">18 blocks</entry>
-			<entry value="14">20 blocks</entry>
-			<entry value="15">22 blocks</entry>
+		<list nybble="7" title="Width" comment="The width of the geyser. (Value + 1) * 1.625.">
+			<entry value="0">6.5 blocks</entry>
+			<entry value="1">3.25 blocks</entry>
+			<entry value="2">4.875 blocks</entry>
+			<entry value="3">6.5 blocks</entry>
+			<entry value="4">8.125 blocks</entry>
+			<entry value="5">9.75 blocks</entry>
+			<entry value="6">11.375 blocks</entry>
+			<entry value="7">13 blocks</entry>
+			<entry value="8">14.625 blocks</entry>
+			<entry value="9">16.25 blocks</entry>
+			<entry value="10">17.875 blocks</entry>
+			<entry value="11">19.5 blocks</entry>
+			<entry value="12">21.125 blocks</entry>
+			<entry value="13">22.75 blocks</entry>
+			<entry value="14">24.375 blocks</entry>
+			<entry value="15">26 blocks</entry>
 		</list>
 		<value nybble="8" title="Unknown Value 8" comment="No visible difference."/>
 		<value nybble="9" title="Unknown Value 9" comment="No visible difference."/>
-		<value nybble="10-11" title="Height" comment="The height of the geyser in blocks."/>
-		<checkbox nybble="13" title="Rise Instantly" comment="Rises instantly when checked."/>
+		<value nybble="10-11" title="Height" comment="The height of the geyser in blocks. (Value / 2) + 6."/>
+		<list nybble="13" title="Rise Delay">
+			<entry value="0">1 second</entry>
+			<entry value="1">0 seconds</entry>
+			<entry value="2">1/6 seconds</entry>
+			<entry value="3">2/6 seconds</entry>
+			<entry value="4">3/6 seconds</entry>
+			<entry value="5">4/6 seconds</entry>
+			<entry value="6">5/6 seconds</entry>
+			<entry value="7">1 second</entry>
+		</list>
 		<checkbox nybble="18" title="2 Blocks Wide" comment="Ignores the width set, and creates a geyser with a width even smaller than width value 1."/>
 		<value nybble="19" title="Unknown Value 19" comment="No visible difference."/>
 		<list nybble="20" title="Rise Time" comment="If this is set, this is the time the geyser is risen.">
@@ -2277,14 +2384,10 @@
 	<sprite id="158" name="Dash Coin (Coin Outline)">
 		<value nybble="4" title="Unknown Value 4"/>
 		<checkbox nybble="5" title="Appears in Coin Battle only"/>
-		<list bit="21-23" title="Rotation Type" comment="Normal means that the rotation of the coin is fully controlled by the movement-controller. The gyroscope type means that the movement-controller does not change the rotation of the coin. The inclanation mevement type makes the bottom of the coin face the movement-controller, just like everything on earth points down to the center of its mass.">
-			<entry value="0">Normal</entry>
-			<entry value="1">Gyroscope</entry>
-			<entry value="2">Inclanation</entry>
-			<entry value="3">Gyroscope?</entry>
-			<entry value="4">Normal?</entry>
-		</list>
-		<checkbox bit="24" title="Upside Down" comment="Doesn't work with the rotaton type 'gyroscope' because of obvious reasons (coin only faces down)."/>
+		<checkbox nybble="6" mask="1" title="Upside Down"/>
+		<checkbox nybble="6" mask="2" title="Gyroscopic Movement"/>
+		<checkbox nybble="6" mask="4" title="Tilted"/>
+		<checkbox nybble="6" mask="8" title="Unknown Value 6 Mask 8"/>
 		<value nybble="7" title="Unknown Value 7"/>
 		<value nybble="8" title="Unknown Value 8"/>
 		<value nybble="10" title="Unknown Value 10"/>
@@ -2293,7 +2396,7 @@
 		<value nybble="19" title="Unknown Value 19"/>
 		<value nybble="20" title="Unknown Value 20"/>
 		<value nybble="21-22" title="Movement ID" comment="This can be used to assign this sprite to a rotation controller, as well as to a horizontal or vertical movement."/>
-		<value nybble="24" title="Unknown Value 24"/>
+		<value nybble="23-24" title="Coin ID"/>
 	</sprite>
 	<sprite id="159" name="Expanding/Contracting Pipe - Right" notes="A pipe that expands and contracts at certain heights, defined by the nybbles.">
 		<list nybble="8" title="Color" comment="The color of the pipe! [Unused]">
@@ -2344,27 +2447,28 @@
 	</sprite>
 	<sprite id="163" name="Location-triggered Water Geyser" notes="Also know as &quot;water spout&quot;. Caused by a quick rise in water temperature, these things cause the whole lake to be at a nice temperature, even during winters. Often, Urchins are resting on top of one.">
 		<value nybble="5-6" title="Location ID" comment="Waits until a player is in this location until it rises for the first time."/>
-		<list nybble="7" title="Width" comment="The width of the geyser.">
-			<entry value="0">6 blocks</entry>
-			<entry value="1">3 blocks</entry>
-			<entry value="2">4 blocks</entry>
-			<entry value="3">6 blocks</entry>
-			<entry value="4">7 blocks</entry>
-			<entry value="5">8 blocks</entry>
-			<entry value="6">10 blocks</entry>
-			<entry value="7">12 blocks</entry>
-			<entry value="8">12 blocks</entry>
-			<entry value="9">14 blocks</entry>
-			<entry value="10">15 blocks</entry>
-			<entry value="11">16 blocks</entry>
-			<entry value="12">17 blocks</entry>
-			<entry value="13">18 blocks</entry>
-			<entry value="14">20 blocks</entry>
-			<entry value="15">22 blocks</entry>
+		<list nybble="7" title="Width" comment="The width of the geyser. (Value + 1) * 1.625.">
+			<entry value="0">6.5 blocks</entry>
+			<entry value="1">3.25 blocks</entry>
+			<entry value="2">4.875 blocks</entry>
+			<entry value="3">6.5 blocks</entry>
+			<entry value="4">8.125 blocks</entry>
+			<entry value="5">9.75 blocks</entry>
+			<entry value="6">11.375 blocks</entry>
+			<entry value="7">13 blocks</entry>
+			<entry value="8">14.625 blocks</entry>
+			<entry value="9">16.25 blocks</entry>
+			<entry value="10">17.875 blocks</entry>
+			<entry value="11">19.5 blocks</entry>
+			<entry value="12">21.125 blocks</entry>
+			<entry value="13">22.75 blocks</entry>
+			<entry value="14">24.375 blocks</entry>
+			<entry value="15">26 blocks</entry>
 		</list>
 		<value nybble="8" title="Unknown Value 8" comment="No visible difference."/>
 		<value nybble="9" title="Unknown Value 9" comment="No visible difference."/>
-		<value nybble="10-11" title="Height" comment="The height of the geyser in blocks."/>
+		<value nybble="10" title="Unknown Value 10"/>
+		<value nybble="11" title="Height" comment="The height of the geyser in blocks. (Value / 2) + 6."/>
 		<checkbox nybble="13" title="Rise Instantly" comment="Rises instantly when checked."/>
 		<checkbox nybble="18" title="2 Blocks Wide" comment="Ignores the width set, and creates a geyser with a width even smaller than width value 1."/>
 		<value nybble="19" title="Unknown Value 19" comment="No visible difference."/>
@@ -2520,14 +2624,10 @@
 	</sprite>
 	<sprite id="167" name="Blue Coin">
 		<value nybble="3-4" title="Triggering Event ID"/>
-		<list bit="21-23" title="Rotation Type" comment="Normal means that the rotation of the coin is fully controlled by the movement-controller. The gyroscope type means that the movement-controller does not change the rotation of the coin. The inclanation mevement type makes the bottom of the coin face the movement-controller, just like everything on earth points down to the center of its mass.">
-			<entry value="0">Normal</entry>
-			<entry value="1">Gyroscope</entry>
-			<entry value="2">Inclanation</entry>
-			<entry value="3">Gyroscope?</entry>
-			<entry value="4">Normal?</entry>
-		</list>
-		<checkbox bit="24" title="Upside Down" comment="Doesn't work with the rotaton type 'gyroscope' because of obvious reasons (coin only faces down)."/>
+		<checkbox nybble="6" mask="1" title="Upside Down"/>
+		<checkbox nybble="6" mask="2" title="Gyroscopic Movement"/>
+		<checkbox nybble="6" mask="4" title="Tilted"/>
+		<checkbox nybble="6" mask="8" title="Unknown Value 6 Mask 8"/>
 		<checkbox nybble="7" title="Unknown Checkbox 7" comment="Limit 0xF"/>
 		<list nybble="10" title="Unknown List 10">
 			<entry value="0">???</entry>
@@ -2540,25 +2640,24 @@
 		<value nybble="21-22" title="Movement ID" comment="Can be used with rotation movement controllers for sure."/>
 		<value nybble="23-24" title="Coin ID" comment="Use this to link this coin to a clapping controller."/>
 	</sprite>
-	<sprite id="168" name="Clapping Controller" notes="Same as sprite 169">
-		<value nybble="5" title="Unknown Value 5"/>
-		<value nybble="6" title="Unknown Value 6"/>
+	<sprite id="168" name="Clapping Controller">
+		<value nybble="5-6" title="Amount of coin outlines"/>
 		<value nybble="7-8" title="Amount of blue coins"/>
 		<value nybble="9-10" title="Amount of yellow coins"/>
-		<value nybble="12" title="Unknown Value 12" comment="Seems to be related to a movement ID"/>
-		<value nybble="19" title="Unknown Value 19"/>
-		<value nybble="20" title="Unknown Value 20"/>
+		<value nybble="11" title="Unused Value 11" comment="Relates to value 19-20 somehow."/>
+		<value nybble="12" title="Movement ID" comment="Useless. Looks to be a leftover from an old version of the game where you would get cheered if you collect all coins with this movement ID.&lt;br&gt;This field is no longer even referenced in the code."/>
+		<value nybble="19-20" title="Unknown Value 19-20"/>
 		<value nybble="23-24" title="Coin ID"/>
 	</sprite>
-	<sprite id="169" name="Clapping Controller 2" notes="Same as sprite 168">
-		<value nybble="6" title="Unknown Value 6"/>
-		<value nybble="7-8" title="Number of blue coins" comment="Use this to set the amount of coins that need to be collected."/>
-		<value nybble="9-10" title="Number of yellow coins" comment="Use this to set the amount of coins that need to be collected."/>
-		<value nybble="19" title="Unknown Value 19"/>
-		<value nybble="20" title="Location ID" comment="Use this to set the location ID the player has to be in for the Event to be activated."/>
-		<value nybble="23-24" title="Target Event ID/Coin ID" comment="This Event is activated when the conditions are met or the coins are collected.&lt;br&gt;Alternatively, when this controller produces clapping sounds, this is the ID that needs to be set on the coins that need to be collected."/>
+	<sprite id="169" name="Clapping Controller 2" notes="It was determined through looking at the game's code that the only differences between this and 168 are the spawn range and a certain flag. However, we still don't know what difference those made.">
+		<value nybble="5-6" title="Amount of coin outlines"/>
+		<value nybble="7-8" title="Amount of blue coins"/>
+		<value nybble="9-10" title="Amount of yellow coins"/>
+		<value nybble="11" title="Unused Value 11" comment="Relates to value 19-20 somehow."/>
+		<value nybble="19-20" title="Unknown Value 19-20"/>
+		<value nybble="23-24" title="Coin ID"/>
 	</sprite>
-	<sprite id="170" name="Parabomb" notes="A bob-omb that falls from the sky on a parachute. ">
+	<sprite id="170" name="Parabomb" notes="A bob-omb that falls from the sky on a parachute.">
 		<list nybble="16" title="Direction After Landing" comment="The direction the Bob-omb walks in after landing.">
 			<entry value="0">Right</entry>
 			<entry value="1">Left</entry>
@@ -2700,10 +2799,14 @@
 		<checkbox nybble="5" title="Don't Fall" comment="&lt;br&gt;Makes the Icicle not fall down."/>
 		<checkbox nybble="6" title="Load in Small (Growing)" comment="&lt;br&gt;This makes the Icicle first appear small, then grow to it's normal size."/>
 		<value nybble="7" title="Vertical Distance" comment="When set, the horizontal distance from the player is ignored and the icicle will only fall when the player is 'value*2' blocks below at most. When the value is 0, the vertical distance is ignored and the icicle will only fall when the player is 4 blocks away at most. (Horizontally)"/>
-		<value nybble="8" title="Unknown Value 8"/>
-		<value nybble="9" title="Unknown Value 9"/>
-		<value nybble="10" title="Block Train Distance" comment="If 'Falls Onto Block Train' is checked, the icicle will only fall if the block train is 'value+8' blocks away at most. (Horizontally)"/>
-		<checkbox nybble="11" title="Falls Onto Block Train" comment="Unused port from NSMBW. When this is checked, it will only fall when a block train is underneath it."/>
+		<list nybble="8" title="State after ground disappearance">
+			<entry value="0">Die and fall leaning leftwards</entry>
+			<entry value="1">Die and fall leaning backwards</entry>
+			<entry value="1">Continue falling downwards</entry>
+		</list>
+		<checkbox nybble="9" title="Do not respawn"/>
+		<value nybble="10" title="Snake Block Horizontal Distance" comment="If 'Falls Onto Snake Block' is checked, the icicle will only fall if the snake block is 'value+8' blocks away at most. (Horizontally)"/>
+		<checkbox nybble="11" title="Falls Onto Snake Block" comment="Unused port from NSMBW. When this is checked, it will only fall when a snake block is underneath it."/>
 		<checkbox nybble="12" title="Tilt after falling" comment="Unused port from NSMBW. The icicle will tilt to the right after falling."/>
 	</sprite>
 	<sprite id="185" name="Stationary Icicle" notes="A stationary icicle. Meant to be placed on the ceiling of icy and snowy levels. Doesn't fall.">
@@ -3086,25 +3189,68 @@
 	</sprite>
 	<sprite id="214" name="Movement Controller - Spinning (Single-use)" notes="A simpler version of the rotation controller. Can also only be temporary spinning.">
 		<value nybble="3-4" title="Triggering Event ID" comment="If this event is activated, the assigned objects will be rotated."/>
-		<list nybble="5" title="Direction" comment="The direction the objects swing in from. 1 and 3 are hard to see...">
-			<entry value="0">Counterclockwise</entry>
-			<entry value="1">UNKNOWN</entry>
-			<entry value="2">Clockwise</entry>
-			<entry value="3">UNKNOWN</entry>
-			<entry value="4">From below the screen</entry>
-			<entry value="5">UNKNOWN</entry>
-			<entry value="6">UNKNOWN</entry>
+		<checkbox nybble="5" title="From top of screen" comment="Makes the coin swing in from the top of the screen."/>
+		<checkbox nybble="5" title="Clockwise" mask="2"/>
+		<checkbox nybble="5" title="Closer Arc" mask="4" comment="Makes the rotation non-circular in some cases."/>
+		<value nybble="6" title="Controller Spin Radius"/>
+		<list nybble="7" title="Controller Spin Arc">
+			<entry value="0">0&#xB0;</entry>
+			<entry value="1">22.5&#xB0;</entry>
+			<entry value="2">45&#xB0;</entry>
+			<entry value="3">67.5&#xB0;</entry>
+			<entry value="4">90&#xB0;</entry>
+			<entry value="5">112.5&#xB0;</entry>
+			<entry value="6">135&#xB0;</entry>
+			<entry value="7">157.5&#xB0;</entry>
+			<entry value="8">180&#xB0;</entry>
+			<entry value="9">202.5&#xB0;</entry>
+			<entry value="10">225&#xB0;</entry>
+			<entry value="11">247.5&#xB0;</entry>
+			<entry value="12">270&#xB0;</entry>
+			<entry value="13">292.5&#xB0;</entry>
+			<entry value="14">315&#xB0;</entry>
+			<entry value="15">337.5&#xB0;</entry>
 		</list>
-		<value nybble="6" title="Unknown Value 6"/>
-		<value nybble="7" title="Unknown Value 7"/>
-		<value nybble="8" title="Unknown Value 8"/>
-		<value nybble="9" title="Arc?" comment="Possibly the rotation arc."/>
-		<value nybble="10" title="Delay" comment="The delay between the activation of the event and the start of the actual rotation. Unknown unit."/>
-		<value nybble="13" title="Unknown Value 13"/>
-		<value nybble="14" title="Unknown Value 14"/>
+		<value nybble="8" title="Delay" comment="Unknown unit. Delay before the controller starts spinning."/>
+		<list nybble="9" title="Speed" comment="Values 11-15 are the same as 0.">
+			<entry value="0">Slower</entry>
+			<entry value="1">Slow</entry>
+			<entry value="2">Normal</entry>
+			<entry value="3">Fast</entry>
+			<entry value="4">Slowest</entry>
+			<entry value="5">Faster</entry>
+			<entry value="6">Even faster</entry>
+			<entry value="7">Extreme</entry>
+			<entry value="8">Insane</entry>
+			<entry value="9">Light speed</entry>
+			<entry value="10">Instant</entry>
+		</list>
+		<value nybble="10" title="Ordering ID" comment="This value specifies the order which the controllers activates. Almost always starts with order ID 1."/>
+		<list nybble="13" title="Arc (Useless)" comment="This field is no longer even referenced in the code.">
+			<entry value="0">0&#xB0; (?)</entry>
+			<entry value="1">45&#xB0;</entry>
+			<entry value="2">90&#xB0; [USED]</entry>
+			<entry value="3">135&#xB0;</entry>
+			<entry value="4">180&#xB0; [USED]</entry>
+			<entry value="5">225&#xB0;</entry>
+			<entry value="6">270&#xB0;</entry>
+			<entry value="7">315&#xB0;</entry>
+			<entry value="8">0&#xB0; (?)</entry>
+			<entry value="9">0&#xB0; (?)</entry>
+			<entry value="10">270&#xB0;</entry>
+			<entry value="11">247.5&#xB0;</entry>
+			<entry value="12">225&#xB0;</entry>
+			<entry value="13">202.5&#xB0;</entry>
+			<entry value="14">180&#xB0;</entry>
+			<entry value="15">157.5&#xB0;</entry>
+		</list>
+		<value nybble="14" title="Useless" comment="Supposed to be the same as sprite 484's Unknown Value 14. This field is no longer even referenced in the code."/>
 		<value nybble="15" title="Unknown Value 15"/>
-		<value nybble="16" title="Unknown Value 16"/>
-		<value nybble="20" title="Unknown Value 20"/>
+		<list nybble="16" title="Sound">
+			<entry value="0">At the end of movement</entry>
+			<entry value="1">When the movement starts</entry>
+		</list>
+		<value nybble="19-20" title="Ordering ID (Useless)" comment="Same as the other Ordering ID, but is no longer even referenced in the code. Use the other one."/>
 		<value nybble="21-22" title="Movement ID" comment="Use this ID to connect (assign) objects to this movement controller."/>
 	</sprite>
 	<sprite id="215" name="Portable Springboard" notes="Notes: Known as Trampoline in Super Mario Maker english script.">
@@ -3177,7 +3323,7 @@
 			<entry value="2">All Players</entry>
 		</list>
 		<value nybble="8-9" title="Starting Node"/>
-		<value bit="40-44" title="Path ID" comment="Use this to specify the path the train follows. Only values less than 32 can be used."/>
+		<value bit="40-44" title="Path ID" comment="Use this to specify the path the snake block follows. Only values less than 32 can be used."/>
 		<list nybble="12" title="Number of blocks" comment="This is glitchy when the length is longer than the distance from the first to the second node of the path.">
 			<entry value="0">3 blocks</entry>
 			<entry value="1">4 blocks</entry>
@@ -3620,14 +3766,17 @@
 			<entry value="2">1x1 Block (with no glimmer)</entry>
 		</list>
 	</sprite>
-	<sprite id="269" name="Rotating Stone Gear" notes="A rotating solid gear/cog.">
-		<checkbox nybble="5" title="Inverted Alignment" comment="Use this to get it to sync with other gears more easily."/>
+	<sprite id="269" name="Rotating Stone Gear" notes="A rotating solid gear/cog. Doesn't need a movement controller to spin.">
+		<checkbox nybble="5" title="Offset Rotation" comment="Used to sync gears. Can only be used with large gears and is ignored if a movement-controller isn't used."/>
 		<value nybble="8" title="Z-Order"/>
-		<checkbox nybble="9" title="Clockwise"/>
+		<checkbox nybble="9" title="Clockwise" comment="Ignored if a movement-controller is used."/>
 		<list nybble="10" title="Size">
-			<entry value="0">13x13</entry>
-			<entry value="1">19x19</entry>
+			<entry value="0">Medium</entry>
+			<entry value="1">Large</entry>
+			<entry value="2">Small</entry>
 		</list>
+		<checkbox nybble="12" title="Metallic"/>
+		<value nybble="16" title="Rotation Speed" comment="Ignored if a movement-controller is used."/>
 		<value nybble="21-22" title="Movement ID" comment="Use this to match it to a movement controller (68, 69, 116, 118)."/>
 	</sprite>
 	<sprite id="270" name="Amp" notes="Will electrify the player once he comes in contact with the Amp.">
@@ -3638,10 +3787,19 @@
 	</sprite>
 	<sprite id="271" name="Movement-controlled Metal Bridge Platform" notes="A piece of the metal bridge platform. This is the actual bridge piece.">
 		<value nybble="9" title="Unknown Value 9"/>
+		<list nybble="10" title="Type">
+			<entry value="0">UNUSED</entry>
+			<entry value="1">UNUSED</entry>
+			<entry value="2">Metal Bridge</entry>
+			<entry value="3">CRASHES</entry>
+		</list>
 		<value nybble="21-22" title="Movement ID"/>
 	</sprite>
 	<sprite id="272" name="Movement-controlled Metal Bridge Stem" notes="A piece of the metal bridge. This is the step of the platform, that connects to the base.">
-		<value nybble="12" title="Unknown Value 12"/>
+		<list nybble="12" title="Type">
+			<entry value="0">UNUSED</entry>
+			<entry value="1">Stone Stem</entry>
+		</list>
 		<value nybble="21-22" title="Movement ID"/>
 	</sprite>
 	<sprite id="273" name="Movement-controlled Metal Bridge Base" notes="A piece of the metal bridge. This is the base with the screw in the center. ">
@@ -3767,6 +3925,7 @@
 		</list>
 	</sprite>
 	<sprite id="289" name="Continuous Burner" notes="A burner that sprays a flame continuously. The flames are 2 blocks long.">
+		<checkbox nybble="7" title="Affected by gravity" mask="2"/>
 		<list nybble="12" title="Direction" comment="Sets the direction of the burner.">
 			<entry value="0">Left</entry>
 			<entry value="1">Right</entry>
@@ -3774,16 +3933,34 @@
 			<entry value="3">Down</entry>
 		</list>
 	</sprite>
-	<sprite id="290" name="Burner (Long Fire) (Right) [UNUSED]" notes="A burner with a long fire that faces right."/>
-	<sprite id="291" name="Synchronized Burner Controller" notes="This sprite is REQUIRED for sprite 292 to function.">
-		<value nybble="6" title="Unknown Value 6"/>
-		<value nybble="7-8" title="Unknown Value 7-8"/>
-		<value nybble="9-10" title="Unknown Value 9-10"/>
-		<value nybble="11" title="Unknown Value 11"/>
+	<sprite id="290" name="Continuous Burner (Long Fire) [UNUSED]" notes="A larger varient of sprite 289.">
+		<checkbox nybble="7" title="Affected by gravity" mask="2"/>
+		<list nybble="12" title="Direction" comment="Sets the direction of the burner.">
+			<entry value="0">Left</entry>
+			<entry value="1">Right</entry>
+			<entry value="2">Up</entry>
+			<entry value="3">Down</entry>
+		</list>
+	</sprite>
+	<sprite id="291" name="Synced Burner Controller" notes="This sprite is REQUIRED for sprite 292 to function.">
+		<value nybble="6" title="Burner ID"/>
+		<value nybble="7-8" title="Time inactive"/>
+		<value nybble="9-10" title="Time active"/>
+		<list nybble="11" title="Length" comment="Length of burner (base and flame).">
+			<entry value="0">1 block</entry>
+			<entry value="1">2 blocks</entry>
+			<entry value="2">3 blocks</entry>
+			<entry value="3">4 blocks</entry>
+			<entry value="4">5 blocks</entry>
+			<entry value="5">6 blocks</entry>
+			<entry value="6">7 blocks</entry>
+			<entry value="7">8 blocks</entry>
+		</list>
 	</sprite>
 	<sprite id="292" name="Synced Burner">
-		<value nybble="6" title="Length" comment="Value + 2.25 (including base)."/>
-		<checkbox nybble="10" title="Start activated" comment="If checked, the burner starts spitting out a flame. Otherwise, it starts deactivated, and then activates after a certain amount of time."/>
+		<value nybble="6" title="Burner ID"/>
+		<checkbox nybble="7" title="Affected by gravity" mask="2"/>
+		<checkbox nybble="10" title="Switch time active and inactive"/>
 		<list nybble="12" title="Direction" comment="Set the direction of the flame.">
 			<entry value="0">Right</entry>
 			<entry value="1">Left</entry>
@@ -3791,8 +3968,8 @@
 			<entry value="3">Down</entry>
 		</list>
 	</sprite>
-	<sprite id="293" name="synchronised burner control object">
-		<checkbox nybble="5" title="Unknown Flag 5"/>
+	<sprite id="293" name="Rotating Burner">
+		<checkbox nybble="5" title="Useless" comment="This field is no longer even referenced in the code."/>
 		<checkbox nybble="7" title="Affected by gravity" mask="2"/>
 		<list nybble="11" title="Direction" comment="Describes where the flame is during the movement, relative to the base block. 0 is unused.">
 			<entry value="0">Left-Top-Right</entry>
@@ -3800,7 +3977,15 @@
 			<entry value="2">Bottom-Right-Up</entry>
 			<entry value="3">Top-Left-Bottom</entry>
 		</list>
-		<value nybble="12" title="Flame Length" comment="The flame length. Value + 3 in blocks."/>
+		<value nybble="12" title="Length" comment="Length of burner (base and flame)."/>
+		<entry value="0">5 block</entry>
+		<entry value="1">6 blocks</entry>
+		<entry value="2">7 blocks</entry>
+		<entry value="3">8 blocks</entry>
+		<entry value="4">9 blocks</entry>
+		<entry value="5">10 blocks</entry>
+		<entry value="6">11 blocks</entry>
+		<entry value="7">12 blocks</entry>
 	</sprite>
 	<sprite id="294" name="Purple Striped Climbable Pole" notes="A pole that is striped with purple, usually found in ghost houses.">
 		<value nybble="11-12" title="Length"/>
@@ -3934,18 +4119,19 @@
 			<entry value="15">34 Blocks</entry>
 		</list>
 	</sprite>
-	<sprite id="308" name="&quot;Balance [moving platform]&quot; [UNUSED]">
+	<sprite id="308" name="Scale Platform [UNUSED]">
 		<value nybble="3-4" title="Triggering Event ID" comment="The ID that triggers the spawn of the scale platform."/>
 		<checkbox nybble="5" title="Event Activated" comment="When checked, the platform can be event activated."/>
-		<checkbox nybble="8" title="Snow Covered" comment="When checked, the platform will have a snow covering on it."/>
-		<value nybble="9" title="Extra Rope Width?" comment="Seemed to double the width of the platform..."/>
-		<value nybble="10" title="Left Platform Rope Height" comment="Height of the rope on the left platform when it spawns."/>
-		<value nybble="11" title="Right Platform Rope Height" comment="Height of the rope on the right platform when it spawns."/>
-		<value nybble="12" title="Rope Width" comment="Width of the rope that seperates the platforms."/>
-		<value nybble="18" title="Left Platform Width" comment="Width of the left platform. (Value + 3)"/>
-		<value nybble="19" title="Right Platform Width" comment="Width of the left platform. (Value + 3)"/>
+		<value nybble="8" title="Additional distance between steps*" comment="Value * 16. *Adds this distance to the regular distance between steps."/>
+		<checkbox nybble="9" title="Snowy" comment="If checked, the Scale Platform will be covered in snow."/>
+		<value nybble="10" title="Rope length left side"/>
+		<value nybble="11" title="Rope length right side"/>
+		<value nybble="12" title="Distance between steps"/>
+		<value nybble="18" title="Platform width left side" comment="Width of the left platform. (Value + 3)"/>
+		<value nybble="19" title="Platform width right side" comment="Width of the right platform. (Value + 3)"/>
 	</sprite>
 	<sprite id="309" name="Scale Platform" notes="A platform that acts as a scale when something is on it.">
+		<value nybble="8" title="Additional distance between steps*" comment="Value * 16. *Adds this distance to the regular distance between steps."/>
 		<checkbox nybble="9" title="Snowy" comment="If checked, the Scale Platform will be covered in snow."/>
 		<value nybble="10" title="Rope length left side"/>
 		<value nybble="11" title="Rope length right side"/>
@@ -4015,8 +4201,8 @@
 		<value nybble="23-24" title="Crystal ID" comment="Some kind of ID."/>
 	</sprite>
 	<sprite id="317" name="Boom Boom (W5 - big, spinning and jumping)" notes="The Soda Jungle version of Boom boom. "/>
-	<sprite id="318" name="Lava Bubble (Synced)" notes="Lava Bubbles were previously known as Podoboo.">
-		<value nybble="6" title="Unknown Value 6"/>
+	<sprite id="318" name="Grouped Lava Bubble" notes="Lava Bubbles were previously known as Podoboo.">
+		<value nybble="5-6" title="Group ID"/>
 		<list nybble="8" title="Initial Direction" comment="Only useful when &quot;Horizontal Distance&quot; is set.">
 			<entry value="0">Right</entry>
 			<entry value="1">Left</entry>
@@ -4073,27 +4259,19 @@
 			<entry value="0">Coin outline</entry>
 			<entry value="1">Coin</entry>
 		</list>
-		<list bit="21-23" title="Rotation Type" comment="Normal means that the rotation of the coin is fully controlled by the movement-controller. The gyroscope type means that the movement-controller does not change the rotation of the coin. The inclanation mevement type makes the bottom of the coin face the movement-controller, just like everything on earth points down to the center of its mass.">
-			<entry value="0">Normal</entry>
-			<entry value="1">Gyroscope</entry>
-			<entry value="2">Inclanation</entry>
-			<entry value="3">Gyroscope?</entry>
-			<entry value="4">Normal?</entry>
-		</list>
-		<checkbox bit="24" title="Upside Down" comment="Doesn't work with the rotaton type 'gyroscope' because of obvious reasons (coin only faces down)."/>
+		<checkbox nybble="6" mask="1" title="Upside Down"/>
+		<checkbox nybble="6" mask="2" title="Gyroscopic Movement"/>
+		<checkbox nybble="6" mask="4" title="Tilted"/>
+		<checkbox nybble="6" mask="8" title="Unknown Value 6 Mask 8"/>
 		<value nybble="10" title="Unknown Value 10"/>
 		<value nybble="21-22" title="Movement ID" comment="The movement id for the sprite."/>
 	</sprite>
 	<sprite id="326" name="Movement-controlled Coin" notes="May only connect to rotation controllers.">
 		<value nybble="4" title="Unknown Value 4"/>
-		<list bit="21-23" title="Rotation Type" comment="Normal means that the rotation of the coin is fully controlled by the movement-controller. The gyroscope type means that the movement-controller does not change the rotation of the coin. The inclanation mevement type makes the bottom of the coin face the movement-controller, just like everything on earth points down to the center of its mass.">
-			<entry value="0">Normal</entry>
-			<entry value="1">Gyroscope</entry>
-			<entry value="2">Inclanation</entry>
-			<entry value="3">Gyroscope?</entry>
-			<entry value="4">Normal?</entry>
-		</list>
-		<checkbox bit="24" title="Upside Down" comment="Doesn't work with the rotaton type 'gyroscope' because of obvious reasons (coin only faces down)."/>
+		<checkbox nybble="6" mask="1" title="Upside Down"/>
+		<checkbox nybble="6" mask="2" title="Gyroscopic Movement"/>
+		<checkbox nybble="6" mask="4" title="Tilted"/>
+		<checkbox nybble="6" mask="8" title="Unknown Value 6 Mask 8"/>
 		<value nybble="9" title="Unknown Value 9"/>
 		<value nybble="10" title="Unknown Value 10"/>
 		<value nybble="13" title="Unknown Value 13"/>
@@ -4126,18 +4304,23 @@
 			<entry value="2">Slow</entry>
 			<entry value="3">Disables sprite</entry>
 		</list>
-		<checkbox nybble="6" title="Start Extended" mask="2" comment="If checked, the spike pillar will start in its extended position."/>
-		<list nybble="7" title="Y-Offset" comment="Anything higher than 3 will reset the offset value to normal.">
-			<entry value="0">Normal</entry>
-			<entry value="1">9 Blocks higher and slower turn animation</entry>
-			<entry value="2">2 Blocks higher and normal turn animation</entry>
-			<entry value="3">6 Blocks higher and slightly slower turn animation</entry>
+		<list bit="22-24" title="Initial Extension State">
+			<entry value="0">Extend immediately</entry>
+			<entry value="1">UNUSED</entry>
+			<entry value="2">Already extended</entry>
+			<entry value="3">UNUSED</entry>
 		</list>
-		<value nybble="8" title="Unknown Value 8"/>
+		<checkbox nybble="6" title="Unknown Checkbox 6 Mask 8" mask="8"/>
+		<list nybble="7" title="Movement Distance" comment="Any value higher than 3 is the same as value 0.">
+			<entry value="0">16 Blocks</entry>
+			<entry value="1">7 Blocks</entry>
+			<entry value="2">14 Blocks</entry>
+			<entry value="3">10 Blocks</entry>
+		</list>
+		<value nybble="8" title="Unknown Value 8" comment="Only used in NSLU."/>
 		<value nybble="9-10" title="Delay before Extension" comment="Setting this to 60 will give the sprite a one second delay before extending due to there being 60 frames every second in NSMBU. That means setting this to 1 will give it a 1/60 second delay."/>
 		<value nybble="11-12" title="Delay before Retraction" comment="Setting this to 60 will give the sprite a one second delay before retracting due to there being 60 frames every second in NSMBU. That means setting this to 1 will give it a 1/60 second delay."/>
-		<value nybble="19" title="Unknown Value 19" comment="Inferred from 332. Possibly related to Value 20."/>
-		<value nybble="20" title="Unknown Value 20" comment="Possibly related to Value 19."/>
+		<value nybble="19-20" title="Some kind of delay" comment="Only used in NSLU."/>
 	</sprite>
 	<sprite id="330" name="Raft with Enemy Limit">
 		<checkbox nybble="8" title="Follow Poison Water" comment="May work with lava and normal water as well"/>
@@ -4163,35 +4346,73 @@
 			<entry value="2">Slow</entry>
 			<entry value="3">Disables sprite</entry>
 		</list>
-		<list nybble="7" title="Y-Offset" comment="Anything higher than 3 will reset the offset value to normal.">
-			<entry value="0">Normal</entry>
-			<entry value="1">9 Blocks lower and slower turn animation</entry>
-			<entry value="2">2 Blocks lower and normal turn animation</entry>
-			<entry value="3">6 Blocks lower and slightly slower turn animation</entry>
+		<list bit="22-24" title="Initial Extension State">
+			<entry value="0">Extend immediately</entry>
+			<entry value="1">UNUSED</entry>
+			<entry value="2">Already extended</entry>
+			<entry value="3">UNUSED</entry>
 		</list>
-		<value nybble="8-9" title="Starting Node"/>
+		<checkbox nybble="6" title="Unknown Checkbox 6 Mask 8" mask="8"/>
+		<list nybble="7" title="Movement Distance" comment="Any value higher than 3 is the same as value 0.">
+			<entry value="0">16 Blocks</entry>
+			<entry value="1">7 Blocks</entry>
+			<entry value="2">14 Blocks</entry>
+			<entry value="3">10 Blocks</entry>
+		</list>
+		<value nybble="8" title="Unknown Value 8" comment="Only used in NSLU."/>
 		<value nybble="9-10" title="Delay before Extension" comment="Setting this to 60 will give the sprite a one second delay before extending due to there being 60 frames every second in NSMBU. That means setting this to 1 will give it a 1/60 second delay."/>
 		<value nybble="11-12" title="Delay before Retraction" comment="Setting this to 60 will give the sprite a one second delay before retracting due to there being 60 frames every second in NSMBU. That means setting this to 1 will give it a 1/60 second delay."/>
-		<value nybble="19-20" title="Unknown Value 19-20"/>
+		<value nybble="19-20" title="Some kind of delay" comment="Only used in NSLU."/>
 	</sprite>
 	<sprite id="332" name="Spike Pillar - Right">
-		<value nybble="5-6" title="Launch Speed"/>
-		<value nybble="7-8" title="Launch Distance Subtraction(?)" comment="This makes the distance....shorter?"/>
-		<value nybble="9-10" title="Launch Delay"/>
-		<value nybble="11-12" title="Return Delay"/>
-		<value nybble="19-20" title="Unknown Value 19-20"/>
+		<list nybble="5" title="Overall Speed" comment="Setting this to 3 will unload the sprite completely for some reason.">
+			<entry value="0">Normal</entry>
+			<entry value="1">Fast</entry>
+			<entry value="2">Slow</entry>
+			<entry value="3">Disables sprite</entry>
+		</list>
+		<list bit="22-24" title="Initial Extension State">
+			<entry value="0">Extend immediately</entry>
+			<entry value="1">UNUSED</entry>
+			<entry value="2">Already extended</entry>
+			<entry value="3">UNUSED</entry>
+		</list>
+		<checkbox nybble="6" title="Unknown Checkbox 6 Mask 8" mask="8"/>
+		<list nybble="7" title="Movement Distance" comment="Any value higher than 3 is the same as value 0.">
+			<entry value="0">16 Blocks</entry>
+			<entry value="1">7 Blocks</entry>
+			<entry value="2">14 Blocks</entry>
+			<entry value="3">10 Blocks</entry>
+		</list>
+		<value nybble="8" title="Unknown Value 8" comment="Only used in NSLU."/>
+		<value nybble="9-10" title="Delay before Extension" comment="Setting this to 60 will give the sprite a one second delay before extending due to there being 60 frames every second in NSMBU. That means setting this to 1 will give it a 1/60 second delay."/>
+		<value nybble="11-12" title="Delay before Retraction" comment="Setting this to 60 will give the sprite a one second delay before retracting due to there being 60 frames every second in NSMBU. That means setting this to 1 will give it a 1/60 second delay."/>
+		<value nybble="19-20" title="Some kind of delay" comment="Only used in NSLU."/>
 	</sprite>
 	<sprite id="333" name="Spike Pillar - Left">
-		<value nybble="5" title="Unknown Value 5"/>
-		<value nybble="6" title="Unknown Value 6"/>
-		<value nybble="7" title="Unknown Value 7"/>
-		<value nybble="8" title="Unknown Value 8"/>
-		<value nybble="9" title="Unknown Value 9"/>
-		<value nybble="10" title="Unknown Value 10"/>
-		<value nybble="11" title="Unknown Value 11"/>
-		<value nybble="12" title="Unknown Value 12"/>
-		<value nybble="19" title="Unknown Value 19"/>
-		<value nybble="20" title="Unknown Value 20"/>
+		<list nybble="5" title="Overall Speed" comment="Setting this to 3 will unload the sprite completely for some reason.">
+			<entry value="0">Normal</entry>
+			<entry value="1">Fast</entry>
+			<entry value="2">Slow</entry>
+			<entry value="3">Disables sprite</entry>
+		</list>
+		<list bit="22-24" title="Initial Extension State">
+			<entry value="0">Extend immediately</entry>
+			<entry value="1">UNUSED</entry>
+			<entry value="2">Already extended</entry>
+			<entry value="3">UNUSED</entry>
+		</list>
+		<checkbox nybble="6" title="Unknown Checkbox 6 Mask 8" mask="8"/>
+		<list nybble="7" title="Movement Distance" comment="Any value higher than 3 is the same as value 0.">
+			<entry value="0">16 Blocks</entry>
+			<entry value="1">7 Blocks</entry>
+			<entry value="2">14 Blocks</entry>
+			<entry value="3">10 Blocks</entry>
+		</list>
+		<value nybble="8" title="Unknown Value 8" comment="Only used in NSLU."/>
+		<value nybble="9-10" title="Delay before Extension" comment="Setting this to 60 will give the sprite a one second delay before extending due to there being 60 frames every second in NSMBU. That means setting this to 1 will give it a 1/60 second delay."/>
+		<value nybble="11-12" title="Delay before Retraction" comment="Setting this to 60 will give the sprite a one second delay before retracting due to there being 60 frames every second in NSMBU. That means setting this to 1 will give it a 1/60 second delay."/>
+		<value nybble="19-20" title="Some kind of delay" comment="Only used in NSLU."/>
 	</sprite>
 	<sprite id="334" name="Cooligan">
 		<checkbox nybble="5" title="Pipe Cooligan Generator" comment="Behaves as if spawned by a pipe cooligan generator"/>
@@ -4275,20 +4496,24 @@
 		</list>
 		<value nybble="12" title="Offset Right" comment="The higher this value is, the more to the right the nut starts."/>
 	</sprite>
-	<sprite id="342" name="Spike Pillar - Right" notes="The sound generated from this sprite is different than from sprites 329, 331, 332, and 333. The pillar also looks a TINY bit different.">
-		<checkbox nybble="7" title="Move less far" comment="Moves less far if checked. This cuts the distance to about a fourth of the original distance."/>
-		<value nybble="8-9" title="Starting Node"/>
-		<value nybble="9-10" title="Launch delay" comment="Always 10 in the original game"/>
-		<value nybble="11-12" title="Return delay" comment="Always 5 in the original game"/>
-	</sprite>
-	<sprite id="343" name="Spike Pillar - Left" notes="The sound generated from this sprite is different than from sprites 329, 331, 332, and 333. The pillar also looks a TINY bit different.">
-		<value nybble="5-6" title="Initial Delay" comment="The delay before first activation"/>
-		<list nybble="7" title="Distance Moved">
-			<entry value="0">1280</entry>
-			<entry value="1">384</entry>
+	<sprite id="342" name="Long Spike Pillar - Right" notes="The sound generated from this sprite is different than from sprites 329, 331, 332, and 333. The pillar also looks a TINY bit different.">
+		<list nybble="7" title="Movement Distance">
+			<entry value="0">80 Blocks</entry>
+			<entry value="1">24 Blocks</entry>
 		</list>
-		<value nybble="9-10" title="Launch Delay" comment="The delay of the spike pillar launch."/>
-		<value nybble="11-12" title="Return Delay"/>
+		<value nybble="8" title="Unknown Value 8"/>
+		<value nybble="9-10" title="Delay before Extension"/>
+		<value nybble="11-12" title="Delay before Retraction"/>
+	</sprite>
+	<sprite id="343" name="Long Spike Pillar - Left" notes="The sound generated from this sprite is different than from sprites 329, 331, 332, and 333. The pillar also looks a TINY bit different.">
+		<value nybble="5-6" title="Initial Delay" comment="The delay before first activation"/>
+		<list nybble="7" title="Movement Distance">
+			<entry value="0">80 Blocks</entry>
+			<entry value="1">24 Blocks</entry>
+		</list>
+		<value nybble="8" title="Unknown Value 8"/>
+		<value nybble="9-10" title="Delay before Extension"/>
+		<value nybble="11-12" title="Delay before Retraction"/>
 	</sprite>
 	<sprite id="344" name="Airship Rocking Effect">
 		<value nybble="5" title="Angle" comment="-22.5 * value + 90 degrees"/>
@@ -4349,7 +4574,10 @@
 			<entry value="2">Placed on Ceiling</entry>
 			<entry value="3">Placed on Right Wall</entry>
 		</list>
-		<value nybble="12" title="Direction"/>
+		<list nybble="12" title="Direction">
+			<entry value="0">Clockwise</entry>
+			<entry value="1">Counter-Clockwise</entry>
+		</list>
 	</sprite>
 	<sprite id="353" name="Parachute Coin">
 		<value nybble="16" title="Unknown Value 16"/>
@@ -4637,13 +4865,35 @@
 	</sprite>
 	<sprite id="389" name="Roy Koopa"/>
 	<sprite id="390" name="Movement-controlled Jungle Bridge Platform">
-		<value nybble="5" title="Unknown Value 5"/>
-		<checkbox nybble="8" title="Don't Spin with Movement Controller" comment="As the sprite spins around the movement controller, the platforms themselves won't."/>
-		<checkbox nybble="10" title="Unknown Flag 10" comment="Unticked in NSLU 5-56 A1, NSLU 5-6 A1, NSLU 5-6 A2, NSMBU 5-56 A1, NSMBU 5-6 A1, NSMBU 5-6 A2&lt;br&gt;&lt;br&gt;Ticked in NSLU 5-6 A1, NSMBU 5-6 A1"/>
-		<value nybble="11" title="Starting Angle" comment="Angle should be Value - 22.5. Needs more testing."/>
-		<value nybble="12" title="Hinge Amount-Related" comment="The amount of hinges...? Used 0-2 in NSMBU 5-6 A1. The first hinge will be generated wherever the movement controller is placed."/>
-		<value nybble="17-18" title="Length" comment="Value+0. Extends to the right of the sprite."/>
-		<value nybble="21-22" title="Movement ID" comment="Attatches to sprite 68."/>
+		<checkbox nybble="5" mask="1" title="Slippery"/>
+		<checkbox nybble="5" mask="2" title="Unknown Value 5 Mask 2"/>
+		<checkbox nybble="8" title="Gyroscopic Movement" comment="The rotation will be locked in place as it follows the movement controller."/>
+		<checkbox nybble="10" title="Longer Pillar"/>
+		<list nybble="11" title="Rotation">
+			<entry value="0">0&#xB0;</entry>
+			<entry value="1">22.5&#xB0;</entry>
+			<entry value="2">45&#xB0;</entry>
+			<entry value="3">67.5&#xB0;</entry>
+			<entry value="4">90&#xB0;</entry>
+			<entry value="5">112.5&#xB0;</entry>
+			<entry value="6">135&#xB0;</entry>
+			<entry value="7">157.5&#xB0;</entry>
+			<entry value="8">180&#xB0;</entry>
+			<entry value="9">202.5&#xB0;</entry>
+			<entry value="10">225&#xB0;</entry>
+			<entry value="11">247.5&#xB0;</entry>
+			<entry value="12">270&#xB0;</entry>
+			<entry value="13">292.5&#xB0;</entry>
+			<entry value="14">315&#xB0;</entry>
+			<entry value="15">337.5&#xB0;</entry>
+		</list>
+		<list nybble="12" title="Has Hinge" comment="The hinge will be placed wherever the movement controller is placed.">
+			<entry value="0">No</entry>
+			<entry value="1">Yes (Under layer 0)</entry>
+			<entry value="2">Yes (Over layer 0)</entry>
+		</list>
+		<value bit="68-72" title="Length" comment="Value + 0. Value 0 = 1. Extends to the right of the sprite."/>
+		<value nybble="21-22" title="Movement ID" comment="Attatches to sprite 68 and 69."/>
 	</sprite>
 	<sprite id="391" name="Rotation-controlled Crystal Block">
 		<list nybble="10" title="Type" comment="* This is not cyrstalized. (Also unused.)">
@@ -5039,16 +5289,16 @@
 		<value nybble="12" title="Unknown Value 12"/>
 	</sprite>
 	<sprite id="447" name="Grouped Spike Top">
-		<list nybble="1" title="Direction">
-			<entry value="0">Right</entry>
-			<entry value="1">Left</entry>
-		</list>
-		<value nybble="6" title="Unknown Value 6"/>
+		<value nybble="5-6" title="Group ID" comment="The ID used to chain sprites together. Use sprite 196 to create the groups."/>
 		<list nybble="11" title="Orientation">
 			<entry value="0">Placed on Ground</entry>
 			<entry value="1">Placed on Left Wall</entry>
 			<entry value="2">Placed on Ceiling</entry>
 			<entry value="3">Placed on Right Wall</entry>
+		</list>
+		<list nybble="12" title="Direction">
+			<entry value="0">Clockwise</entry>
+			<entry value="1">Counter-Clockwise</entry>
 		</list>
 	</sprite>
 	<sprite id="448" name="Torpedo Ted for Bowser Jr. Fight (W5-Ship)" notes="Only used in the fight with Bowser Jr. at the start of World 5.">
@@ -5080,10 +5330,13 @@
 	</sprite>
 	<sprite id="455" name="Location-based Clapping Controller" notes="Activated when all coins in the location are grabbed by the player. There seems to be no time limit.">
 		<value nybble="5-6" title="Location ID"/>
-		<value nybble="10" title="Unknown Value 10"/>
-		<value nybble="12" title="Unknown Value 12"/>
-		<value nybble="19" title="Unknown Value 19"/>
-		<value nybble="20" title="Unknown Value 20"/>
+		<value nybble="9-10" title="Amount of yellow coins" comment="Useless. Looks to be a leftover from an old version of the game where you would get cheered only if you collect this amount of coins.&lt;br&gt;This field is no longer even referenced in the code."/>
+		<value nybble="11" title="Unused Value 11" comment="Relates to value 19-20 somehow."/>
+		<checkbox nybble="12" title="Ignore blue coins" mask="1"/>
+		<checkbox nybble="12" title="Ignore yellow coins" mask="2"/>
+		<checkbox nybble="12" title="Ignore brick blocks (P-Switch yellow coins)" mask="4"/>
+		<checkbox nybble="12" title="Ignore coin outlines" mask="8"/>
+		<value nybble="19-20" title="Unknown Value 19-20"/>
 	</sprite>
 	<sprite id="456" name="Kamek Warp - Useless [UNUSED]" notes="This sprite doesn't do anything. May have been used in earlier development to define the locations Kamek warps to in the battle.">
 		<checkbox nybble="7" title="Useless Flag 7" comment="Not sure what this nybble was used for, but since this sprite does nothing, it's useless."/>
@@ -5329,7 +5582,7 @@
 	</sprite>
 	<sprite id="486" name="Darkened Screen Corners Effect" notes="This spite makes the corners of the screen darker. Used in most underground sections of levels.">
 		<value nybble="10-11" title="Zone (useless)" comment="This doesn't make a difference."/>
-		<checkbox nybble="12" title="Don't do anything" comment="Doesn't do anything if this checkbox is unchecked."/>
+		<checkbox nybble="12" title="Apply effect" comment="The effect is not applied if this checkbox is unchecked."/>
 	</sprite>
 	<sprite id="487" name="Bowser Area" notes="&quot;Area dedicated OBJ Bowser&quot;. ">
 		<value nybble="3-4" title="Event ID"/>
@@ -5383,7 +5636,7 @@
 			<entry value="1">8x10</entry>
 		</list>
 	</sprite>
-	<sprite id="494" name="Places Bowser Jr. Goes to When Hit (?)" notes="&quot;Retracted position. Bowser Jr underwater&quot;&#13;&#10;Unless it was just a coincidence when I tested it.">
+	<sprite id="494" name="Underwater Bowser Jr. Retraction position" notes="Position Bowser Jr. goes to when hit.">
 		<checkbox nybble="12" title="Unknown Flag 12"/>
 	</sprite>
 	<sprite id="495" name="Down-Pulling Underwater Bubbles" notes="Can spawn bubbles that pull you down in a location.">
@@ -5576,7 +5829,7 @@
 		</list>
 		<value nybble="12" title="Height" comment="Value + 1. Other nybbles may influence this though."/>
 	</sprite>
-	<sprite id="512" name="Ghost House Block">
+	<sprite id="512" name="Ghost Ship Block">
 		<value nybble="18" title="Width" comment="Value+3"/>
 		<value nybble="20" title="Height" comment="Value+3"/>
 		<value nybble="21-22" title="Movement ID" comment="Can be matched to multiple movement controllers at the same time."/>
@@ -5754,7 +6007,7 @@
 	</sprite>
 	<sprite id="536" name="Rocky Wrench"/>
 	<sprite id="537" name="Flying Wrench [UNUSED]" notes="Name translates to Spanner. Spawns a wrench and is thrown to the left.&#13;&#10;Might be spawned by Rocky Wrenches."/>
-	<sprite id="538" name="Cookie [CRASHING SPRITE] [UNUSED]" notes="Name translates as &quot;cookie&quot;"/>
+	<sprite id="538" name="Roto-disc [CRASHING SPRITE] [UNUSED]"/>
 	<sprite id="539" name="Rolling Ice Block [UNUSED]" notes="Name translates to Gattan. Battan is Whomp's Japanese name. One of the coolest unused sprites. No collision glitches. It can roll on its side and can crush the player.">
 		<value nybble="5" title="Mid-delay" comment="Delay for middle rolls."/>
 		<value nybble="6" title="Initial delay" comment="Delay for first and last rolls."/>
@@ -5859,8 +6112,8 @@
 		<list nybble="5" title="Orientation" comment="Sets the direction of the piranha plant. 2 and 3 are unused.">
 			<entry value="0">Up</entry>
 			<entry value="1">Down</entry>
-			<entry value="2">Left</entry>
-			<entry value="3">Right</entry>
+			<entry value="2">Right</entry>
+			<entry value="3">Left</entry>
 		</list>
 	</sprite>
 	<sprite id="551" name="Nothing. [UNUSED]"/>
@@ -5889,8 +6142,8 @@
 		<value nybble="8" title="Unknown Value 8"/>
 		<value nybble="9" title="Unknown Value 9"/>
 		<value nybble="10" title="Unknown Value 10"/>
-		<value nybble="11" title="Unknown Value 11"/>
-		<value nybble="12" title="Unknown Value 12"/>
+		<value nybble="11" title="Height"/>
+		<value nybble="12" title="Width"/>
 	</sprite>
 	<sprite id="560" name="Wendy Battle Floor"/>
 	<sprite id="561" name="Records Toad House Signboard">
@@ -6122,7 +6375,10 @@
 		<value nybble="5" title="Unknown Value 5" comment="Only used as 8."/>
 	</sprite>
 	<sprite id="590" name="Eep Cheep">
-		<value nybble="5" title="Unknown Value 5"/>
+		<list nybble="5" title="Direction">
+			<entry value="0">Towards Player</entry>
+			<entry value="8">Left</entry>
+		</list>
 	</sprite>
 	<sprite id="591" name="Medium Eep Cheep"/>
 	<sprite id="592" name="Searching Cheep Cheep [UNUSED]" notes="An aggressive green Cheep Cheep that tries to swim towards the player. Needs a location to function.">
@@ -6260,8 +6516,8 @@
 	<sprite id="623" name="Pipe-bubbles-related">
 		<checkbox nybble="5" title="Unknown Flag 5"/>
 	</sprite>
-	<sprite id="624" name="Spike Top Group">
-		<value nybble="5-6" title="Group ID" comment="The ID used to chain sprites together. Use sprite 196 to create the groups."/>
+	<sprite id="624" name="Spike Top Group Controller">
+		<value nybble="5-6" title="Group ID" comment="Use this ID to chain Spike Tops together."/>
 	</sprite>
 	<sprite id="625" name="Bolt-controlled Rocky Castle Platform" notes="This sprite does exactly the same as sprite 530.">
 		<checkbox nybble="5" title="Unknown Flag 5"/>
@@ -6407,8 +6663,8 @@
 		<value nybble="17" title="Unknown Value 17" comment="Not sure"/>
 		<value nybble="18" title="Horizontal Distance"/>
 	</sprite>
-	<sprite id="644" name="Lava Bubble (Synced) - NSLU" notes="You can sync it with other lava bubbles">
-		<value nybble="6" title="Unknown Value 6"/>
+	<sprite id="644" name="Grouped Lava Bubble - NSLU" notes="You can sync it with other lava bubbles">
+		<value nybble="5-6" title="Group ID"/>
 		<list nybble="8" title="Initial Direction">
 			<entry value="0">Right</entry>
 			<entry value="1">Left</entry>
@@ -6491,7 +6747,7 @@
 			<entry value="2">All Players</entry>
 		</list>
 		<value nybble="8-9" title="Starting Node"/>
-		<value bit="40-44" title="Path ID" comment="Use this to specify the path the train follows. Only values less than 32 can be used."/>
+		<value bit="40-44" title="Path ID" comment="Use this to specify the path the snake block follows. Only values less than 32 can be used."/>
 		<list nybble="12" title="Number of blocks" comment="This is glitchy when the length is longer than the distance from the first to the second node of the path.">
 			<entry value="0">3 blocks</entry>
 			<entry value="1">4 blocks</entry>
@@ -6652,11 +6908,18 @@
 		<value nybble="10" title="Unknown Value 10"/>
 		<value nybble="21-22" title="Movement ID"/>
 	</sprite>
-	<sprite id="675" name="Stone Cog Platform - NSLU" notes="Doesn't need a movement controller to spin.">
-		<value nybble="9" title="Unknown Value 9"/>
-		<value nybble="10" title="Unknown Value 10"/>
-		<value nybble="21" title="Unknown Value 21"/>
-		<value nybble="22" title="Unknown Value 22"/>
+	<sprite id="675" name="Rotating Stone Gear - NSLU" notes="Doesn't need a movement controller to spin.">
+		<checkbox nybble="5" title="Offset Rotation" comment="Used to sync gears. Can only be used with large gears and is ignored if a movement-controller isn't used."/>
+		<value nybble="8" title="Z-Order"/>
+		<checkbox nybble="9" title="Clockwise" comment="Ignored if a movement-controller is used."/>
+		<list nybble="10" title="Size">
+			<entry value="0">Medium</entry>
+			<entry value="1">Large</entry>
+			<entry value="2">Small</entry>
+		</list>
+		<checkbox nybble="12" title="Metallic"/>
+		<value nybble="16" title="Rotation Speed" comment="Ignored if a movement-controller is used."/>
+		<value nybble="21-22" title="Movement ID" comment="Use this to match it to a movement controller (68, 69, 116, 118)."/>
 	</sprite>
 	<sprite id="676" name="Blue Platform - NSLU">
 		<value nybble="5" title="Unknown Value 5"/>
@@ -6687,13 +6950,29 @@
 			<entry value="15">Ice flower</entry>
 		</list>
 	</sprite>
-	<sprite id="679" name="Movement Controlled Pipe Body - NSLU">
-		<value nybble="7" title="Unknown Value 7"/>
-		<value nybble="8" title="Unknown Value 8"/>
-		<value nybble="9" title="Unknown Value 9"/>
-		<value nybble="10" title="Unknown Value 10"/>
-		<value nybble="11" title="Unknown Value 11"/>
-		<value nybble="21-22" title="Movement ID?" comment="Probably."/>
+	<sprite id="679" name="Movement-controlled Pipe Body - NSLU">
+		<checkbox nybble="5" title="Expels bubbles"/>
+		<value nybble="6" title="Z-Order"/>
+		<list nybble="7" title="Direction">
+			<entry value="0">Right</entry>
+			<entry value="1">Left</entry>
+			<entry value="2">Up</entry>
+			<entry value="3">Down</entry>
+		</list>
+		<list nybble="8" title="Color" comment="Set the colour of your pipe!">
+			<entry value="0">Green</entry>
+			<entry value="1">Red</entry>
+			<entry value="2">Yellow</entry>
+			<entry value="3">Purple/Blue</entry>
+		</list>
+		<value bit="35-40" title="Length" comment="Value + 2."/>
+		<list nybble="11" title="Type">
+			<entry value="0">Normal</entry>
+			<entry value="1">Painted</entry>
+		</list>
+		<value nybble="12" title="Unknown Value 12"/>
+		<value nybble="14-15" title="Unknown Value 14-15" comment="Any non-zero value would probably show the same behavior."/>
+		<value nybble="21-22" title="Movement ID" comment="Oddly, 1-2 A1 used the swayer instead of the spinner like one would expect..."/>
 	</sprite>
 	<sprite id="680" name="Stone-Eye - NSLU">
 		<value nybble="6" title="Unknown Value 6" comment="Only used as 1."/>
@@ -6943,7 +7222,7 @@
 			<entry value="2">All Players [NSLU: Activates event]</entry>
 		</list>
 		<value nybble="8-9" title="Starting Node"/>
-		<value bit="40-44" title="Path ID" comment="Use this to specify the path the train follows. Only values less than 32 can be used."/>
+		<value bit="40-44" title="Path ID" comment="Use this to specify the path the snake block follows. Only values less than 32 can be used."/>
 		<list nybble="12" title="Number of blocks" comment="This is glitchy when the length is longer than the distance from the first to the second node of the path.">
 			<entry value="0">3 blocks</entry>
 			<entry value="1">4 blocks</entry>

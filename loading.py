@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Miyamoto! Level Editor - New Super Mario Bros. U Level Editor
-# Copyright (C) 2009-2019 Treeki, Tempus, angelsl, JasonP27, Kinnay,
-# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10
+# Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kinnay,
+# MalStar1000, RoadrunnerWMC, MrRean, Grop, AboodXD, Gota7, John10v10,
+# mrbengtsson
 
 # This file is part of Miyamoto!.
 
@@ -33,7 +34,7 @@ from xml.etree import ElementTree as etree
 import globals
 import spritelib as SLib
 from gamedefs import MiyamotoGameDefinition, GetPath
-from misc import SpriteDefinition, setting, setSetting
+from misc import SpriteDefinition, BGName, setting, setSetting
 import SarcLib
 from strings import MiyamotoTranslation
 
@@ -63,15 +64,14 @@ def LoadBGNames():
     """
     # Sort BG Names
     globals.names_bg = []
-    globals.names_bgTrans = []
 
-    with open(GetPath('bg'), 'r') as txt:
-        for line in txt.readlines():
-            globals.names_bg.append(line.rstrip())
+    with open(GetPath('bg'), 'r') as txt, open(GetPath('bgTrans'), 'r') as txt2:
+        for line, lineTrans in zip(txt.readlines(), txt2.readlines()):
+            name, trans = line.rstrip(), lineTrans.rstrip()
+            if name and trans:
+                globals.names_bg.append(BGName(name, trans))
 
-    with open(GetPath('bgTrans'), 'r') as txt:
-        for line in txt.readlines():
-            globals.names_bgTrans.append(line.rstrip())
+    globals.names_bg.append(BGName.Custom())
 
 
 def LoadLevelNames():
@@ -303,6 +303,11 @@ def LoadSpriteCategories(reload_=False):
         paths = new
 
     globals.SpriteCategories = []
+
+    # Add a Search category
+    globals.SpriteCategories.append((globals.trans.string('Sprites', 19), [(globals.trans.string('Sprites', 16), list(range(globals.NumSprites)))], []))
+    globals.SpriteCategories[-1][1][0][1].append(9999)  # 'no results' special case
+
     for path in paths:
         tree = etree.parse(path)
         root = tree.getroot()
@@ -343,10 +348,6 @@ def LoadSpriteCategories(reload_=False):
                         for i in range(int(x[0]), int(x[1]) + 1):
                             if i not in CurrentCategory:
                                 CurrentCategory.append(i)
-
-    # Add a Search category
-    globals.SpriteCategories.append((globals.trans.string('Sprites', 19), [(globals.trans.string('Sprites', 16), list(range(globals.NumSprites)))], []))
-    globals.SpriteCategories[-1][1][0][1].append(9999)  # 'no results' special case
 
 
 def LoadSpriteListData(reload_=False):
@@ -625,7 +626,7 @@ def LoadGameDef(name=None, dlg=None):
     try:
         # Load the gamedef
         globals.gamedef = MiyamotoGameDefinition(name)
-        if globals.gamedef.custom and (not globals.settings.contains('GamePath_' + globals.gamedef.name)):
+        if globals.gamedef.custom and (not globals.settings.contains('GamePath_' + globals.gamedef.name)) and globals.mainWindow:
             # First-time usage of this gamedef. Have the
             # user pick a stage folder so we can load stages
             # and tilesets from there
