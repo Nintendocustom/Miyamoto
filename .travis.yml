@@ -12,7 +12,7 @@ deploy:
   file_glob: true
   file: distrib/*
   skip_cleanup: true
-  draft: true
+  draft: false
   on:
     all_branches: true
 tags: false
