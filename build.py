@@ -35,9 +35,8 @@ PackageName = 'miyamoto_v%s' % Version
 ################################################################
 
 # Imports
-import os, os.path, platform, shutil, sys, zipfile
+import os, os.path, platform, shutil, sys
 from cx_Freeze import setup, Executable
-from shutil import copyfile
 
 # Pick a build directory
 dir_ = 'distrib/' + PackageName
@@ -69,7 +68,7 @@ setup(
     options={
         'build_exe': {
             'excludes': excludes,
-            'packages': ["PyQt5-sip", 'encodings', 'encodings.hex_codec', 'encodings.utf_8'],
+            'packages': ['sip', 'encodings', 'encodings.hex_codec', 'encodings.utf_8'],
             'build_exe': dir_,
             'optimize': 2,
             'silent': True,
@@ -111,16 +110,18 @@ else:
     if os.path.isdir(dir_ + '/macTools'): shutil.rmtree(dir_ + '/macTools') 
     shutil.copytree('macTools', dir_ + '/macTools')
 shutil.copy('license.txt', dir_)
+shutil.copy('README.md', dir_)
 print('>> Files copied!')
+import os
+import zipfile
+
+def zipdir(path, ziph):
+    # ziph is zipfile handle
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file))
+zipf = zipfile.ZipFile(PackageName + '.zip', 'w', zipfile.ZIP_DEFLATED)
+zipdir('dir_', zipf)
+zipf.close()
 
 print('>> Miyamoto! has been frozen to %s !' % dir_)
-
-zf = zipfile.ZipFile(PackageName + ".zip", "w", zipfile.ZIP_DEFLATED)
-for dirname, subdirs, files in os.walk(dir_):
-    zf.write(dirname)
-    for filename in files:
-        os.path.abspath(os.path.join(dirname, filename))
-        zf.write(os.path.join(dirname, filename))
-zf.close()
-print('Miyamoto! has been packed as zip')
-shutil.copy(PackageName + ".zip", "distrib")
