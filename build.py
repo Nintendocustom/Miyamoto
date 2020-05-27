@@ -112,5 +112,16 @@ else:
 shutil.copy('license.txt', dir_)
 shutil.copy('README.md', dir_)
 print('>> Files copied!')
+import os
+import zipfile
+
+def zipdir(path, ziph):
+    # ziph is zipfile handle
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file))
+zipf = zipfile.ZipFile(PackageName + '.zip', 'w', zipfile.ZIP_DEFLATED)
+zipdir('dir_', zipf)
+zipf.close()
 
 print('>> Miyamoto! has been frozen to %s !' % dir_)
