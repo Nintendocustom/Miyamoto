@@ -1851,8 +1851,6 @@ class SpriteImage_ControllerSwaying(SLib.SpriteImage_MovementController):  # 68
         self.parent.setZValue(500000)
         self.aux.append(SLib.AuxiliaryRotationAreaOutline(parent, 60))
         self.aux.append(SLib.AuxiliaryRotationAreaOutline(parent, 120))
-        self.aux[0].setPos(-12, 0)
-        self.aux[1].setPos(-58, -44)
 
     @staticmethod
     def loadImages():
@@ -2673,7 +2671,7 @@ class SpriteImage_QuestionSwitch(SLib.SpriteImage_Static):  # 104
         super().dataChanged()
 
 
-class SpriteImage_PSwitch(SLib.SpriteImage_Static):  # 105
+class SpriteImage_PSwitch(SLib.SpriteImage_Static):  # 105, 686, 710
     def __init__(self, parent):
         super().__init__(
             parent,
@@ -4029,7 +4027,7 @@ class SpriteImage_ExpandingPipeDown(SpriteImage_PipeExpand):  # 162
         super().dataChanged()
 
 
-class SpriteImage_WaterGeyserLocation(SpriteImage_StackedSprite):  # 163
+class SpriteImage_WaterGeyserLocation(SpriteImage_StackedSprite):  # 163, 705
     def __init__(self, parent, scale=3.75):
         super().__init__(parent, scale)
 
@@ -5374,11 +5372,19 @@ class SpriteImage_TileGod(SLib.SpriteImage_StaticMultiple):  # 237, 673
         super().__init__(parent, 3.75)
         self.aux2 = [SLib.AuxiliaryRectOutline(parent, 0, 0)]
         self.aux = self.aux2
+        self.checkType = 0
 
     def dataChanged(self):
         super().dataChanged()
 
+        self.checkType = (self.parent.spritedata[3] & 0xF)
+        if self.checkType > 2:
+            self.checkType = 1
+
         type_ = self.parent.spritedata[4] >> 4
+
+        self.alpha = 1 if (self.parent.spritedata[4] & 0xF) != 0 else 0.5
+        
         self.width = (self.parent.spritedata[8] & 0xF) * 16
         self.height = (self.parent.spritedata[9] & 0xF) * 16
 
@@ -5388,7 +5394,7 @@ class SpriteImage_TileGod(SLib.SpriteImage_StaticMultiple):  # 237, 673
         if not self.height:
             self.height = 16
 
-        if type_ in [2, 5, 8, 9, 10, 11, 14, 15]:
+        if type_ > 5:
             self.aux = self.aux2
             self.spritebox.shown = True
             self.image = None
@@ -5400,23 +5406,20 @@ class SpriteImage_TileGod(SLib.SpriteImage_StaticMultiple):  # 237, 673
             self.aux = []
             self.spritebox.shown = False
 
-            if not type_:
+            if type_ == 0:
                 tile = SLib.Tiles[208]
 
             elif type_ == 1:
                 tile = SLib.Tiles[48]
 
+            elif type_ == 2:
+                tile = SLib.Tiles[0]
+
             elif type_ == 3:
                 tile = SLib.Tiles[52]
 
-            elif type_ == 4:
+            else:
                 tile = SLib.Tiles[51]
-
-            elif type_ in [6, 12]:
-                tile = SLib.Tiles[256 + 240]
-
-            elif type_ in [7, 13]:
-                tile = SLib.Tiles[256 + 4]
 
             if tile.exists:
                 self.image = tile.main
@@ -5437,7 +5440,10 @@ class SpriteImage_TileGod(SLib.SpriteImage_StaticMultiple):  # 237, 673
 
         for yTile in range(self.height // 16):
             for xTile in range(self.width // 16):
-                painter.drawPixmap(xTile * 60, yTile * 60, self.image)
+                if ( self.checkType == 0                                                                                     # Solid Fill
+                     or self.checkType == 1 and (xTile % 2 == 0 and yTile % 2 == 0 or xTile % 2 != 0 and yTile % 2 != 0)     # Checkers
+                     or self.checkType == 2 and (xTile % 2 != 0 and yTile % 2 == 0 or xTile % 2 == 0 and yTile % 2 != 0) ):  # Inverted Checkers
+                    painter.drawPixmap(xTile * 60, yTile * 60, self.image)
 
         aux = self.aux2
         aux[0].paint(painter, None, None)
@@ -5803,22 +5809,20 @@ class SpriteImage_WaterGeyserBoss(SLib.SpriteImage_Static):  # 264
 
 
 class SpriteImage_RollingHill(SLib.SpriteImage):  # 265
-    RollingHillSizes = [2 * 40, 18 * 40, 32 * 40, 50 * 40, 64 * 40, 0, 0, 0, 18 * 40, 2 * 40, 30 * 40]
+    RollingHillSizes = [0, 18 * 16, 32 * 16, 50 * 16, 64 * 16, 10 * 16, 14 * 16, 20 * 16, 18 * 16, 0, 30 * 16, 44 * 16]
 
     def __init__(self, parent):
         super().__init__(parent, 3.75)
-        self.xOffset = 4
 
         size = (self.parent.spritedata[3] >> 4) & 0xF
         if size in [0, 9]:
-            increase = self.parent.spritedata[4]
-            realSize = self.RollingHillSizes[size] * (increase + 1)
+            realSize = 32 * (self.parent.spritedata[4] + 1)
 
-        elif size > 10:
-            realSize = 0
+        elif size <= 11:
+            realSize = self.RollingHillSizes[size]
 
         else:
-            realSize = self.RollingHillSizes[size]
+            realSize = 0
 
         self.aux.append(SLib.AuxiliaryCircleOutline(parent, realSize))
 
@@ -5827,14 +5831,13 @@ class SpriteImage_RollingHill(SLib.SpriteImage):  # 265
 
         size = (self.parent.spritedata[3] >> 4) & 0xF
         if size in [0, 9]:
-            increase = self.parent.spritedata[4]
-            realSize = self.RollingHillSizes[size] * (increase + 1)
+            realSize = 32 * (self.parent.spritedata[4] + 1)
 
-        elif size > 10:
-            realSize = 0
+        elif size <= 11:
+            realSize = self.RollingHillSizes[size]
 
         else:
-            realSize = self.RollingHillSizes[size]
+            realSize = 0
 
         self.aux[0].setSize(realSize)
         self.aux[0].update()
@@ -7050,6 +7053,13 @@ class SpriteImage_SpikeTop(SLib.SpriteImage_StaticMultiple):  # 352, 447
         
         self.image = ImageCache['SpikeTop%d' % orientation].transformed(t)
         super().dataChanged()
+
+
+class SpriteImage_RollingHillPipe(SLib.SpriteImage):  # 355
+    def __init__(self, parent):
+        super().__init__(parent, 3.75)
+
+        self.aux.append(SLib.AuxiliaryCircleOutline(parent, 50 * 16))
 
 
 class SpriteImage_GoldenYoshi(SLib.SpriteImage_Static):  # 365
@@ -8974,7 +8984,7 @@ ImageClasses = {
     350: SpriteImage_MovingStoneBlock,
     351: SpriteImage_Pokey,
     352: SpriteImage_SpikeTop,
-    355: SpriteImage_Crash,
+    355: SpriteImage_RollingHillPipe,
     357: SpriteImage_Fuzzy,
     358: SpriteImage_Crash,
     360: SpriteImage_Crash,
@@ -9097,13 +9107,18 @@ ImageClasses = {
     659: SpriteImage_BigGrrrol,
     662: SpriteImage_BlueRing,
     673: SpriteImage_TileGod,
+    681: SpriteImage_ArrowSignboard,
     683: SpriteImage_QBlock,
+    686: SpriteImage_PSwitch,
     692: SpriteImage_BrickBlock,
     701: SpriteImage_BrickBlock,
     703: SpriteImage_BooCircle,
     704: SpriteImage_BrickBlock,
+    705: SpriteImage_WaterGeyserLocation,
     706: SpriteImage_BrickBlock,
     707: SpriteImage_QBlock,
+    710: SpriteImage_PSwitch,
     716: SpriteImage_Foo,
     717: SpriteImage_SnakeBlock,
+    722: SpriteImage_ArrowSignboard,
 }
